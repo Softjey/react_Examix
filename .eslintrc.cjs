@@ -20,6 +20,10 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    'import/no-absolute-path': 'off',
+    'react/react-in-jsx-scope': 'off',
+    'react/jsx-no-target-blank': 'off',
+    "react/jsx-one-expression-per-line": "off",
   },
   settings: {
     'import/resolver': {
