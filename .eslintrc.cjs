@@ -14,7 +14,7 @@ module.exports = {
   parserOptions: {
     project: './tsconfig.json',
   },
-  plugins: ['react-refresh'],
+  plugins: ['react-refresh', '@emotion'],
   rules: {
     'react-refresh/only-export-components': [
       'warn',
@@ -24,6 +24,8 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'react/jsx-no-target-blank': 'off',
     "react/jsx-one-expression-per-line": "off",
+    "react/no-unknown-property": ["error", { "ignore": ["css"] }],
+    "@emotion/pkg-renaming": "error"
   },
   settings: {
     'import/resolver': {
