@@ -15,6 +15,10 @@ const router = createRouter([
     path: '/join',
     element: <div>Join page</div>,
   },
+  {
+    path: '*',
+    element: <div>Not found 404</div>,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(<RouterProvider router={router} />);
