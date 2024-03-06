@@ -1,10 +1,20 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import ReactDOM from 'react-dom/client';
+import { RouterProvider, createHashRouter as createRouter } from 'react-router-dom';
+import './index.css';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+const router = createRouter([
+  {
+    path: '/',
+    element: <div>Start page</div>,
+  },
+  {
+    path: '/login',
+    element: <div>Login Page</div>,
+  },
+  {
+    path: '/join',
+    element: <div>Join page</div>,
+  },
+]);
+
+ReactDOM.createRoot(document.getElementById('root')!).render(<RouterProvider router={router} />);
