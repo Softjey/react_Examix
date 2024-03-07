@@ -4,6 +4,7 @@ import './index.css';
 // import StartPage from './pages/StartPage';
 // import NotFoundPage from './pages/NotFoundPage';
 // import LoginPage from './pages/LoginPage';
+// import JoinPage from './pages/JoinPage';
 
 const router = createRouter([
   {
