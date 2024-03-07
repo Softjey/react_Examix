@@ -4,7 +4,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import React from 'react';
 
-export interface Props {
+interface Props {
   children: React.ReactNode;
   css?: CSSObject;
 }

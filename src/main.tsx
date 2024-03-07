@@ -1,26 +1,26 @@
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createHashRouter as createRouter } from 'react-router-dom';
 import './index.css';
-import StartPage from './pages/StartPage';
-import NotFoundPage from './pages/NotFoundPage';
-import TeacherLoginPage from './pages/TeacherLoginPage';
+// import StartPage from './pages/StartPage';
+// import NotFoundPage from './pages/NotFoundPage';
+// import LoginPage from './pages/LoginPage';
 
 const router = createRouter([
   {
     path: '/',
-    element: <StartPage />,
+    element: /* <StartPage /> */ <div>Start page</div>,
   },
   {
     path: '/login',
-    element: <TeacherLoginPage />,
+    element: /* <LoginPage /> */ <div>Login page</div>,
   },
   {
     path: '/join',
-    element: <div>Join page</div>,
+    element: /* <JoinPage /> */ <div>Join page</div>,
   },
   {
     path: '*',
-    element: <NotFoundPage />,
+    element: /* <NotFoundPage /> */ <div>Page not found</div>,
   },
 ]);
 
