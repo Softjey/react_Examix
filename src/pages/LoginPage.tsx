@@ -1,60 +1,45 @@
-import { Button, Fab, TextField } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router';
+import { TextField } from '@mui/material';
 import Layout from '../Layout';
+import MainButton from '../components/MainButton';
+import LoginHeader from '../components/LoginHeader';
+import InputContainer from '../components/InputContainer';
 
-const Inputs: React.FC = () => (
-  <div
-    css={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '15px',
-      width: '300px',
-    }}
-  >
-    <TextField label="Username" placeholder="Enter username" variant="outlined" />
-    <TextField label="Password" placeholder="Enter password" type="password" variant="outlined" />
-  </div>
-);
-
-const Wrapper: React.FC = () => {
+const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <div css={{ position: 'relative' }}>
-      <h1 css={{ marginBottom: '20px' }}>Examix</h1>
-      <form
+    <Layout>
+      <div
         css={{
+          height: '300px',
+          gap: '20px',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
-          gap: '20px',
         }}
       >
-        <Inputs />
-        <Button sx={{ width: '200px', height: '50px', fontSize: '1rem' }} variant="contained">
-          Login
-        </Button>
-      </form>
-      <Fab
-        onClick={() => navigate('/')}
-        color="primary"
-        size="large"
-        sx={{
-          position: 'absolute',
-          top: '7px',
-          left: '-70px',
-        }}
-      >
-        <ArrowBackIcon />
-      </Fab>
-    </div>
+        <LoginHeader navigate={navigate} />
+        <form
+          css={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '20px',
+          }}
+        >
+          <InputContainer>
+            <TextField label="Username" placeholder="Enter username" variant="outlined" />
+            <TextField
+              label="Password"
+              placeholder="Enter password"
+              type="password"
+              variant="outlined"
+            />
+          </InputContainer>
+          <MainButton variant="contained">Login</MainButton>
+        </form>
+      </div>
+    </Layout>
   );
 };
-
-const LoginPage: React.FC = () => (
-  <Layout>
-    <Wrapper />
-  </Layout>
-);
 
 export default LoginPage;
