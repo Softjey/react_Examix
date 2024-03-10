@@ -5,7 +5,7 @@ import MainButton from '../components/MainButton';
 import LoginHeader from '../components/LoginHeader';
 import InputContainer from '../components/InputContainer';
 
-const JoinPage: React.FC = () => {
+const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   return (
     <Layout>
@@ -27,19 +27,19 @@ const JoinPage: React.FC = () => {
           }}
         >
           <InputContainer>
-            <TextField label="Name" placeholder="Enter name" variant="outlined" />
+            <TextField label="Username" placeholder="Enter username" variant="outlined" />
             <TextField
-              inputProps={{ maxLength: 6 }}
-              label="Code"
-              placeholder="Enter game code"
+              label="Password"
+              placeholder="Enter password"
+              type="password"
               variant="outlined"
             />
           </InputContainer>
-          <MainButton variant="contained">Join the test</MainButton>
+          <MainButton variant="contained">Login</MainButton>
         </form>
       </div>
     </Layout>
   );
 };
 
-export default JoinPage;
+export default LoginPage;
