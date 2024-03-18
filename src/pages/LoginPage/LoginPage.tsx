@@ -10,7 +10,8 @@ interface Props {
 
 // eslint-disable-next-line react/prop-types
 const LoginPage: React.FC<Props> = ({ role }) => {
-  const { fields, inputProps } = useLoginPage(role);
+  const { fields, inputProps, hiddenCounterStyles } = useLoginPage(role);
+
   return (
     <Layout>
       <div
@@ -43,16 +44,9 @@ const LoginPage: React.FC<Props> = ({ role }) => {
               placeholder={fields.input2Placeholder}
               type={fields.input2Type}
               variant="outlined"
-              inputProps={inputProps.input2}
+              inputProps={{ ...inputProps.input2, sx: hiddenCounterStyles }}
+              autoComplete="off"
               fullWidth
-              sx={{
-                '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                  display: 'none',
-                },
-                '& input[type=number]': {
-                  MozAppearance: 'textfield',
-                },
-              }}
             />
           </Stack>
           <MainButton variant="contained">{fields.buttonText}</MainButton>

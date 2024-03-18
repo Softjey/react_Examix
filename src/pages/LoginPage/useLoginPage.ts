@@ -1,4 +1,19 @@
 import { InputBaseComponentProps } from '@mui/material';
+import { css } from '@emotion/react';
+
+function getHiddenInputNumberCounterStyles() {
+  return css`
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &[type='number'] {
+      -moz-appearance: textfield;
+    }
+  `;
+}
 
 export type Role = 'teacher' | 'student';
 
@@ -60,8 +75,10 @@ function getFields(role: Role): Fields {
 export function useLoginPage(role: Role) {
   const fields = getFields(role);
   const inputProps = getInputProps(role);
+  const hiddenCounterStyles = getHiddenInputNumberCounterStyles();
   return {
     fields,
     inputProps,
+    hiddenCounterStyles,
   };
 }
