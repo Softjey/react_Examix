@@ -10,7 +10,7 @@ interface Props {
 
 // eslint-disable-next-line react/prop-types
 const LoginPage: React.FC<Props> = ({ role }) => {
-  const { fields, inputProps, hiddenCounterStyles } = useLoginPage(role);
+  const { fields, inputProps } = useLoginPage(role);
 
   return (
     <Layout>
@@ -44,7 +44,7 @@ const LoginPage: React.FC<Props> = ({ role }) => {
               placeholder={fields.input2Placeholder}
               type={fields.input2Type}
               variant="outlined"
-              inputProps={{ ...inputProps.input2, sx: hiddenCounterStyles }}
+              inputProps={inputProps.input2}
               autoComplete="off"
               fullWidth
             />

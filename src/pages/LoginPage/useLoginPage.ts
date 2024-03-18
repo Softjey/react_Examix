@@ -41,7 +41,10 @@ function getInputProps(role: Role): InputProps {
     case 'teacher':
       return defaultInputProps;
     case 'student':
-      return { ...defaultInputProps, input2: { maxLength: 6 } };
+      return {
+        ...defaultInputProps,
+        input2: { maxLength: 6, sx: getHiddenInputNumberCounterStyles() },
+      };
     default:
       throw new Error('Role is unhandled');
   }
@@ -75,10 +78,8 @@ function getFields(role: Role): Fields {
 export function useLoginPage(role: Role) {
   const fields = getFields(role);
   const inputProps = getInputProps(role);
-  const hiddenCounterStyles = getHiddenInputNumberCounterStyles();
   return {
     fields,
     inputProps,
-    hiddenCounterStyles,
   };
 }
