@@ -4,7 +4,7 @@ import { RouterProvider, createHashRouter as createRouter } from 'react-router-d
 import './index.css';
 import StartPage from './pages/StartPage';
 import NotFoundPage from './pages/NotFoundPage';
-import LoginPage from './pages/LoginPage/LoginPage';
+import LoginPage from './pages/LoginPage';
 
 const router = createRouter([
   {
