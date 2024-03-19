@@ -6,10 +6,10 @@ import React from 'react';
 
 interface Props {
   children: React.ReactNode;
-  css?: CSSObject;
+  style?: CSSObject;
 }
 
-const Layout: React.FC<Props> = ({ children, css }) => (
+const Layout: React.FC<Props> = ({ children, style }) => (
   <div
     css={{
       display: 'flex',
@@ -17,7 +17,7 @@ const Layout: React.FC<Props> = ({ children, css }) => (
       justifyContent: 'center',
       alignItems: 'center',
       height: '100vh',
-      ...css,
+      ...style,
     }}
   >
     {children}
