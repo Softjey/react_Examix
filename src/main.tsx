@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/aria-role */
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createHashRouter as createRouter } from 'react-router-dom';
 import './index.css';
