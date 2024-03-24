@@ -5,6 +5,7 @@ import './index.css';
 import StartPage from './pages/StartPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage/LoginPage';
+import QuizPage from './pages/QuizPage';
 
 const router = createRouter([
   {
@@ -18,6 +19,10 @@ const router = createRouter([
   {
     path: '/join',
     element: <LoginPage role="student" />,
+  },
+  {
+    path: '/quiz',
+    element: <QuizPage />,
   },
   {
     path: '*',

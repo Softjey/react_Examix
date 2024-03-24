@@ -3,6 +3,7 @@ import Layout from '../../Layout';
 import MainButton from '../../components/MainButton';
 import Header from '../../components/Header';
 import { Role, useLoginPage } from './useLoginPage';
+import Routes from '../../constants/Routes';
 
 interface Props {
   role: Role;
@@ -49,7 +50,9 @@ const LoginPage: React.FC<Props> = ({ role }) => {
               fullWidth
             />
           </Stack>
-          <MainButton variant="contained">{fields.buttonText}</MainButton>
+          <MainButton href={Routes.QUIZ_PAGE} variant="contained">
+            {fields.buttonText}
+          </MainButton>
         </form>
       </div>
     </Layout>

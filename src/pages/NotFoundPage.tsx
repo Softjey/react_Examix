@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import Layout from '../Layout';
-import Routes from '../Routes';
+import Routes from '../constants/Routes';
 
 const NotFoundPage: React.FC = () => (
   <Layout>

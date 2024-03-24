@@ -12,7 +12,7 @@
     "build": "tsc && vite build",
     "deploy": "npm run build && npm run deploy:only",
     "format": "prettier src --ignore-path .gitignore --write --log-level warn",
-    "lint:only": "eslint src/ --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0 --fix",
+    "lint-only": "eslint src/ --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0 --fix",
     "lint": "npm run format && npm run lint-only",
     "preview": "vite preview",
     "prepare": "husky"
