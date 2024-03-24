@@ -1,4 +1,5 @@
-import { Button, ButtonProps, styled } from '@mui/material';
+import { ButtonProps, styled } from '@mui/material';
+import Button from './Button';
 
 const MainButton = styled(Button)<ButtonProps>(() => ({
   width: 200,

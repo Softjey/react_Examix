@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material';
-import Routes from '../constants/Routes';
+import Routes from '../constants/Router/Routes';
 import Layout from '../Layout';
-import MainButton from '../components/MainButton';
+import MainButton from '../components/UI/buttons/MainButton';
 import Header from '../components/Header';
 
 const StartPage: React.FC = () => (
@@ -17,10 +17,10 @@ const StartPage: React.FC = () => (
     >
       <Header disableBackBtn />
       <Stack direction="column" spacing={2}>
-        <MainButton href={Routes.LOGIN_PAGE} variant="contained">
+        <MainButton to={Routes.LOGIN_PAGE} variant="contained">
           Login as teacher
         </MainButton>
-        <MainButton href={Routes.JOIN_PAGE} variant="contained">
+        <MainButton to={Routes.JOIN_PAGE} variant="contained">
           Join the test
         </MainButton>
       </Stack>

@@ -1,6 +1,6 @@
 import { Stack, TextField } from '@mui/material';
 import Layout from '../../Layout';
-import MainButton from '../../components/MainButton';
+import MainButton from '../../components/UI/buttons/MainButton';
 import Header from '../../components/Header';
 import { Role, useLoginPage } from './useLoginPage';
 
