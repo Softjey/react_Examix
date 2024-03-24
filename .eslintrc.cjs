@@ -20,6 +20,7 @@ module.exports = {
     'import/no-absolute-path': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
+    "react/destructuring-assignment": 'off',
     "jsx-a11y/aria-role": ['error', { ignoreNonDOM: true }],
     'react/jsx-no-target-blank': 'off',
     'react/jsx-one-expression-per-line': 'off',
