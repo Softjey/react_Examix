@@ -4,22 +4,23 @@ import './index.css';
 import StartPage from './pages/StartPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage/LoginPage';
+import Routes from './constants/Router/Routes';
 
 const router = createRouter([
   {
-    path: '/',
+    path: Routes.START_PAGE,
     element: <StartPage />,
   },
   {
-    path: '/login',
+    path: Routes.LOGIN_PAGE,
     element: <LoginPage role="teacher" />,
   },
   {
-    path: '/join',
+    path: Routes.JOIN_PAGE,
     element: <LoginPage role="student" />,
   },
   {
-    path: '*',
+    path: Routes.NOT_FOUND_PAGE,
     element: <NotFoundPage />,
   },
 ]);
