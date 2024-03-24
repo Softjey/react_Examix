@@ -5,7 +5,6 @@ interface Props {
   disableBackBtn?: boolean;
 }
 
-// eslint-disable-next-line react/prop-types
 const Header: React.FC<Props> = ({ disableBackBtn }) => (
   <header css={{ position: 'relative' }}>
     <h1>Examix</h1>

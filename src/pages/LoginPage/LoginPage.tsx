@@ -8,7 +8,6 @@ interface Props {
   role: Role;
 }
 
-// eslint-disable-next-line react/prop-types
 const LoginPage: React.FC<Props> = ({ role }) => {
   const { fields, inputProps } = useLoginPage(role);
 
