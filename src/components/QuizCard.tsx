@@ -1,5 +1,5 @@
 /* eslint-disable object-curly-newline */
-/* eslint-disable react/prop-types */
+
 import { Button, CardActions, CardHeader, ButtonGroup, LinearProgress } from '@mui/material';
 import Card from '@mui/material/Card';
 import { Question, Answer } from '../constants/questions';
