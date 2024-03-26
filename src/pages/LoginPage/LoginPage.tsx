@@ -1,6 +1,6 @@
 import { Stack, TextField } from '@mui/material';
 import Layout from '../../Layout';
-import MainButton from '../../components/MainButton';
+import MainButton from '../../components/UI/buttons/MainButton';
 import Header from '../../components/Header';
 import { Role, useLoginPage } from './useLoginPage';
 import Routes from '../../constants/Routes';
@@ -9,7 +9,6 @@ interface Props {
   role: Role;
 }
 
-// eslint-disable-next-line react/prop-types
 const LoginPage: React.FC<Props> = ({ role }) => {
   const { fields, inputProps } = useLoginPage(role);
 

@@ -1,8 +1,8 @@
 enum Routes {
   START_PAGE = '/',
-  LOGIN_PAGE = '#/login',
-  JOIN_PAGE = '#/join',
-  QUIZ_PAGE = '#/quiz',
+  QUIZ_PAGE = '/quiz',
+  LOGIN_PAGE = '/login',
+  JOIN_PAGE = '/join',
   NOT_FOUND_PAGE = '*',
 }
 

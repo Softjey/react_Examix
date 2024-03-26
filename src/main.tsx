@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/aria-role */
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createHashRouter as createRouter } from 'react-router-dom';
 import './index.css';
@@ -6,26 +5,27 @@ import StartPage from './pages/StartPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import QuizPage from './pages/QuizPage';
+import Routes from './constants/Router/Routes';
 
 const router = createRouter([
   {
-    path: '/',
+    path: Routes.START_PAGE,
     element: <StartPage />,
   },
   {
-    path: '/login',
+    path: Routes.LOGIN_PAGE,
     element: <LoginPage role="teacher" />,
   },
   {
-    path: '/join',
+    path: Routes.JOIN_PAGE,
     element: <LoginPage role="student" />,
   },
   {
-    path: '/quiz',
+    path: Routes.QUIZ_PAGE,
     element: <QuizPage />,
   },
   {
-    path: '*',
+    path: Routes.NOT_FOUND_PAGE,
     element: <NotFoundPage />,
   },
 ]);

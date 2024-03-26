@@ -16,25 +16,25 @@ module.exports = {
   },
   plugins: ['react-refresh', '@emotion'],
   rules: {
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
-    ],
+    'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'import/no-absolute-path': 'off',
     'react/react-in-jsx-scope': 'off',
+    'react/prop-types': 'off',
+    "react/destructuring-assignment": 'off',
+    "jsx-a11y/aria-role": ['error', { ignoreNonDOM: true }],
     'react/jsx-no-target-blank': 'off',
-    "react/jsx-one-expression-per-line": "off",
-    "react/no-unknown-property": ["error", { "ignore": ["css"] }],
-    "react/function-component-definition": [
+    'react/jsx-one-expression-per-line': 'off',
+    'react/no-unknown-property': ['error', { ignore: ['css'] }],
+    'react/function-component-definition': [
       2,
       {
-        "namedComponents": "arrow-function",
-        "unnamedComponents": "arrow-function"
-      }
+        namedComponents: 'arrow-function',
+        unnamedComponents: 'arrow-function',
+      },
     ],
-    "react/no-unescaped-entities": 'off',
-    "react/require-default-props": "off",
-    "@emotion/pkg-renaming": "error"
+    'react/no-unescaped-entities': 'off',
+    'react/require-default-props': 'off',
+    '@emotion/pkg-renaming': 'error',
   },
   settings: {
     'import/resolver': {
@@ -46,4 +46,4 @@ module.exports = {
       version: 'detect',
     },
   },
-}
+};
