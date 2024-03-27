@@ -16,7 +16,7 @@ interface Props {
   answers: Answer[];
 }
 
-const Result: React.FC = ({ answers }): Props => {
+const Result: React.FC<Props> = ({ answers }) => {
   const navigate = useNavigate();
   return (
     <Box flexDirection="column" display="flex" gap="20px">
