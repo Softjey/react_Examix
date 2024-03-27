@@ -5,7 +5,7 @@ import QuizCard from '../components/QuizCard';
 import Result from '../components/Result';
 
 const QuizPage: React.FC = () => {
-  const [step, setStep] = useState(0);
+  const [currQuestionNum, setCurrQuestionNum] = useState(0);
   // state with saved answers to compare on server
   // eslint-disable-next-line operator-linebreak
   const [answers, setAnswers]: [Answer[], React.Dispatch<React.SetStateAction<Answer[]>>] =
@@ -15,14 +15,14 @@ const QuizPage: React.FC = () => {
   // вернее у меня получилось вроде как,
   // но проблема в том что мне нужно передать начальное значение пустой обьект
   // и изза этого в списке ответов лишний пустой обьект в начале
-  const progress = Math.round((step / questions.length) * 100);
+  const progress = Math.round((currQuestionNum / questions.length) * 100);
   return (
     <Layout>
-      {step < questions.length ? (
+      {currQuestionNum < questions.length ? (
         <QuizCard
-          nextQuestion={() => setStep(step + 1)}
+          nextQuestion={() => setCurrQuestionNum(currQuestionNum + 1)}
           setAnswers={setAnswers}
-          question={questions[step]}
+          question={questions[currQuestionNum]}
           progress={progress}
         />
       ) : (
