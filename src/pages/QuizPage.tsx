@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Layout from '../Layout';
-import { Answer, newQuestions as questions } from '../constants/questions';
+import { Answer, newQuestions as questions } from '../temp/questions';
 import QuizCard from '../components/QuizCard';
 import Result from '../components/Result';
 

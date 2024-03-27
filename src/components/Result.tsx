@@ -10,7 +10,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { Answer } from '../constants/questions';
+import { Answer } from '../temp/questions';
 
 interface Props {
   answers: Answer[];
