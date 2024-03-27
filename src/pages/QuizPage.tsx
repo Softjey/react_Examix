@@ -1,18 +1,8 @@
 import { useState } from 'react';
-import {
-  Box,
-  Button,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from '@mui/material';
 import Layout from '../Layout';
 import { Answer, newQuestions as questions } from '../constants/questions';
 import QuizCard from '../components/QuizCard';
+import Result from '../components/Result';
 
 const QuizPage: React.FC = () => {
   const [step, setStep] = useState(0);
@@ -37,31 +27,7 @@ const QuizPage: React.FC = () => {
         />
       ) : (
         // this is the test fragment, it should be replaced with results page
-        <Box flexDirection="column" display="flex" gap="20px">
-          <h1>Done</h1>
-          <TableContainer component={Paper} sx={{ width: 650, height: 300 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>question id</TableCell>
-                  <TableCell>answer</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {answers.map((answer) => (
-                  <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell align="right">{answer.questionId}</TableCell>
-                    <TableCell align="right">{answer.answer}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          <Button size="large" onClick={() => window.location.reload()}>
-            Restart
-          </Button>
-        </Box>
+        <Result answers={answers} />
       )}
     </Layout>
   );
