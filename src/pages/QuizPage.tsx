@@ -5,24 +5,17 @@ import QuizCard from '../components/QuizCard';
 import Result from '../components/Result';
 
 const QuizPage: React.FC = () => {
-  const [currQuestionNum, setCurrQuestionNum] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
   // state with saved answers to compare on server
-  // eslint-disable-next-line operator-linebreak
-  const [answers, setAnswers]: [Answer[], React.Dispatch<React.SetStateAction<Answer[]>>] =
-    useState([{}]);
-  // очень трудно обьяснить на английском, поэтому в кратце проблема такая:
-  // у меня не получается типизировать стейт что бы передать его как пропсы в QuizCard
-  // вернее у меня получилось вроде как,
-  // но проблема в том что мне нужно передать начальное значение пустой обьект
-  // и изза этого в списке ответов лишний пустой обьект в начале
-  const progress = Math.round((currQuestionNum / questions.length) * 100);
+  const [answers, setAnswers] = useState<Answer[]>([]);
+  const progress = Math.round((questionIndex / questions.length) * 100);
   return (
     <Layout>
-      {currQuestionNum < questions.length ? (
+      {questionIndex < questions.length ? (
         <QuizCard
-          nextQuestion={() => setCurrQuestionNum(currQuestionNum + 1)}
+          nextQuestion={() => setQuestionIndex(questionIndex + 1)}
           setAnswers={setAnswers}
-          question={questions[currQuestionNum]}
+          question={questions[questionIndex]}
           progress={progress}
         />
       ) : (

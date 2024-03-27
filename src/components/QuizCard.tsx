@@ -20,13 +20,7 @@ const QuizCard: React.FC<Props> = ({ question, progress, nextQuestion, setAnswer
         {question.variants.map((varinat) => (
           <Button
             onClick={() => {
-              setAnswers((prev) => [
-                ...prev,
-                {
-                  questionId: question.id,
-                  answer: varinat,
-                },
-              ]);
+              setAnswers((prev) => [...prev, { questionId: question.id, answer: varinat }]);
               nextQuestion();
             }}
             sx={{ height: '60px' }}
