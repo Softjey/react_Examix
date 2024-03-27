@@ -3,9 +3,11 @@
   "author": "Softjey",
   "version": "0.0.5",
   "scripts": {
-    "dev": "concurrently \"cd client && npm run dev\"",
-    "lint": "concurrently \"cd client && npm run lint\"",
-    "install-all": "concurrently \"cd client && npm install\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run start:dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "lint": "concurrently \"cd client && npm run lint\" \"cd server && npm run lint\"",
+    "install-all": "concurrently \"cd client && npm install\" \"cd server && npm install\"",
     "prepare": "husky"
   },
   "devDependencies": {
