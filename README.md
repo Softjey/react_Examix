@@ -1,30 +1,74 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Examix Project Documentation
 
-Currently, two official plugins are available:
+## Introduction
+This documentation outlines the process for setting up and developing the "Examix" project, which consists of two main parts: the client (`client`) and the server (`server`). The project utilizes `npm` for dependency management and script execution.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Project Setup
 
-## Expanding the ESLint configuration
+### Initial Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- Before running any other scripts, make sure to execute:
 
-- Configure the top-level `parserOptions` property like this:
+  ```bash
+  npm install
+  ```
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+  This will install the necessary packages for the project's root.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Installing Dependencies
+
+- To install all dependencies simultaneously in both `client` and `server` directories, run the following command:
+
+  ```bash
+  npm run install-all
+  ```
+
+## Starting Development
+
+### Concurrent Client and Server Development
+
+- While you can start development servers for both the client and server simultaneously with:
+
+  ```bash
+  npm run dev
+  ```
+
+  It is often more convenient to open the client and server in separate console windows. This approach provides better visibility and control over the output and processes of each part of the application. However, if preferred, they can still be run concurrently in a single console.
+
+  This command runs two processes in parallel: `dev:client` (client development server) and `dev:server` (server development server).
+
+### Client Development
+
+- To work solely on the client, execute:
+
+  ```bash
+  npm run dev:client
+  ```
+
+  This will start the development server for the client part of the project.
+
+### Server Development
+
+- For server-side development only, use:
+
+  ```bash
+  npm run dev:server
+  ```
+
+  This will start the development server for the server part of the project.
+
+## Linting
+
+- To perform linting (code style checks) for both the client and server simultaneously, use the command:
+
+  ```bash
+  npm run lint
+  ```
+
+## Notes
+
+- Ensure you have `Node.js` and `npm` installed before running these commands.
+- Husky configuration depends on your project's needs, make sure it is set up according to your requirements.
+
+This documentation should assist you in efficiently starting work on the "Examix" project, utilizing defined scripts for development, testing, and project management.

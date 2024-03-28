@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import Layout from '../Layout';
-import { Answer, newQuestions as questions } from '../temp/questions';
+import {
+  Answer,
+  newQuestions as questions,
+} from '/Users/junk/Desktop/projects/frontend/react/react_Examix/src/temp/questions';
 import QuizCard from '../components/QuizCard';
 import Result from '../components/Result';
 

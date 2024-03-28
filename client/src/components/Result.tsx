@@ -10,7 +10,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { Answer } from '../temp/questions';
+import { Answer } from '/Users/junk/Desktop/projects/frontend/react/react_Examix/src/temp/questions';
 
 interface Props {
   answers: Answer[];

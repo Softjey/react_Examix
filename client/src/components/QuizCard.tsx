@@ -2,7 +2,10 @@
 
 import { Button, CardActions, CardHeader, ButtonGroup, LinearProgress } from '@mui/material';
 import Card from '@mui/material/Card';
-import { Question, Answer } from '../temp/questions';
+import {
+  Question,
+  Answer,
+} from '/Users/junk/Desktop/projects/frontend/react/react_Examix/src/temp/questions';
 
 interface Props {
   question: Question;
