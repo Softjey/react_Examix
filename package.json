@@ -16,9 +16,5 @@
   },
   "dependencies": {
     "lint-staged": "^15.2.2"
-  },
-  "lint-staged": {
-    "client/src/*.{js,jsx,ts,tsx}": "npm run lint",
-    "server/src/*.{js,jsx,ts,tsx}": "npm run lint"
   }
 }
