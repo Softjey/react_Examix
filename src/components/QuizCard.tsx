@@ -11,26 +11,27 @@ interface Props {
   nextQuestion: () => void;
 }
 
-const QuizCard: React.FC<Props> = ({ question, progress, nextQuestion, setAnswers }) => (
-  <Card elevation={5} sx={{ width: '500px', padding: '20px' }}>
-    <LinearProgress variant="determinate" value={progress} />
-    <CardHeader title={question.title} />
-    <CardActions>
-      <ButtonGroup fullWidth orientation="vertical">
-        {question.variants.map((varinat) => (
-          <Button
-            onClick={() => {
-              setAnswers((prev) => [...prev, { questionId: question.id, answer: varinat }]);
-              nextQuestion();
-            }}
-            sx={{ height: '60px' }}
-            size="large"
-          >
-            {varinat}
-          </Button>
-        ))}
-      </ButtonGroup>
-    </CardActions>
-  </Card>
-);
+const QuizCard: React.FC<Props> = ({ question, progress, nextQuestion, setAnswers }) => {
+  function onButtonClick(variant: string) {
+    setAnswers((prev) => [...prev, { questionId: question.id, answer: variant }]);
+    nextQuestion();
+  }
+
+  return (
+    <Card elevation={5} sx={{ width: '500px', padding: '20px' }}>
+      <LinearProgress variant="determinate" value={progress} />
+      <CardHeader title={question.title} />
+      <CardActions>
+        <ButtonGroup fullWidth orientation="vertical">
+          {question.variants.map((variant) => (
+            <Button onClick={() => onButtonClick(variant)} sx={{ height: '60px' }} size="large">
+              {variant}
+            </Button>
+          ))}
+        </ButtonGroup>
+      </CardActions>
+    </Card>
+  );
+};
+
 export default QuizCard;
