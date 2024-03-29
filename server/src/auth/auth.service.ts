@@ -10,20 +10,14 @@ export class AuthService {
     private readonly hashService: HashService,
   ) {}
 
-  async validateUser(
-    email: User['email'],
-    password: User['password'],
-  ): Promise<User | null> {
+  async validateUser(email: User['email'], password: User['password']): Promise<User | null> {
     const user = await this.usersService.getByEmail(email);
 
     if (!user) {
       return null;
     }
 
-    const passwordIsCorrect = await this.hashService.compare(
-      password,
-      user.password,
-    );
+    const passwordIsCorrect = await this.hashService.compare(password, user.password);
 
     return passwordIsCorrect ? user : null;
   }
