@@ -24,12 +24,5 @@ export class AppModule implements NestModule {
         }),
       )
       .forRoutes('*');
-
-    consumer
-      .apply((req, res, next) => {
-        console.log('Was requested session ', req.session.id);
-        next();
-      })
-      .forRoutes('*');
   }
 }

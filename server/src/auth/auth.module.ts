@@ -8,14 +8,7 @@ import { UserSerializer } from './user-serializer';
 import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [
-    UsersModule,
-    HashModule,
-    PassportModule.register({
-      session: true,
-      defaultStrategy: 'local',
-    }),
-  ],
+  imports: [UsersModule, HashModule, PassportModule.register({ session: true })],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, UserSerializer],
 })
