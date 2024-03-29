@@ -32,8 +32,8 @@ const Result: React.FC<Props> = ({ answers }) => {
           <TableBody>
             {answers.map((answer) => (
               <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell align="right">{answer.questionId}</TableCell>
-                <TableCell align="right">{answer.answer}</TableCell>
+                <TableCell align="left">{answer.questionId}</TableCell>
+                <TableCell align="left">{answer.answer}</TableCell>
               </TableRow>
             ))}
           </TableBody>
