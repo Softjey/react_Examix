@@ -11,6 +11,10 @@ export class UsersService {
     private readonly hashService: HashService,
   ) {}
 
+  normalize({ id, email, createdAt, name, role }: User) {
+    return { id, name, email, role, createdAt };
+  }
+
   getByEmail(email: User['email']) {
     return this.prismaService.user.findUnique({
       where: { email },
@@ -22,9 +26,7 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const encryptedPassword = await this.hashService.hash(
-      createUserDto.password,
-    );
+    const encryptedPassword = await this.hashService.hash(createUserDto.password);
 
     return this.prismaService.user.create({
       data: {
