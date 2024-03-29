@@ -1,18 +1,15 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
-import { SessionGuard } from 'src/auth/guards/session.guard';
+import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { UseSessionGuard } from 'src/auth/decorators/session-guard.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @UseGuards(SessionGuard)
-  create() {
-    this.usersService.create({
-      email: 'example@gmail.com',
-      password: 'password',
-      name: 'John Doe',
-    });
+  @UseSessionGuard()
+  create(@Body(new ValidationPipe()) body: CreateUserDto) {
+    this.usersService.create(body);
   }
 }

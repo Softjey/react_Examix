@@ -1,15 +1,10 @@
-import { All, Controller, UseGuards } from '@nestjs/common';
-import { SessionGuard } from './auth/guards/session.guard';
+import { Controller, Get } from '@nestjs/common';
+import { UseSessionGuard } from './auth/decorators/session-guard.decorator';
 
 @Controller()
 export class AppController {
-  @All()
-  root() {
-    return { message: 'Hello World!' };
-  }
-
-  @All('protected')
-  @UseGuards(SessionGuard)
+  @Get('protected')
+  @UseSessionGuard()
   protected() {
     return { message: 'You see protected route' };
   }

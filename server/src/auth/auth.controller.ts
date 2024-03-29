@@ -3,6 +3,8 @@ import { UsersService } from 'src/users/users.service';
 import { LoginGuard } from './guards/login.guard';
 import { User } from './decorators/user.decorator';
 import { User as UserI } from '@prisma/client';
+import { LoginDto } from './dto/login.dto';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -11,6 +13,7 @@ export class AuthController {
   @Post('login')
   @UseGuards(LoginGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: LoginDto })
   async login(@User() user: UserI) {
     return {
       message: 'Login successful. Welcome!',
