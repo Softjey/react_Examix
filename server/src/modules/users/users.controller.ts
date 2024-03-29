@@ -1,7 +1,7 @@
 import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { UseSessionGuard } from 'src/auth/decorators/session-guard.decorator';
+import { UseSessionGuard } from 'src/modules/auth/decorators/session-guard.decorator';
 
 @Controller('users')
 export class UsersController {

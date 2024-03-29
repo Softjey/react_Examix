@@ -1,5 +1,5 @@
 import { Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/modules/users/users.service';
 import { LoginGuard } from './guards/login.guard';
 import { User } from './decorators/user.decorator';
 import { User as UserI } from '@prisma/client';

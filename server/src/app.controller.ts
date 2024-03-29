@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { UseSessionGuard } from './auth/decorators/session-guard.decorator';
+import { UseSessionGuard } from './modules/auth/decorators/session-guard.decorator';
 
 @Controller()
 export class AppController {

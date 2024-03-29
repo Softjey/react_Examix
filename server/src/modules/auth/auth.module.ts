@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UsersModule } from 'src/users/users.module';
-import { HashModule } from 'src/hash/hash.module';
+import { UsersModule } from 'src/modules/users/users.module';
+import { HashModule } from 'src/modules/hash/hash.module';
 import { LocalStrategy } from './strategies/local.strategy';
 import { UserSerializer } from './user-serializer';
 import { PassportModule } from '@nestjs/passport';
