@@ -3,10 +3,12 @@ import { AppController } from './app.controller';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import * as session from 'express-session';
+import * as passport from 'passport';
 import config from './config';
+import { RoomsModule } from './modules/rooms/rooms.module';
 
 @Module({
-  imports: [AuthModule, UsersModule],
+  imports: [AuthModule, UsersModule, RoomsModule],
   controllers: [AppController],
 })
 export class AppModule implements NestModule {
@@ -23,6 +25,10 @@ export class AppModule implements NestModule {
           },
         }),
       )
+      .forRoutes('*')
+      .apply(passport.initialize())
+      .forRoutes('*')
+      .apply(passport.session())
       .forRoutes('*');
   }
 }
