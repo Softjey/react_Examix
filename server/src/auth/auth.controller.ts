@@ -1,6 +1,8 @@
-import { Controller, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { LoginGuard } from './guards/login.guard';
+import { User } from './decorators/user.decorator';
+import { User as UserI } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -9,9 +11,7 @@ export class AuthController {
   @Post('login')
   @UseGuards(LoginGuard)
   @HttpCode(HttpStatus.OK)
-  async login(@Req() req) {
-    const { user } = req;
-
+  async login(@User() user: UserI) {
     return {
       message: 'Login successful. Welcome!',
       user: this.usersService.normalize(user),
