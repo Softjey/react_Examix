@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import config from './config';
-import { enableApiDocs } from './utlis/documentaion';
+import { enableApiDocs } from './utils/documentation';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
