@@ -1,24 +1,31 @@
-import { ConnectedSocket, OnGatewayConnection, WebSocketGateway } from '@nestjs/websockets';
+import {
+  ConnectedSocket,
+  OnGatewayConnection,
+  SubscribeMessage,
+  WebSocketGateway,
+} from '@nestjs/websockets';
 import { RoomsService } from './rooms.service';
 import { Socket } from 'socket.io';
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { WsRoomsAuthenticator } from './utils/ws-rooms-authenticator';
+import { RoomAuthorGuard } from './guards/room-author.guard';
+import { ClientData } from './decorators/client-data.decorator';
+import { WsExceptionsFilter } from 'src/utils/websockets/exceptions/ws-exceptions.filter';
 
-@UseGuards(WsRoomsAuthenticator)
+@UseFilters(WsExceptionsFilter)
 @WebSocketGateway({ namespace: 'join-room' })
 export class RoomsGateway implements OnGatewayConnection {
   constructor(private readonly roomsService: RoomsService) {}
 
   handleConnection(@ConnectedSocket() client: Socket) {
-    const wsRoomsAuthenticator = new WsRoomsAuthenticator(this.roomsService, client);
-    const isAuthorized = wsRoomsAuthenticator.authenticate();
+    WsRoomsAuthenticator.authenticate(this.roomsService, client);
 
-    if (!isAuthorized) {
-      client.disconnect();
-    }
+    client.join(client.handshake.query.roomId);
+  }
 
-    const { roomId } = client.handshake.query;
-
-    client.join(roomId);
+  @UseGuards(RoomAuthorGuard)
+  @SubscribeMessage('start-exam')
+  startExam(@ClientData('roomId') roomId: string) {
+    console.log('start-exam', roomId);
   }
 }

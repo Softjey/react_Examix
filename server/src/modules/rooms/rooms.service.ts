@@ -42,4 +42,8 @@ export class RoomsService {
   roomExist(roomId: string) {
     return this.rooms.has(roomId);
   }
+
+  isAuthorOfRoom(authorToken: Room['authorToken'], roomId: Room['id']) {
+    return authorToken === this.rooms.get(roomId)?.authorToken;
+  }
 }
