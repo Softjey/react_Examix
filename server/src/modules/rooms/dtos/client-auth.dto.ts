@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
-import { Room } from '../interfaces/Room';
 import { IsLiteral } from '../../../utils/validation/is-literal.decorator';
+import { Room } from '@prisma/client';
 
 export type ClientAuthDto = ClientAuthorAuthDto | ClientStudentAuthDto;
 

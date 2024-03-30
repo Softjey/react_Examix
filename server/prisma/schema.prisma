@@ -28,28 +28,30 @@ model User {
   updatedAt DateTime   @updatedAt
   questions Question[]
   tests     Test[]
+  rooms     Room[]
 }
 
 model Question {
-  id             Int             @id @default(autoincrement())
-  title          String
-  author         User?            @relation(fields: [authorId], references: [id])
-  answers        Json
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  authorId       Int?
+  id            Int            @id @default(autoincrement())
+  title         String
+  author        User?          @relation(fields: [authorId], references: [id])
+  answers       Json
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  authorId      Int?
   testQuestions TestQuestion[]
 }
 
 model Test {
-  id             Int             @id @default(autoincrement())
-  name           String
-  description    String
-  authorId       Int?
-  Author         User?            @relation(fields: [authorId], references: [id])
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  id            Int            @id @default(autoincrement())
+  name          String
+  description   String
+  authorId      Int?
+  Author        User?          @relation(fields: [authorId], references: [id])
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   testQuestions TestQuestion[]
+  rooms         Room[]
 }
 
 model TestQuestion {
@@ -59,4 +61,22 @@ model TestQuestion {
   max_score  Int
   testId     Int
   questionId Int
+}
+
+model Room {
+  id          String    @id
+  author      User      @relation(fields: [authorId], references: [id])
+  test        Test      @relation(fields: [testId], references: [id])
+  students    Student[]
+  authorToken String
+  createdAt   DateTime  @default(now())
+  authorId    Int
+  testId      Int
+}
+
+model Student {
+  id     Int    @id @default(autoincrement())
+  name   String
+  room   Room   @relation(fields: [roomId], references: [id])
+  roomId String
 }

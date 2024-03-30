@@ -2,51 +2,68 @@ import { Socket } from 'socket.io';
 import { RoomsService } from '../rooms.service';
 import { WsExceptionsFilter } from 'src/utils/websockets/exceptions/ws-exceptions.filter';
 import { WebSocketException } from 'src/utils/websockets/exceptions/websocket.exception';
-import { ClientAuthorAuthDto, ClientStudentAuthDto } from '../dtos/client-auth.dto';
+import { ClientAuthDto, ClientAuthorAuthDto, ClientStudentAuthDto } from '../dtos/client-auth.dto';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { ValidationError } from '@nestjs/common';
 
 export class WsRoomsAuthenticator {
-  static async authenticate(roomsService: RoomsService, client: Socket) {
-    const [errors, auth] = await WsRoomsAuthenticator.validateAuthDto(client);
+  constructor(
+    private readonly roomsService: RoomsService,
+    private readonly client: Socket,
+  ) {}
+
+  async authenticate() {
+    const { roomsService } = this;
+    const [errors, auth] = await this.validateAuthDto();
 
     if (auth === null) return false;
     if (errors.length > 0) {
-      const messages = errors.map((error) => Object.values(error.constraints)).flat();
-      const error = WebSocketException.BadRequest(messages, { disconnect: true });
-      WsExceptionsFilter.handleError(client, error);
-
-      return false;
+      return this.handleError(
+        WebSocketException.BadRequest(
+          errors.map((error) => Object.values(error.constraints)).flat(),
+          { disconnect: true },
+        ),
+      );
     }
 
     if (!roomsService.roomExist(auth.roomId)) {
-      const error = WebSocketException.NotFound('Room not found. Please, check the room id', {
-        disconnect: true,
-      });
-
-      WsExceptionsFilter.handleError(client, error);
-
-      return false;
+      return this.handleError(
+        WebSocketException.NotFound('Room not found. Please, check the room id', {
+          disconnect: true,
+        }),
+      );
     }
 
     if (auth.role === 'author' && !roomsService.isAuthorOfRoom(auth.authorToken, auth.roomId)) {
-      const error = WebSocketException.Forbidden('You are not the author of this room', {
-        disconnect: true,
-      });
+      return this.handleError(
+        WebSocketException.Forbidden('You are not the author of this room', {
+          disconnect: true,
+        }),
+      );
+    }
 
-      WsExceptionsFilter.handleError(client, error);
+    const needAuthor = auth.role === 'student' && !(await roomsService.getRoomAuthor(auth.roomId));
 
-      return false;
+    if (needAuthor) {
+      return this.handleError(
+        WebSocketException.Forbidden('Author not found. Author have to join first', {
+          disconnect: true,
+        }),
+      );
     }
 
     return true;
   }
 
-  private static async validateAuthDto(
-    client: Socket,
-  ): Promise<[ValidationError[], ClientAuthorAuthDto | ClientStudentAuthDto]> {
-    const auth = client.handshake.auth;
+  private handleError(error: WebSocketException) {
+    WsExceptionsFilter.handleError(this.client, error);
+
+    return false;
+  }
+
+  private async validateAuthDto(): Promise<[ValidationError[], ClientAuthDto]> {
+    const auth = this.client.handshake.auth;
 
     switch (auth.role) {
       case 'author':
@@ -63,7 +80,7 @@ export class WsRoomsAuthenticator {
         const error = WebSocketException.BadRequest('Role must be either "author" or "student"', {
           disconnect: true,
         });
-        WsExceptionsFilter.handleError(client, error);
+        WsExceptionsFilter.handleError(this.client, error);
 
         return [null, null];
     }
