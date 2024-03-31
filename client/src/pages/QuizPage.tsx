@@ -10,7 +10,13 @@ const QuizPage: React.FC = () => {
   const [questionIndex, setQuestionIndex] = useState(0);
   // state with saved answers to compare on server
   const [answers, setAnswers] = useState<Answer[]>([]);
-  const quizProgress = Math.round((questionIndex / questions.length) * 100);
+  const quizProgress = Math.ceil((questionIndex / questions.length) * 100);
+  /*
+  ToDo:
+    fix problem with quizProgress start value:
+    when quiz starts and its first question, progress must be zero, but its 5
+  */
+  // console.log('quizProgress', quizProgress);
   const [isStarted, setIsStarted] = useState(false);
 
   return (
