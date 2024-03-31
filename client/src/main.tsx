@@ -5,6 +5,7 @@ import StartPage from './pages/StartPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Routes from './constants/Router/Routes';
+import TestPage from './pages/TestPage';
 
 const router = createRouter([
   {
@@ -22,6 +23,10 @@ const router = createRouter([
   {
     path: Routes.NOT_FOUND_PAGE,
     element: <NotFoundPage />,
+  },
+  {
+    path: 'test',
+    element: <TestPage />,
   },
 ]);
 
