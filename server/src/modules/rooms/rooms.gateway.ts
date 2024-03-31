@@ -35,14 +35,18 @@ export class RoomsGateway implements OnGatewayConnection {
       return this.roomsService.joinAuthor(roomId, client.id);
     }
 
-    const author = await this.roomsService.getRoomAuthor(roomId);
+    const authorClient = await this.roomsService.getRoomAuthor(roomId);
     const [newStudent] = await this.roomsService.joinStudent(roomId, auth.studentName);
-    this.server.to(author).emit('student-joined', newStudent);
+    this.server.to(authorClient).emit('student-joined', newStudent);
   }
 
   @UseGuards(RoomAuthorGuard)
   @SubscribeMessage('start-exam')
   startExam(@ClientAuth('roomId') roomId: string) {
-    console.log('start-exam', roomId);
+    this.server.to(roomId).emit('exam-started');
+
+    // Start exam logic
+
+    this.server.timeout(1000 * 5).emit('question', {});
   }
 }

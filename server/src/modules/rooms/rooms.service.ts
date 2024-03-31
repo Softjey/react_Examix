@@ -6,9 +6,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { StudentsService } from '../students/students.service';
 import { Socket } from 'socket.io';
 
+interface RoomCache {
+  testId: Room['testId'];
+  clientId?: Socket['id'];
+}
+
 @Injectable()
 export class RoomsService {
-  private authorsClientIds = new Map<Room['id'], Socket['id']>();
+  private roomsCache = new Map<Room['id'], RoomCache>();
 
   constructor(
     private readonly uniqueIdService: UniqueIdService,
@@ -21,7 +26,7 @@ export class RoomsService {
 
     do {
       newRoomId = `${Math.floor(Math.random() * 100_000)}`.padStart(6, '0');
-    } while (this.authorsClientIds.has(newRoomId));
+    } while (this.roomsCache.has(newRoomId));
 
     return newRoomId;
   }
@@ -43,7 +48,13 @@ export class RoomsService {
       },
     });
 
+    this.roomsCache.set(room.id, { clientId: null, testId });
+
     return room;
+  }
+
+  async joinAuthor(roomId, clientId) {
+    this.roomsCache.get(roomId).clientId = clientId;
   }
 
   roomExist(roomId: string) {
@@ -57,11 +68,7 @@ export class RoomsService {
   }
 
   async getRoomAuthor(roomId: Room['id']) {
-    return this.authorsClientIds.get(roomId);
-  }
-
-  async joinAuthor(roomId, clientId) {
-    this.authorsClientIds.set(roomId, clientId);
+    return this.roomsCache.get(roomId).clientId;
   }
 
   async joinStudent(roomId: Room['id'], studentName: Student['name']) {
