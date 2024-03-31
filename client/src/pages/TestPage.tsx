@@ -33,7 +33,7 @@ const connectStudent = () => {
   socket.io.on('close', log('student disconnected'));
   socket.io.on('error', log('student error'));
   socket.on('exception', log('student exception'));
-}
+};
 
 const TestPage: React.FC = () => (
   <Layout>
