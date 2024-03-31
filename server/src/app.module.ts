@@ -2,33 +2,18 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
-import * as session from 'express-session';
-import * as passport from 'passport';
-import config from './config';
 import { RoomsModule } from './modules/rooms/rooms.module';
+import { TestsModule } from './modules/tests/tests.module';
+import { QuestionsModule } from './modules/questions/questions.module';
+import { SessionMiddleware } from './modules/auth/middlewares/session.middleware';
+import { PassportMiddleware } from './modules/auth/middlewares/passport.middleware';
 
 @Module({
-  imports: [AuthModule, UsersModule, RoomsModule],
+  imports: [AuthModule, UsersModule, RoomsModule, TestsModule, QuestionsModule],
   controllers: [AppController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(
-        session({
-          secret: config.SESSION_SECRET,
-          resave: false,
-          saveUninitialized: false,
-          rolling: true,
-          cookie: {
-            maxAge: 1000 * 60 * 60 * config.SESSION_MAX_AGE,
-          },
-        }),
-      )
-      .forRoutes('*')
-      .apply(passport.initialize())
-      .forRoutes('*')
-      .apply(passport.session())
-      .forRoutes('*');
+    consumer.apply(SessionMiddleware).forRoutes('*').apply(PassportMiddleware).forRoutes('*');
   }
 }
