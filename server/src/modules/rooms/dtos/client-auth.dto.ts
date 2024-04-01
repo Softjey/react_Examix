@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 import { IsLiteral } from '../../../utils/validation/is-literal.decorator';
-import { Room } from '@prisma/client';
+import { Room } from '../room.entity';
+import { Author } from 'src/modules/authors/author.entity';
 
 export type ClientAuthDto = ClientAuthorAuthDto | ClientStudentAuthDto;
 
@@ -14,7 +15,7 @@ export class ClientAuthorAuthDto {
 
   @IsUUID()
   @IsOptional()
-  authorToken?: Room['authorToken'];
+  authorToken?: Author['authorToken'];
 }
 
 export class ClientStudentAuthDto {

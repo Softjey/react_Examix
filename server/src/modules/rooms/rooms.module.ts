@@ -4,10 +4,11 @@ import { RoomsService } from './rooms.service';
 import { UniqueIdModule } from '../unique-id/unique-id.module';
 import { RoomsController } from './rooms.controller';
 import { PrismaModule } from '../prisma/prisma.module';
-import { StudentsModule } from '../students/students.module';
+import { ExamsModule } from '../exams/exams.module';
+import { AuthorsModule } from '../authors/authors.module';
 
 @Module({
-  imports: [UniqueIdModule, PrismaModule, StudentsModule],
+  imports: [UniqueIdModule, PrismaModule, ExamsModule, AuthorsModule],
   providers: [RoomsGateway, RoomsService],
   controllers: [RoomsController],
 })

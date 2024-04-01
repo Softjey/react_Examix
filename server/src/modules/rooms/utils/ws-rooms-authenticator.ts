@@ -43,7 +43,8 @@ export class WsRoomsAuthenticator {
       );
     }
 
-    const needAuthor = auth.role === 'student' && !(await roomsService.getRoomAuthor(auth.roomId));
+    const authorClientId = await roomsService.getRoomAuthorClientId(auth.roomId);
+    const needAuthor = auth.role === 'student' && !authorClientId;
 
     if (needAuthor) {
       return this.handleError(
@@ -77,10 +78,11 @@ export class WsRoomsAuthenticator {
           auth as ClientStudentAuthDto,
         ];
       default:
-        const error = WebSocketException.BadRequest('Role must be either "author" or "student"', {
-          disconnect: true,
-        });
-        WsExceptionsFilter.handleError(this.client, error);
+        this.handleError(
+          WebSocketException.BadRequest('Role must be either "author" or "student"', {
+            disconnect: true,
+          }),
+        );
 
         return [null, null];
     }

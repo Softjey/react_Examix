@@ -1,85 +1,76 @@
 import { Injectable } from '@nestjs/common';
 import { CreateRoomDto } from './dtos/create-room.dto';
-import { Room, Student, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { UniqueIdService } from '../unique-id/unique-id.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { StudentsService } from '../students/students.service';
+import { ExamsService } from '../exams/exams.service';
+import { Room } from './room.entity';
+import { AuthorService } from '../authors/authors.service';
+import { Author } from '../authors/author.entity';
 import { Socket } from 'socket.io';
-
-interface RoomCache {
-  testId: Room['testId'];
-  clientId?: Socket['id'];
-}
+import { Student } from '../exams/entities/student.entity';
 
 @Injectable()
 export class RoomsService {
-  private roomsCache = new Map<Room['id'], RoomCache>();
+  private readonly rooms = new Map<Room['id'], Room>();
 
   constructor(
+    private readonly authorService: AuthorService,
+    private readonly examsService: ExamsService,
     private readonly uniqueIdService: UniqueIdService,
-    private readonly prismaService: PrismaService,
-    private readonly studentsService: StudentsService,
   ) {}
 
-  generateRoomId() {
-    let newRoomId;
+  async createRoom({ authorId, testId }: CreateRoomDto & { authorId: User['id'] }) {
+    const roomId = this.uniqueIdService.generate6DigitCode(this.rooms);
+    const examPromise = this.examsService.create(testId);
+    const authorPromise = this.authorService.create(authorId);
+    const [exam, author] = await Promise.all([examPromise, authorPromise]);
+    const room = new Room(roomId, exam, author);
 
-    do {
-      newRoomId = `${Math.floor(Math.random() * 100_000)}`.padStart(6, '0');
-    } while (this.roomsCache.has(newRoomId));
+    this.rooms.set(roomId, room);
 
-    return newRoomId;
+    return room;
   }
 
-  async createRoom({ authorId, testId }: CreateRoomDto & { authorId: User['id'] }) {
-    // development only
-    await this.prismaService.test.upsert({
-      where: { id: testId },
-      create: { id: testId, authorId, name: 'Test name', description: 'Test description' },
-      update: {},
-    });
+  private get(roomId: Room['id']) {
+    const room = this.rooms.get(roomId);
 
-    const room = await this.prismaService.room.create({
-      data: {
-        id: this.generateRoomId(),
-        authorToken: this.uniqueIdService.generate(),
-        authorId,
-        testId,
-      },
-    });
-
-    this.roomsCache.set(room.id, { clientId: null, testId });
+    // TODO: need to handle
+    if (!room) {
+      throw new Error('Room id is invalid');
+    }
 
     return room;
   }
 
   async joinAuthor(roomId, clientId) {
-    this.roomsCache.get(roomId).clientId = clientId;
+    this.get(roomId).author.clientId = clientId;
   }
 
-  roomExist(roomId: string) {
-    return this.prismaService.room.findUnique({ where: { id: roomId } });
+  async roomExist(roomId: string) {
+    return this.rooms.has(roomId);
   }
 
-  async isAuthorOfRoom(authorToken: Room['authorToken'], roomId: Room['id']) {
-    const room = await this.prismaService.room.findUnique({ where: { id: roomId, authorToken } });
-
-    return room !== null;
+  async isAuthorOfRoom(authorToken: Author['authorToken'], roomId: Room['id']) {
+    return this.get(roomId).author.authorToken === authorToken;
   }
 
-  async getRoomAuthor(roomId: Room['id']) {
-    return this.roomsCache.get(roomId).clientId;
+  async getRoomAuthorClientId(roomId: Room['id']) {
+    return this.get(roomId).author.clientId;
   }
 
-  async joinStudent(roomId: Room['id'], studentName: Student['name']) {
-    const [newStudent, allStudents] = await this.prismaService.$transaction([
-      this.studentsService.create({ name: studentName, roomId }),
-      this.studentsService.getRoomStudents(roomId),
-    ]);
+  async joinStudent(roomId: Room['id'], name: Student['name'], clientId: Socket['id']) {
+    const exam = this.get(roomId).exam;
+    const newStudent = await this.examsService.addStudent(exam, name, clientId);
 
-    return [
-      { id: newStudent.id, name: newStudent.name },
-      allStudents.map(({ id, name }) => ({ id, name })),
-    ] as const;
+    return newStudent;
+  }
+
+  async getTestInfo(roomId: Room['id']) {
+    const { test, questions } = this.get(roomId).exam;
+
+    return {
+      test,
+      questionsAmount: questions.length,
+    };
   }
 }

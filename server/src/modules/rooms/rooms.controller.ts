@@ -11,7 +11,7 @@ export class RoomsController {
   @Post()
   @UseSessionGuard()
   async create(@Body(new ValidationPipe()) createRoomDto: CreateRoomDto, @User('id') authorId) {
-    const { id, authorToken } = await this.roomsService.createRoom({
+    const { id, author } = await this.roomsService.createRoom({
       ...createRoomDto,
       authorId,
     });
@@ -19,7 +19,7 @@ export class RoomsController {
     return {
       message: 'Room was created successfully',
       roomId: id,
-      authorToken,
+      authorToken: author.authorToken,
     };
   }
 }

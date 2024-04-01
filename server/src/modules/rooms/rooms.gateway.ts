@@ -26,27 +26,32 @@ export class RoomsGateway implements OnGatewayConnection {
 
   async handleConnection(@ConnectedSocket() client: Socket) {
     const authenticator = new WsRoomsAuthenticator(this.roomsService, client);
-    if (!(await authenticator.authenticate())) return;
-
+    const isAuthorized = await authenticator.authenticate();
     const auth = client.handshake.auth as ClientAuthDto;
-    const { role, roomId } = auth;
 
-    if (role === 'author') {
-      return this.roomsService.joinAuthor(roomId, client.id);
+    if (!isAuthorized) return;
+    if (auth.role === 'author') {
+      this.roomsService.joinAuthor(auth.roomId, client.id);
+    } else {
+      const { roomId, studentName } = auth;
+      const authorClient = await this.roomsService.getRoomAuthorClientId(roomId);
+      const newStudent = await this.roomsService.joinStudent(roomId, studentName, client.id);
+
+      this.server.to(authorClient).emit('student-joined', { name: newStudent.name });
+      client.emit('student-joined', { id: newStudent.id });
     }
 
-    const authorClient = await this.roomsService.getRoomAuthor(roomId);
-    const [newStudent] = await this.roomsService.joinStudent(roomId, auth.studentName);
-    this.server.to(authorClient).emit('student-joined', newStudent);
+    const testInfo = await this.roomsService.getTestInfo(auth.roomId);
+
+    client.emit('test-info', testInfo);
   }
 
   @UseGuards(RoomAuthorGuard)
   @SubscribeMessage('start-exam')
-  startExam(@ClientAuth('roomId') roomId: string) {
+  startExam(@ConnectedSocket() client: Socket, @ClientAuth('roomId') roomId: string) {
     this.server.to(roomId).emit('exam-started');
 
     // Start exam logic
-
     this.server.timeout(1000 * 5).emit('question', {});
   }
 }
