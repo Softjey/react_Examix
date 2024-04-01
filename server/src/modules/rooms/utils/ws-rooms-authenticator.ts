@@ -27,7 +27,9 @@ export class WsRoomsAuthenticator {
       );
     }
 
-    if (!roomsService.roomExist(auth.roomId)) {
+    const roomExist = await roomsService.roomExist(auth.roomId);
+
+    if (!roomExist) {
       return this.handleError(
         WebSocketException.NotFound('Room not found. Please, check the room id', {
           disconnect: true,
@@ -35,7 +37,10 @@ export class WsRoomsAuthenticator {
       );
     }
 
-    if (auth.role === 'author' && !roomsService.isAuthorOfRoom(auth.authorToken, auth.roomId)) {
+    if (
+      auth.role === 'author' &&
+      !(await roomsService.isAuthorOfRoom(auth.authorToken, auth.roomId))
+    ) {
       return this.handleError(
         WebSocketException.Forbidden('You are not the author of this room', {
           disconnect: true,

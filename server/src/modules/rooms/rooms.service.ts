@@ -34,7 +34,6 @@ export class RoomsService {
   private get(roomId: Room['id']) {
     const room = this.rooms.get(roomId);
 
-    // TODO: need to handle
     if (!room) {
       throw new Error('Room id is invalid');
     }
