@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { CreateTestDtoAuthorId } from './dtos/create-test.dto';
 import { Test, TestQuestion } from '@prisma/client';
+import { Question } from '../questions/interfaces/question.interface';
 
 @Injectable()
 export class TestsService {
@@ -33,5 +34,17 @@ export class TestsService {
 
       return [test, count] as const;
     });
+  }
+
+  async getTestAndQuestionsByTestId(testId: Test['id']) {
+    const [test, questions] = await this.prismaService.$transaction([
+      this.prismaService.test.findUnique({ where: { id: testId } }),
+      this.prismaService.testQuestion.findMany({
+        where: { testId },
+        include: { question: true },
+      }),
+    ]);
+
+    return [test, questions as (TestQuestion & { question: Question })[]] as const;
   }
 }
