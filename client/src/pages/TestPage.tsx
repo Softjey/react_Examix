@@ -8,8 +8,8 @@ function log(message: string) {
   return (value: unknown = '') => console.log(message, value);
 }
 
-const roomId = '086461';
-const authorToken = 'c80f59dc-4f6a-4e52-a9ca-4b09818be5b6';
+const roomId = '061778';
+const authorToken = 'e43fa59e-1a0a-43bc-93c8-c513ae8fd95e';
 
 const connectAuthor = () => {
   const socket = io('ws://localhost:3005/join-room', {
@@ -20,8 +20,8 @@ const connectAuthor = () => {
   socket.io.on('close', log('author disconnected'));
   socket.io.on('error', log('author error'));
   socket.on('exception', log('author exception'));
-
-  socket.on('student-joined', log('student-joined'));
+  socket.on('test-info', log('author test-info:'));
+  socket.on('student-joined', log('author student-joined'));
 };
 
 const connectStudent = () => {
@@ -33,6 +33,8 @@ const connectStudent = () => {
   socket.io.on('close', log('student disconnected'));
   socket.io.on('error', log('student error'));
   socket.on('exception', log('student exception'));
+  socket.on('test-info', log('student test-info:'));
+  socket.on('student-joined', log('student student-joined:'));
 };
 
 const TestPage: React.FC = () => (
