@@ -5,7 +5,7 @@ import StartPage from './pages/StartPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Routes from './constants/Router/Routes';
-import TestPage from './pages/TestPage';
+import TestPage from './dev/TestPage';
 
 const router = createRouter([
   {
