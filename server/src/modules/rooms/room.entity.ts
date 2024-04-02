@@ -1,10 +1,10 @@
 import { Author } from '../authors/author.entity';
-import { Exam } from '../exams/entities/exam.entity';
+import { ExamEmitter } from '../exams/utils/exam.emitter';
 
 export class Room {
   constructor(
     readonly id: string,
-    readonly exam: Exam,
+    readonly examEmitter: ExamEmitter,
     readonly author: Author,
   ) {}
 }
