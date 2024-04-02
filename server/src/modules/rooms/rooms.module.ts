@@ -6,9 +6,10 @@ import { RoomsController } from './rooms.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ExamsModule } from '../exams/exams.module';
 import { AuthorsModule } from '../authors/authors.module';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
-  imports: [UniqueIdModule, PrismaModule, ExamsModule, AuthorsModule],
+  imports: [UniqueIdModule, PrismaModule, ExamsModule, AuthorsModule, RedisModule],
   providers: [RoomsGateway, RoomsService],
   controllers: [RoomsController],
 })

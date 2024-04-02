@@ -1,5 +1,6 @@
 import {
   ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   SubscribeMessage,
   WebSocketGateway,
@@ -13,6 +14,9 @@ import { RoomAuthorGuard } from './guards/room-author.guard';
 import { ClientAuth } from '../../utils/websockets/decorators/client-auth.decorator';
 import { WsExceptionsFilter } from 'src/utils/websockets/exceptions/ws-exceptions.filter';
 import { ClientAuthDto } from './dtos/client-auth.dto';
+import { WebSocketException } from 'src/utils/websockets/exceptions/websocket.exception';
+import { ExamEmitterException } from '../exams/utils/exam-emitter.exception';
+import { QuestionAnswerDto } from './dtos/question-answer.dto';
 
 @UseFilters(WsExceptionsFilter)
 @WebSocketGateway({
@@ -43,15 +47,57 @@ export class RoomsGateway implements OnGatewayConnection {
 
     const testInfo = await this.roomsService.getTestInfo(auth.roomId);
 
+    client.join(auth.roomId);
     client.emit('test-info', testInfo);
   }
 
   @UseGuards(RoomAuthorGuard)
   @SubscribeMessage('start-exam')
-  startExam(@ConnectedSocket() client: Socket, @ClientAuth('roomId') roomId: string) {
-    this.server.to(roomId).emit('exam-started');
+  async tartExam(@ConnectedSocket() client: Socket, @ClientAuth('roomId') roomId: string) {
+    const examEmitter = await this.roomsService.getExamEmitter(roomId);
 
-    // Start exam logic
-    this.server.timeout(1000 * 5).emit('question', {});
+    this.server.to(roomId).emit('exam-started');
+    await examEmitter.startExam();
+
+    examEmitter.onException(this.emitterExceptionHandler(roomId));
+    examEmitter.onQuestion((question) => {
+      client.emit('question', examEmitter.exam.questions[question.id]);
+      client.broadcast.to(roomId).emit('question', question);
+    });
+  }
+
+  @UseGuards()
+  @SubscribeMessage('answer')
+  async answerQuestion(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() { questionId, answerIndexes }: QuestionAnswerDto,
+    @ClientAuth('roomId') roomId: string,
+  ) {
+    const studentId = await this.roomsService.getStudentId(client.id, roomId);
+    const examEmitter = await this.roomsService.getExamEmitter(roomId);
+
+    console.log('answer', { studentId, questionId, answerIndexes });
+
+    examEmitter.answerQuestion(studentId, questionId, answerIndexes);
+  }
+
+  emitterExceptionHandler(roomId: string) {
+    return async (exception: ExamEmitterException) => {
+      console.log('exception', exception);
+      switch (exception.type) {
+        case 'wrong-question-index': {
+          const { studentId, questionIndex, currentQuestionIndex } = exception.details;
+          const studentClientId = await this.roomsService.getStudentClientId(roomId, studentId);
+          const message = `Wrong question index. Your index: ${questionIndex}, current index: ${currentQuestionIndex}`; // eslint-disable-line max-len
+
+          throw WebSocketException.BadRequest(message, {
+            client: this.server.sockets.sockets.get(studentClientId),
+          });
+        }
+        default: {
+          throw WebSocketException.ServerError();
+        }
+      }
+    };
   }
 }
