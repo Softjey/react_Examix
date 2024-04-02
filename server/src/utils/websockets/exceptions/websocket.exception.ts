@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
+import { Socket } from 'socket.io';
 
 type Message = string | string[];
 
@@ -6,6 +7,7 @@ interface WebSocketExceptionDetails {
   disconnect?: boolean;
   date?: Date;
   cause?: Error;
+  client?: Socket;
 }
 
 export class WebSocketException {

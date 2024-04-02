@@ -15,12 +15,15 @@ export class WsExceptionsFilter extends BaseWsExceptionFilter {
         cause: exception,
       });
 
+      console.log(exception);
       client.emit(WsExceptionsFilter.eventName, new WebSocketExceptionResponse(serverError));
 
       return;
     }
 
-    WsExceptionsFilter.handleError(client, exception);
+    const clientToHandle = exception.details.client ?? client;
+
+    WsExceptionsFilter.handleError(clientToHandle, exception);
   }
 
   public static handleError(client: Socket, exception: WebSocketException) {
