@@ -1,22 +1,25 @@
 import { TestQuestion } from '@prisma/client';
-import { Answer, Question } from '../../questions/interfaces/question.interface';
-import { Student } from './student.entity';
-
-type Result = { answer: Answer['title'] };
+import { Question } from '../../questions/interfaces/question.interface';
 
 export class ExamQuestion {
+  id: TestQuestion['id'];
+  type: 'single' | 'multiple';
   title: Question['title'];
   answers: Question['answers'];
   maxScore: TestQuestion['maxScore'];
   timeLimit: TestQuestion['timeLimit'];
-  studentsResults = new Map<Student['id'], Result>();
 
   constructor({
+    id,
     maxScore,
     timeLimit,
     question: { title, answers },
   }: TestQuestion & { question: Question }) {
+    const correctLength = answers.filter((answer) => answer.isCorrect).length;
+
+    this.id = id;
     this.title = title;
+    this.type = correctLength > 1 ? 'multiple' : 'single';
     this.answers = answers;
     this.maxScore = maxScore;
     this.timeLimit = timeLimit;
