@@ -7,8 +7,8 @@ export class UniqueIdService {
     return uuid();
   }
 
-  generate6DigitCode(mapOrSet: Map<unknown, unknown> | Set<unknown>) {
-    let new6digitCode;
+  generate6DigitCode(mapOrSet: Map<string, unknown> | Set<string>) {
+    let new6digitCode: string;
 
     do {
       new6digitCode = `${Math.floor(Math.random() * 100_000)}`.padStart(6, '0');
