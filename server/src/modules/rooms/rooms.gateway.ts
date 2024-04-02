@@ -17,6 +17,7 @@ import { ClientAuthDto } from './dtos/client-auth.dto';
 import { WebSocketException } from 'src/utils/websockets/exceptions/websocket.exception';
 import { ExamEmitterException } from '../exams/utils/exam-emitter.exception';
 import { QuestionAnswerDto } from './dtos/question-answer.dto';
+import { RoomStudentGuard } from './guards/room-student.guard';
 
 @UseFilters(WsExceptionsFilter)
 @WebSocketGateway({
@@ -66,17 +67,20 @@ export class RoomsGateway implements OnGatewayConnection {
     });
   }
 
-  @UseGuards()
+  @UseGuards(RoomStudentGuard)
   @SubscribeMessage('answer')
   async answerQuestion(
     @ConnectedSocket() client: Socket,
     @MessageBody() { questionId, answerIndexes }: QuestionAnswerDto,
     @ClientAuth('roomId') roomId: string,
   ) {
-    const studentId = await this.roomsService.getStudentId(client.id, roomId);
     const examEmitter = await this.roomsService.getExamEmitter(roomId);
 
-    console.log('answer', { studentId, questionId, answerIndexes });
+    if (examEmitter.status !== 'started') {
+      throw WebSocketException.BadRequest('Exam is not started');
+    }
+
+    const studentId = await this.roomsService.getStudentId(client.id, roomId);
 
     examEmitter.answerQuestion(studentId, questionId, answerIndexes);
   }
