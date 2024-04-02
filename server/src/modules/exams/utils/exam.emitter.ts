@@ -54,7 +54,11 @@ export class ExamEmitter extends EventEmitter implements ExamEmitterI {
   }
 
   private answerHandler(studentId: Student['id'], questionIndex: number, answersIndexes: number[]) {
-    if (questionIndex !== this.currentQuestion) {
+    if (
+      questionIndex !== this.currentQuestion ||
+      questionIndex < 0 ||
+      questionIndex >= this.preparedQuestions.length
+    ) {
       return this.emitException('wrong-question-index', {
         studentId,
         questionIndex,
