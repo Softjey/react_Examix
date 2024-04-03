@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class UniqueIdService {
   generateUUID() {
-    return uuid();
+    return uuid() as string;
   }
 
   async generate6DigitCode(isExist: (code: string) => Promise<boolean>) {
