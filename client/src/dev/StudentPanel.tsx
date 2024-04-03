@@ -1,5 +1,7 @@
+/* eslint-disable operator-linebreak */
 import { io } from 'socket.io-client';
-import React, { memo, useEffect, useRef } from 'react';
+// eslint-disable-next-line object-curly-newline
+import React, { memo, useEffect, useRef, useState } from 'react';
 
 import {
   Avatar,
@@ -12,12 +14,33 @@ import {
 } from '@mui/material';
 import log from './log';
 
-const StudentPanel: React.FC<{ name: string; roomId: string }> = memo(({ name, roomId }) => {
-  const [questionId, setQuestionId] = React.useState<number | null>(null);
+interface StudentAnswer {
+  title: string;
+}
+
+interface Question {
+  id: number;
+  index: number;
+  answers: StudentAnswer[];
+  type: 'single' | 'multiple';
+  title: string;
+  maxScore: number;
+  timeLimit: number;
+}
+
+interface Props {
+  name: string;
+  examCode: string;
+  onDisconnect: () => void;
+}
+
+const StudentPanel: React.FC<Props> = memo(({ name, examCode, onDisconnect }) => {
+  const [studentId, setStudentId] = useState<string | null>(null);
+  const [question, setQuestion] = useState<Question | null>(null);
   const socketRef = useRef(
-    io('ws://localhost:3005/join-room', {
+    io('ws://localhost:3005/join-exam', {
       autoConnect: false,
-      auth: { role: 'student', roomId, studentName: name },
+      auth: { role: 'student', examCode, studentName: name },
     }),
   );
 
@@ -26,16 +49,33 @@ const StudentPanel: React.FC<{ name: string; roomId: string }> = memo(({ name, r
 
     socket.connect();
     socket.on('open', log(`${name} connected`));
-    socket.on('close', log(`${name} disconnected`));
+    socket.on('close', () => {
+      log(`${name} disconnected`);
+      onDisconnect();
+    });
     socket.on('error', log(`${name} error`));
     socket.on('exception', log(`${name} exception`));
     socket.on('test-info', log(`${name} test-info:`));
-    socket.on('student-joined', log(`${name} student-joined:`));
+    socket.on('student-joined', (body) => setStudentId(body.id));
     socket.on('exam-started', log(`${name} exam-started`));
-    socket.on('question', (body) => {
-      setQuestionId(body.id);
-    });
-  }, [name, roomId]);
+    socket.on('question', (body) => setQuestion(body));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name, examCode]);
+
+  useEffect(() => {
+    if (!question) return;
+
+    setTimeout(() => {
+      const randomAnswer = question?.answers[Math.floor(Math.random() * question.answers.length)];
+
+      socketRef.current.emit('answer', {
+        studentId,
+        questionIndex: question?.index,
+        answers: [randomAnswer],
+      });
+      log(`${name} answered ${randomAnswer?.title} to question ${question?.title}`);
+    }, Math.random() * 3000);
+  }, [question, name, studentId]);
 
   return (
     <>
@@ -47,7 +87,7 @@ const StudentPanel: React.FC<{ name: string; roomId: string }> = memo(({ name, r
           />
         </ListItemAvatar>
         <ListItemText
-          primary="Brunch this weekend?"
+          primary={question?.title || 'No question yet'}
           secondary={
             <>
               <Typography
@@ -57,8 +97,19 @@ const StudentPanel: React.FC<{ name: string; roomId: string }> = memo(({ name, r
                 color="text.primary"
               >
                 {name}
+                {studentId ? ` (${studentId})` : ''}
               </Typography>
-              {" — I'll be in your neighborhood doing errands this…"}
+              {question &&
+                question.answers.map((answer) => (
+                  <Typography
+                    key={answer.title}
+                    component="span"
+                    variant="body2"
+                    color="text.primary"
+                  >
+                    {answer.title}
+                  </Typography>
+                ))}
             </>
           }
         />
@@ -67,8 +118,9 @@ const StudentPanel: React.FC<{ name: string; roomId: string }> = memo(({ name, r
             () =>
               // eslint-disable-next-line implicit-arrow-linebreak
               socketRef.current.emit('answer', {
-                questionId,
-                answerIndexes: [0],
+                studentId,
+                questionIndex: question?.index,
+                answers: [question?.answers[Math.floor(Math.random() * question.answers.length)]],
               })
 
           }

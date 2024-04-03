@@ -9,15 +9,14 @@ import { getRandomName } from './randomNames';
 
 const res = {
   message: 'Room was created successfully',
-  roomId: '078384',
-  authorToken: '0168f979-80ba-4c7c-9015-c5481f150341',
+  examCode: '098956',
+  authorToken: 'c2295009-ab98-44db-9c8a-7aae729346a9',
 };
+const { examCode, authorToken } = res;
 
-const { roomId, authorToken } = res;
-
-const authorSocket = io('ws://localhost:3005/join-room', {
+const authorSocket = io('ws://localhost:3005/join-exam', {
   autoConnect: false,
-  auth: { role: 'author', roomId, authorToken },
+  auth: { role: 'author', examCode, authorToken },
 });
 
 authorSocket.io.on('open', log('author connected'));
@@ -28,6 +27,7 @@ authorSocket.on('test-info', log('author test-info:'));
 authorSocket.on('student-joined', log('author student-joined'));
 authorSocket.on('exam-started', log('author exam-started'));
 authorSocket.on('question', log('author question:'));
+authorSocket.on('exam-finished', log('author exam-finished'));
 
 const TestPage: React.FC = () => {
   const [students, setStudents] = useState<string[]>([]);
@@ -59,8 +59,13 @@ const TestPage: React.FC = () => {
         }}
       >
         {students.map((student, i) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <StudentPanel name={student} roomId={roomId} key={i} />
+          <StudentPanel
+            name={student}
+            examCode={examCode}
+            // eslint-disable-next-line react/no-array-index-key
+            key={i}
+            onDisconnect={() => setStudents(students.filter((_, index) => index !== i))}
+          />
         ))}
       </List>
     </Layout>
