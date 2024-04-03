@@ -7,12 +7,12 @@ export class UniqueIdService {
     return uuid();
   }
 
-  generate6DigitCode(mapOrSet: Map<string, unknown> | Set<string>) {
+  async generate6DigitCode(isExist: (code: string) => Promise<boolean>) {
     let new6digitCode: string;
 
     do {
       new6digitCode = `${Math.floor(Math.random() * 100_000)}`.padStart(6, '0');
-    } while (mapOrSet.has(new6digitCode));
+    } while (await isExist(new6digitCode));
 
     return new6digitCode;
   }
