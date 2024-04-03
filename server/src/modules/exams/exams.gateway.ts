@@ -41,14 +41,14 @@ export class ExamsGateway implements OnGatewayConnection {
         this.examsService.joinAuthor(auth.examCode, client.id);
         break;
       case 'student':
-        const { clientId: authorClient } = await this.examsService.getAuthor(auth.examCode);
+        const { author } = await this.examsService.getExam(auth.examCode);
         const [studentId, student] = await this.examsService.joinStudent(
           auth.examCode,
           auth.studentName,
           client.id,
         );
 
-        this.server.to(authorClient).emit('student-joined', { name: student.name });
+        this.server.to(author.clientId).emit('student-joined', { name: student.name });
         client.emit('student-joined', { id: studentId });
         break;
       default:
@@ -63,7 +63,8 @@ export class ExamsGateway implements OnGatewayConnection {
     if (isAuthorized) {
       this.handleRole(client, auth);
 
-      const testInfo = await this.examsService.getTestInfo(auth.examCode);
+      const { test, questions } = await this.examsService.getExam(auth.examCode);
+      const testInfo = { test, questionsAmount: questions.length };
 
       client.join(auth.examCode);
       client.emit('test-info', testInfo);
@@ -73,9 +74,9 @@ export class ExamsGateway implements OnGatewayConnection {
   @UseGuards(RoomAuthorGuard)
   @SubscribeMessage('start-exam')
   async startExam(@ConnectedSocket() client: Socket, @ClientAuth('examCode') examCode: string) {
-    const examStatus = await this.examsService.getExamStatus(examCode);
+    const { status } = await this.examsService.getExam(examCode);
 
-    if (examStatus !== 'created') {
+    if (status !== 'created') {
       throw WebSocketException.BadRequest('Exam is already started or finished');
     }
 
@@ -100,8 +101,7 @@ export class ExamsGateway implements OnGatewayConnection {
     @MessageBody() { studentId, questionIndex, answers }: QuestionAnswerDto,
     @ClientAuth('examCode') examCode: string,
   ) {
-    const status = await this.examsService.getExamStatus(examCode);
-    const currentQuestionIndex = await this.examsService.getCurrentQuestionIndex(examCode);
+    const { status, currentQuestionIndex } = await this.examsService.getExam(examCode);
 
     if (status !== 'started') {
       throw WebSocketException.BadRequest('Exam is not started or already finished');

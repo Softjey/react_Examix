@@ -26,7 +26,7 @@ export class ExamsService extends EventEmitter {
     await this.redisService.hset(this.redisPrefix, examCode, JSON.stringify(exam));
   }
 
-  private async getExam(examCode: string) {
+  async getExam(examCode: string) {
     const exam = await this.redisService.hget(this.redisPrefix, examCode);
 
     return exam ? (JSON.parse(exam) as Exam) : null;
@@ -68,18 +68,6 @@ export class ExamsService extends EventEmitter {
     return [studentId, newStudent] as const;
   }
 
-  async getAuthor(examCode: string) {
-    const exam = await this.getExam(examCode);
-
-    return exam.author;
-  }
-
-  async getTestInfo(examCode: string) {
-    const { test, questions } = await this.getExam(examCode);
-
-    return { test: test, questionsAmount: questions.length };
-  }
-
   async startExam(examCode: string) {
     const exam = await this.getExam(examCode);
     exam.status = 'started';
@@ -87,7 +75,7 @@ export class ExamsService extends EventEmitter {
     this.processQuestion(examCode);
   }
 
-  emitQuestion(examCode: string, question: ExamQuestion, questionIndex: number) {
+  private emitQuestion(examCode: string, question: ExamQuestion, questionIndex: number) {
     this.emit(`question-${examCode}`, question, questionIndex);
   }
 
@@ -116,18 +104,6 @@ export class ExamsService extends EventEmitter {
     }
 
     setTimeout(() => this.processQuestion(examCode), timeLimit);
-  }
-
-  async getCurrentQuestionIndex(examCode: string) {
-    const exam = await this.getExam(examCode);
-
-    return exam.currentQuestionIndex;
-  }
-
-  async getExamStatus(examCode: string) {
-    const exam = await this.getExam(examCode);
-
-    return exam.status;
   }
 
   async answerQuestion(examCode: string, studentId: Student['clientId'], answers: string[]) {
