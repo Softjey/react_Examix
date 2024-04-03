@@ -1,65 +1,45 @@
-/* eslint-disable object-curly-newline */
-import { Button, CardActions, CardHeader, ButtonGroup, LinearProgress } from '@mui/material';
+// eslint-disable-next-line object-curly-newline
+import { CardActions, CardHeader, LinearProgress } from '@mui/material';
 import Card from '@mui/material/Card';
-import React, { useEffect } from 'react';
 import { Question, Answer } from '../temp/questions';
-import useCountDown from '../hooks/useCountdown';
+import Timer from './UI/Timer';
+import RadioButtonGroup from './UI/RadioButtonGroup';
 
 interface Props {
   question: Question;
-  quizProgress: number;
+  questionIndex: number;
+  questionsLength: number;
   setAnswers: React.Dispatch<React.SetStateAction<Answer[]>>;
   nextQuestion: () => void;
 }
 
-const QuizCard: React.FC<Props> = ({ question, quizProgress, nextQuestion, setAnswers }) => {
-  const { msLeft, start } = useCountDown();
+const QuizCard: React.FC<Props> = ({
+  question,
+  questionsLength,
+  questionIndex,
+  nextQuestion,
+  setAnswers,
+}) => {
+  const quizProgress = Math.ceil((questionIndex / questionsLength) * 100);
 
-  const fixProgressAnimationStyles = {
-    '&[aria-valuenow="100"]': {
-      '& > .progressBarInner': {
-        transition: 'none',
-      },
-    },
-  };
-
-  const time = 5000;
-  const progress = (msLeft / time) * 100;
-
-  function onButtonClick(variant: string) {
-    setAnswers((prev) => [...prev, { questionId: question.id, answer: variant }]);
-    start(time);
+  const onTimerEnd = () => {
+    setAnswers((prev) => [...prev, { questionId: question.id, answer: 'unset' }]);
     nextQuestion();
-  }
-
-  useEffect(() => {
-    start(time);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (msLeft === 0) {
-      onButtonClick('unset');
-    }
-  });
+  };
 
   return (
     <Card elevation={5} sx={{ width: '500px', padding: '20px' }}>
-      <span>{Math.ceil(msLeft / 1000)}</span>
-      <LinearProgress
-        sx={fixProgressAnimationStyles}
-        classes={{ bar: 'progressBarInner' }}
-        variant="determinate"
-        value={progress}
-      />
+      <Timer onEnd={onTimerEnd} seconds={5} />
       <CardHeader title={question.title} />
-      <CardActions>
-        <ButtonGroup fullWidth orientation="vertical">
+      <CardActions sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {/* <ButtonGroup fullWidth orientation="vertical">
           {question.variants.map((variant, i) => (
             <Button
               // eslint-disable-next-line react/no-array-index-key
               key={i}
-              onClick={() => onButtonClick(variant)}
+              onClick={() => {
+                setAnswers((prev) => [...prev, { questionId: question.id, answer: variant }]);
+              }}
               sx={{ height: '60px' }}
               size="large"
             >
@@ -67,8 +47,13 @@ const QuizCard: React.FC<Props> = ({ question, quizProgress, nextQuestion, setAn
             </Button>
           ))}
         </ButtonGroup>
+        */}
+        <RadioButtonGroup question={question} />
       </CardActions>
       <LinearProgress variant="determinate" value={quizProgress} />
+      <span>
+        {questionIndex}/{questionsLength}
+      </span>
     </Card>
   );
 };

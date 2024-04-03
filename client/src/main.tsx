@@ -6,6 +6,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import QuizPage from './pages/QuizPage';
 import Routes from './constants/Router/Routes';
+import TestPage from './pages/TestPage';
 
 const router = createRouter([
   {
@@ -23,6 +24,10 @@ const router = createRouter([
   {
     path: Routes.QUIZ_PAGE,
     element: <QuizPage />,
+  },
+  {
+    path: '/test',
+    element: <TestPage />,
   },
   {
     path: Routes.NOT_FOUND_PAGE,

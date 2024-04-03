@@ -10,7 +10,6 @@ const QuizPage: React.FC = () => {
   const [questionIndex, setQuestionIndex] = useState(0);
   // state with saved answers to compare on server
   const [answers, setAnswers] = useState<Answer[]>([]);
-  const quizProgress = Math.ceil((questionIndex / questions.length) * 100);
   /*
   ToDo:
     fix problem with quizProgress start value:
@@ -30,7 +29,8 @@ const QuizPage: React.FC = () => {
           nextQuestion={() => setQuestionIndex(questionIndex + 1)}
           setAnswers={setAnswers}
           question={questions[questionIndex]}
-          quizProgress={quizProgress}
+          questionIndex={questionIndex}
+          questionsLength={questions.length}
         />
       ) : (
         // this is the test fragment, it should be replaced with results page
