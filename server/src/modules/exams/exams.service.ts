@@ -9,6 +9,7 @@ import { EventEmitter } from 'stream';
 import { Author } from './entities/author.entity';
 import { Exam } from './entities/exam.entity';
 import config from 'src/config';
+import { StudentAnswer } from './dtos/question-answer.dto';
 
 @Injectable()
 export class ExamsService extends EventEmitter {
@@ -62,7 +63,7 @@ export class ExamsService extends EventEmitter {
   async joinStudent(examCode: string, studentName: Student['name'], clientId: Student['clientId']) {
     const exam = await this.getExam(examCode);
     const studentId = this.uniqueIdService.generateUUID();
-    const newStudent = new Student(studentName, clientId);
+    const newStudent = new Student(clientId, studentName);
 
     exam.students[studentId] = newStudent;
 
@@ -95,24 +96,24 @@ export class ExamsService extends EventEmitter {
     const questionTimeLimit = exam.questions[exam.currentQuestionIndex].timeLimit;
     const timeLimit = (questionTimeLimit + config.NETWORK_DELAY_BUFFER) * 1000;
 
+    exam.currentQuestionIndex += 1;
+
+    if (exam.currentQuestionIndex >= exam.questions.length) {
+      return this.endExam(examCode);
+    }
+
     this.emitQuestion(
       examCode,
       exam.questions[exam.currentQuestionIndex],
       exam.currentQuestionIndex,
     );
 
-    exam.currentQuestionIndex += 1;
-
     await this.setExam(examCode, exam);
-
-    if (exam.currentQuestionIndex >= exam.questions.length) {
-      return this.endExam(examCode);
-    }
 
     setTimeout(() => this.processQuestion(examCode), timeLimit);
   }
 
-  async answerQuestion(examCode: string, studentId: Student['clientId'], answers: string[]) {
+  async answerQuestion(examCode: string, studentId: Student['clientId'], answers: StudentAnswer[]) {
     const exam = await this.getExam(examCode);
     const questionId = exam.questions[exam.currentQuestionIndex].id;
 
@@ -121,7 +122,7 @@ export class ExamsService extends EventEmitter {
     await this.setExam(examCode, exam);
   }
 
-  async onExamFinish(examCode: string, callback: () => void) {
+  async onExamFinish(examCode: string, callback: (exam: Exam) => void) {
     this.once(`finished-${examCode}`, callback);
   }
 
@@ -130,9 +131,9 @@ export class ExamsService extends EventEmitter {
 
     this.removeAllListeners(`question-${examCode}`);
     exam.status = 'finished';
-    this.emit(`finished-${examCode}`);
     clearInterval(exam.intervalId);
     exam.intervalId = null;
+    this.emit(`finished-${examCode}`, exam);
     await this.setExam(examCode, exam);
   }
 }

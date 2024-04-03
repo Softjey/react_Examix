@@ -7,8 +7,8 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { UseFilters, UseGuards } from '@nestjs/common';
-import { WsRoomsAuthenticator } from './utils/ws-rooms-authenticator';
+import { UseFilters, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { WsExamsAuthenticator } from './utils/ws-exams-authenticator';
 import { RoomAuthorGuard } from './guards/room-author.guard';
 import { ClientAuth } from '../../utils/websockets/decorators/client-auth.decorator';
 import { WsExceptionsFilter } from 'src/utils/websockets/exceptions/ws-exceptions.filter';
@@ -17,9 +17,10 @@ import { RoomStudentGuard } from './guards/room-student.guard';
 import { ExamsService } from './exams.service';
 import { ExamQuestion } from './entities/exam-question.entity';
 import { ExamClientAuthDto } from './dtos/client-auth.dto';
-import { QuestionAnswerDto } from './dtos/question-answer.dto';
+import { QuestionAnswerDto, StudentAnswer } from './dtos/question-answer.dto';
 
 @UseFilters(WsExceptionsFilter)
+@UsePipes(new ValidationPipe())
 @WebSocketGateway({
   namespace: 'join-exam',
   cors: { origin: '*' },
@@ -29,10 +30,10 @@ export class ExamsGateway implements OnGatewayConnection {
 
   constructor(private readonly examsService: ExamsService) {}
 
-  private async prepareQuestionForStudents(question: ExamQuestion, index: number) {
-    const answers = question.answers.map(({ title }) => ({ title }));
+  private prepareQuestionForStudents(question: ExamQuestion, index: number) {
+    const answers: StudentAnswer[] = question.answers.map(({ title }) => ({ title }));
 
-    return { question, index, answers };
+    return { ...question, index, answers };
   }
 
   private async handleRole(client: Socket, auth: ExamClientAuthDto) {
@@ -57,11 +58,11 @@ export class ExamsGateway implements OnGatewayConnection {
   }
 
   async handleConnection(@ConnectedSocket() client: Socket) {
-    const authenticator = new WsRoomsAuthenticator(this.examsService, client);
+    const authenticator = new WsExamsAuthenticator(this.examsService, client);
     const { isAuthorized, auth } = await authenticator.authenticate();
 
     if (isAuthorized) {
-      this.handleRole(client, auth);
+      await this.handleRole(client, auth);
 
       const { test, questions } = await this.examsService.getExam(auth.examCode);
       const testInfo = { test, questionsAmount: questions.length };
@@ -90,8 +91,10 @@ export class ExamsGateway implements OnGatewayConnection {
       client.broadcast.to(examCode).emit('question', studentsQuestion);
     });
 
-    this.examsService.onExamFinish(examCode, () => {
-      this.server.to(examCode).emit('exam-finished');
+    this.examsService.onExamFinish(examCode, (exam) => {
+      client.broadcast.to(examCode).emit('exam-finished');
+      client.emit('exam-finished', exam);
+      this.server.socketsLeave(examCode);
     });
   }
 
