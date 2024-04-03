@@ -1,9 +1,8 @@
 import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 import { IsLiteral } from '../../../utils/validation/is-literal.decorator';
-import { Room } from '../room.entity';
-import { Author } from 'src/modules/authors/author.entity';
+import { Author } from '../entities/author.entity';
 
-export type ClientAuthDto = ClientAuthorAuthDto | ClientStudentAuthDto;
+export type ExamClientAuthDto = ClientAuthorAuthDto | ClientStudentAuthDto;
 
 export class ClientAuthorAuthDto {
   @IsLiteral('author')
@@ -11,7 +10,7 @@ export class ClientAuthorAuthDto {
 
   @IsString()
   @IsNotEmpty()
-  roomId: Room['id'];
+  examCode: string;
 
   @IsUUID()
   @IsOptional()
@@ -24,9 +23,13 @@ export class ClientStudentAuthDto {
 
   @IsString()
   @IsNotEmpty()
-  roomId: Room['id'];
+  examCode: string;
 
   @IsString()
   @IsNotEmpty()
   studentName: string;
+
+  @IsUUID()
+  @IsOptional()
+  studentId?: string;
 }

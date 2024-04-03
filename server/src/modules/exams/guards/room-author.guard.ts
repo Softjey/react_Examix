@@ -1,12 +1,12 @@
 import { Socket } from 'socket.io';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { WebSocketException } from 'src/utils/websockets/exceptions/websocket.exception';
-import { ClientAuthDto } from '../dtos/client-auth.dto';
+import { ExamClientAuthDto } from '../dtos/client-auth.dto';
 
 @Injectable()
 export class RoomAuthorGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
-    const auth = context.switchToWs().getClient<Socket>().handshake.auth as ClientAuthDto;
+    const auth = context.switchToWs().getClient<Socket>().handshake.auth as ExamClientAuthDto;
     const isAuthor = auth.role === 'author';
 
     if (!isAuthor) {

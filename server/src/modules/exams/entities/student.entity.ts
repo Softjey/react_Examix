@@ -7,7 +7,6 @@ export class Student {
   public results: Record<ExamQuestion['id'], Result> = {};
 
   constructor(
-    public readonly id: string,
     public clientId: Socket['id'],
     public name: string,
   ) {}

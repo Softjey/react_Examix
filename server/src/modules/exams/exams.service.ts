@@ -1,52 +1,143 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Test } from '@prisma/client';
+import { Test, User } from '@prisma/client';
 import { TestsService } from '../tests/tests.service';
 import { ExamQuestion } from './entities/exam-question.entity';
-import { Exam } from './entities/exam.entity';
 import { Student } from './entities/student.entity';
 import { UniqueIdService } from '../unique-id/unique-id.service';
-import { ExamEmitter } from './utils/exam.emitter';
 import { Redis } from 'ioredis';
+import { EventEmitter } from 'stream';
+import { Author } from './entities/author.entity';
+import { Exam } from './entities/exam.entity';
 
 @Injectable()
-export class ExamsService {
+export class ExamsService extends EventEmitter {
   private readonly redisPrefix = 'exam';
 
   constructor(
     @Inject('REDIS_CLIENT') private readonly redisService: Redis,
     private readonly testsService: TestsService,
     private readonly uniqueIdService: UniqueIdService,
-  ) {}
-
-  async save(id: string, exam: Exam) {
-    await this.redisService.set(`${this.redisPrefix}:${id}`, JSON.stringify(exam));
+  ) {
+    super();
   }
 
-  async restore(id: string) {
-    const exam = await this.redisService.get(`${this.redisPrefix}:${id}`);
-
-    return exam ? JSON.parse(exam) : null;
+  private async setExam(examCode: string, exam: Exam) {
+    await this.redisService.hset(this.redisPrefix, examCode, JSON.stringify(exam));
   }
 
-  async create(testId: Test['id']) {
+  private async getExam(examCode: string) {
+    const exam = await this.redisService.hget(this.redisPrefix, examCode);
+
+    return exam ? (JSON.parse(exam) as Exam) : null;
+  }
+
+  async examExists(examCode: string) {
+    const fieldExists = await this.redisService.hexists(this.redisPrefix, examCode);
+
+    return fieldExists === 1;
+  }
+
+  async create(userId: User['id'], testId: Test['id']) {
     const [test, questions] = await this.testsService.getTestAndQuestionsByTestId(testId);
     const examsQuestions = questions.map((question) => new ExamQuestion(question));
 
-    return new Exam(test, examsQuestions);
+    const authorToken = this.uniqueIdService.generateUUID();
+    const author = new Author(userId, authorToken);
+
+    const examCode = await this.uniqueIdService.generate6DigitCode((code) => this.examExists(code));
+    const exam = new Exam(author, test, examsQuestions);
+
+    await this.setExam(examCode, exam);
+
+    return { examCode, authorToken };
   }
 
-  async createEmitter(testId: Test['id']) {
-    const exam = await this.create(testId);
-
-    return new ExamEmitter(exam);
+  async joinAuthor(examCode: string, clientId: Author['clientId']) {
+    const exam = await this.getExam(examCode);
+    exam.author.clientId = clientId;
   }
 
-  async addStudent(exam: Exam, name: Student['name'], clientId: Student['clientId']) {
-    const id = this.uniqueIdService.generateUUID();
-    const newStudent = new Student(id, clientId, name);
+  async joinStudent(examCode: string, studentName: Student['name'], clientId: Student['clientId']) {
+    const exam = await this.getExam(examCode);
+    const studentId = this.uniqueIdService.generateUUID();
+    const newStudent = new Student(studentName, clientId);
 
-    exam.students[newStudent.id] = newStudent;
+    exam.students[studentId] = newStudent;
 
-    return newStudent;
+    return [studentId, newStudent] as const;
+  }
+
+  async getAuthor(examCode: string) {
+    const exam = await this.getExam(examCode);
+
+    return exam.author;
+  }
+
+  async getTestInfo(examCode: string) {
+    const { test, questions } = await this.getExam(examCode);
+
+    return { test: test, questionsAmount: questions.length };
+  }
+
+  async startExam(examCode: string) {
+    const exam = await this.getExam(examCode);
+    exam.status = 'started';
+
+    exam.intervalId = setInterval(() => this.nextQuestion(examCode), 3000);
+  }
+
+  async onQuestion(
+    examCode: string,
+    callback: (question: ExamQuestion, questionIndex: number) => void,
+  ) {
+    this.on(`question-${examCode}`, callback);
+  }
+
+  private async nextQuestion(examCode: string) {
+    const exam = await this.getExam(examCode);
+
+    exam.currentQuestionIndex += 1;
+    this.emit(
+      `question-${examCode}`,
+      exam.questions[exam.currentQuestionIndex],
+      exam.currentQuestionIndex,
+    );
+
+    if (exam.currentQuestionIndex >= exam.questions.length) {
+      this.endExam(examCode);
+    }
+  }
+
+  async getCurrentQuestionIndex(examCode: string) {
+    const exam = await this.getExam(examCode);
+
+    return exam.currentQuestionIndex;
+  }
+
+  async getExamStatus(examCode: string) {
+    const exam = await this.getExam(examCode);
+
+    return exam.status;
+  }
+
+  async answerQuestion(examCode: string, studentId: Student['clientId'], answers: string[]) {
+    const exam = await this.getExam(examCode);
+    const questionId = exam.questions[exam.currentQuestionIndex].id;
+
+    exam.students[studentId].results[questionId] = { answers };
+  }
+
+  async onExamFinish(examCode: string, callback: () => void) {
+    this.once(`finished-${examCode}`, callback);
+  }
+
+  async endExam(examCode: string) {
+    const exam = await this.getExam(examCode);
+
+    this.removeAllListeners(`question-${examCode}`);
+    exam.status = 'finished';
+    this.emit(`finished-${examCode}`);
+    clearInterval(exam.intervalId);
+    exam.intervalId = null;
   }
 }

@@ -6,8 +6,8 @@ export class Author {
   readonly authorToken: string;
   clientId?: Socket['id'];
 
-  constructor(user: User, authorToken: string) {
+  constructor(userId: User['id'], authorToken: string) {
     this.authorToken = authorToken;
-    this.userId = user.id;
+    this.userId = userId;
   }
 }
