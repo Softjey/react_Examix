@@ -1,7 +1,8 @@
 import { Socket } from 'socket.io';
 import { ExamQuestion } from './exam-question.entity';
+import { StudentAnswer } from '../dtos/question-answer.dto';
 
-type Result = { answers: string[] };
+type Result = { answers: StudentAnswer[] };
 
 export class Student {
   public results: Record<ExamQuestion['id'], Result> = {};
