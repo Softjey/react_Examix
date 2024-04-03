@@ -5,7 +5,7 @@ import { Author } from './author.entity';
 
 export class Exam {
   status: 'created' | 'started' | 'finished' = 'created';
-  currentQuestionIndex = -1;
+  currentQuestionIndex = 0;
   intervalId: NodeJS.Timeout = null;
   students: Record<string, Student> = {};
 

@@ -8,6 +8,7 @@ import { Redis } from 'ioredis';
 import { EventEmitter } from 'stream';
 import { Author } from './entities/author.entity';
 import { Exam } from './entities/exam.entity';
+import config from 'src/config';
 
 @Injectable()
 export class ExamsService extends EventEmitter {
@@ -83,7 +84,11 @@ export class ExamsService extends EventEmitter {
     const exam = await this.getExam(examCode);
     exam.status = 'started';
 
-    exam.intervalId = setInterval(() => this.nextQuestion(examCode), 3000);
+    this.processQuestion(examCode);
+  }
+
+  emitQuestion(examCode: string, question: ExamQuestion, questionIndex: number) {
+    this.emit(`question-${examCode}`, question, questionIndex);
   }
 
   async onQuestion(
@@ -93,19 +98,24 @@ export class ExamsService extends EventEmitter {
     this.on(`question-${examCode}`, callback);
   }
 
-  private async nextQuestion(examCode: string) {
+  private async processQuestion(examCode: string) {
     const exam = await this.getExam(examCode);
+    const questionTimeLimit = exam.questions[exam.currentQuestionIndex].timeLimit;
+    const timeLimit = (questionTimeLimit + config.NETWORK_DELAY_BUFFER) * 1000;
 
-    exam.currentQuestionIndex += 1;
-    this.emit(
-      `question-${examCode}`,
+    this.emitQuestion(
+      examCode,
       exam.questions[exam.currentQuestionIndex],
       exam.currentQuestionIndex,
     );
 
+    exam.currentQuestionIndex += 1;
+
     if (exam.currentQuestionIndex >= exam.questions.length) {
-      this.endExam(examCode);
+      return this.endExam(examCode);
     }
+
+    setTimeout(() => this.processQuestion(examCode), timeLimit);
   }
 
   async getCurrentQuestionIndex(examCode: string) {
