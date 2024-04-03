@@ -14,7 +14,7 @@ export class ExamsController {
     const { examCode, authorToken } = await this.examsService.create(authorId, testId);
 
     return {
-      message: 'Room was created successfully',
+      message: 'Exam was created successfully',
       examCode,
       authorToken,
     };
