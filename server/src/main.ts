@@ -11,7 +11,10 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new ServerExceptionFilter(httpAdapter));
-  app.enableCors();
+  app.enableCors({
+    origin: config.CLIENT_URL,
+    credentials: true,
+  });
   enableApiDocs('api/docs', app);
 
   await app.listen(config.PORT, () => {
