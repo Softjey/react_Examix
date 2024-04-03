@@ -35,7 +35,7 @@ export class WsRoomsAuthenticator {
 
     if (await this.handleRoomNotFoundError(auth)) return false;
 
-    const author = await this.examsService.getAuthor(auth.examCode);
+    const { author } = await this.examsService.getExam(auth.examCode);
 
     if (await this.handleYouAreNotAuthorError(auth, author)) return false;
     if (await this.handleAuthorNotFoundError(auth, author)) return false;
