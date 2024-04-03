@@ -11,7 +11,7 @@ import { plainToClass } from 'class-transformer';
 import { ExamsService } from '../exams.service';
 import { Author } from '../entities/author.entity';
 
-export class WsRoomsAuthenticator {
+export class WsExamsAuthenticator {
   constructor(
     private readonly examsService: ExamsService,
     private readonly client: Socket,
@@ -33,50 +33,50 @@ export class WsRoomsAuthenticator {
   private async handleErrors() {
     const auth = this.client.handshake.auth as ExamClientAuthDto;
 
-    if (await this.handleRoomNotFoundError(auth)) return false;
+    if (await this.hasRoomNotFoundError(auth)) return false;
 
     const { author } = await this.examsService.getExam(auth.examCode);
 
-    if (await this.handleYouAreNotAuthorError(auth, author)) return false;
-    if (await this.handleAuthorNotFoundError(auth, author)) return false;
+    if (await this.hasYouAreNotAuthorError(auth, author)) return false;
+    if (await this.hasAuthorNotFoundError(auth, author)) return false;
+
+    return true;
   }
 
-  private async handleYouAreNotAuthorError(auth: ExamClientAuthDto, { authorToken }: Author) {
+  private async hasYouAreNotAuthorError(auth: ExamClientAuthDto, { authorToken }: Author) {
     if (auth.role === 'author' && authorToken !== auth.authorToken) {
-      return this.handleError(
+      return !this.handleError(
         WebSocketException.Forbidden('You are not the author of this room', {
           disconnect: true,
         }),
       );
     }
 
-    return true;
+    return false;
   }
 
-  private async handleAuthorNotFoundError(auth: ExamClientAuthDto, { clientId }: Author) {
+  private async hasAuthorNotFoundError(auth: ExamClientAuthDto, { clientId }: Author) {
     if (auth.role === 'student' && !clientId) {
-      return this.handleError(
+      return !this.handleError(
         WebSocketException.Forbidden('Author not found. Author have to join first', {
           disconnect: true,
         }),
       );
     }
 
-    return true;
+    return false;
   }
 
-  private async handleRoomNotFoundError({ examCode }: ExamClientAuthDto) {
+  private async hasRoomNotFoundError({ examCode }: ExamClientAuthDto) {
     const roomExist = await this.examsService.examExists(examCode);
 
-    if (!roomExist) {
-      return this.handleError(
-        WebSocketException.NotFound('Room not found. Please, check the room id', {
-          disconnect: true,
-        }),
-      );
-    }
+    if (roomExist) return false;
 
-    return true;
+    return !this.handleError(
+      WebSocketException.NotFound('Room not found. Please, check the room id', {
+        disconnect: true,
+      }),
+    );
   }
 
   private async handleValidationError(
