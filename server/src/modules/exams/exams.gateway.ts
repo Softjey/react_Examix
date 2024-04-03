@@ -38,7 +38,7 @@ export class ExamsGateway implements OnGatewayConnection {
   private async handleRole(client: Socket, auth: ExamClientAuthDto) {
     switch (auth.role) {
       case 'author':
-        this.examsService.joinAuthor(auth.examCode, client.id);
+        await this.examsService.joinAuthor(auth.examCode, client.id);
         break;
       case 'student':
         const { author } = await this.examsService.getExam(auth.examCode);
@@ -113,6 +113,6 @@ export class ExamsGateway implements OnGatewayConnection {
       );
     }
 
-    this.examsService.answerQuestion(examCode, studentId, answers);
+    await this.examsService.answerQuestion(examCode, studentId, answers);
   }
 }

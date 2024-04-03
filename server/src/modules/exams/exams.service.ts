@@ -56,6 +56,7 @@ export class ExamsService extends EventEmitter {
   async joinAuthor(examCode: string, clientId: Author['clientId']) {
     const exam = await this.getExam(examCode);
     exam.author.clientId = clientId;
+    await this.setExam(examCode, exam);
   }
 
   async joinStudent(examCode: string, studentName: Student['name'], clientId: Student['clientId']) {
@@ -65,12 +66,15 @@ export class ExamsService extends EventEmitter {
 
     exam.students[studentId] = newStudent;
 
+    await this.setExam(examCode, exam);
+
     return [studentId, newStudent] as const;
   }
 
   async startExam(examCode: string) {
     const exam = await this.getExam(examCode);
     exam.status = 'started';
+    await this.setExam(examCode, exam);
 
     this.processQuestion(examCode);
   }
@@ -99,6 +103,8 @@ export class ExamsService extends EventEmitter {
 
     exam.currentQuestionIndex += 1;
 
+    await this.setExam(examCode, exam);
+
     if (exam.currentQuestionIndex >= exam.questions.length) {
       return this.endExam(examCode);
     }
@@ -111,6 +117,8 @@ export class ExamsService extends EventEmitter {
     const questionId = exam.questions[exam.currentQuestionIndex].id;
 
     exam.students[studentId].results[questionId] = { answers };
+
+    await this.setExam(examCode, exam);
   }
 
   async onExamFinish(examCode: string, callback: () => void) {
@@ -125,5 +133,6 @@ export class ExamsService extends EventEmitter {
     this.emit(`finished-${examCode}`);
     clearInterval(exam.intervalId);
     exam.intervalId = null;
+    await this.setExam(examCode, exam);
   }
 }
