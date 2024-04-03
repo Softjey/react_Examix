@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable operator-linebreak */
 import { io } from 'socket.io-client';
 // eslint-disable-next-line object-curly-newline
@@ -34,6 +35,13 @@ interface Props {
   onDisconnect: () => void;
 }
 
+const Ava: React.FC<{ name: string }> = memo(({ name }) => (
+  <Avatar
+    alt="Remy Sharp"
+    src={`https://avatar.iran.liara.run/public?username=${name}${Math.random()}`}
+  />
+));
+
 const StudentPanel: React.FC<Props> = memo(({ name, examCode, onDisconnect }) => {
   const [studentId, setStudentId] = useState<string | null>(null);
   const [question, setQuestion] = useState<Question | null>(null);
@@ -50,7 +58,7 @@ const StudentPanel: React.FC<Props> = memo(({ name, examCode, onDisconnect }) =>
     socket.connect();
     socket.on('open', log(`${name} connected`));
     socket.on('close', () => {
-      log(`${name} disconnected`);
+      log(`${name} disconnected`)();
       onDisconnect();
     });
     socket.on('error', log(`${name} error`));
@@ -81,10 +89,7 @@ const StudentPanel: React.FC<Props> = memo(({ name, examCode, onDisconnect }) =>
     <>
       <ListItem alignItems="flex-start">
         <ListItemAvatar>
-          <Avatar
-            alt="Remy Sharp"
-            src={`https://avatar.iran.liara.run/public?username=${name}${Math.random()}`}
-          />
+          <Ava name={name} />
         </ListItemAvatar>
         <ListItemText
           primary={question?.title || 'No question yet'}
@@ -114,15 +119,13 @@ const StudentPanel: React.FC<Props> = memo(({ name, examCode, onDisconnect }) =>
           }
         />
         <Button
-          onClick={
-            () =>
-              // eslint-disable-next-line implicit-arrow-linebreak
-              socketRef.current.emit('answer', {
-                studentId,
-                questionIndex: question?.index,
-                answers: [question?.answers[Math.floor(Math.random() * question.answers.length)]],
-              })
-
+          onClick={() =>
+            // eslint-disable-next-line implicit-arrow-linebreak
+            socketRef.current.emit('answer', {
+              studentId,
+              questionIndex: question?.index,
+              answers: [question?.answers[Math.floor(Math.random() * question.answers.length)]],
+            })
           }
         >
           Send random answer
