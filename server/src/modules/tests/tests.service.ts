@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { CreateTestDtoAuthorId } from './dtos/create-test.dto';
-import { Test, TestQuestion } from '@prisma/client';
+import { Prisma, Test, TestQuestion } from '@prisma/client';
 import { Question } from '../questions/interfaces/question.interface';
-import { GetOptions } from './interfaces/get-options.interface';
+import { GetTestsDto } from './dtos/get-tests.dto';
 
 @Injectable()
 export class TestsService {
@@ -20,10 +20,10 @@ export class TestsService {
     };
   }
 
-  async create({ questions, name, description, authorId }: CreateTestDtoAuthorId) {
+  async create({ questions, name, description, subject, authorId }: CreateTestDtoAuthorId) {
     return this.prismaService.$transaction(async (prisma) => {
       const test = await prisma.test.create({
-        data: { name, description, authorId },
+        data: { name, description, authorId, subject },
       });
 
       const { count } = await prisma.testQuestion.createMany({
@@ -37,13 +37,22 @@ export class TestsService {
     });
   }
 
-  async getAll({ limit, page, search }: GetOptions = {}) {
-    const skip = limit && page ? (page - 1) * limit : undefined;
-    const searchParams = { contains: search, mode: 'insensitive' } as {
-      contains: string;
-      mode: 'insensitive';
-    };
-    const where = search ? { OR: [{ description: searchParams }, { name: searchParams }] } : {};
+  async getAll({ limit, page, search, subjects }: GetTestsDto = {}) {
+    const skip = limit && page ? (page - 1) * limit : 0;
+    const where: Prisma.TestWhereInput = {};
+
+    if (search) {
+      where.OR = [
+        { description: { contains: search, mode: 'insensitive' } },
+        { name: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (subjects && subjects.length > 0) {
+      where.AND = {
+        OR: [{ subject: { in: subjects } }, { subject: null }],
+      };
+    }
 
     return this.prismaService.test.findMany({
       where,

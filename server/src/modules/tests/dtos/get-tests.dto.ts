@@ -1,5 +1,15 @@
-import { IsInt, IsOptional, IsString, Min } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
+import { $Enums } from '@prisma/client';
 
 export class GetTestsDto {
   @IsInt()
@@ -17,4 +27,11 @@ export class GetTestsDto {
   @IsString()
   @IsOptional()
   search?: string;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => String)
+  @IsEnum($Enums.Subject, { each: true })
+  subjects?: $Enums.Subject[];
 }
