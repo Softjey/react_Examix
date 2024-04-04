@@ -3,6 +3,7 @@ import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { CreateTestDtoAuthorId } from './dtos/create-test.dto';
 import { Test, TestQuestion } from '@prisma/client';
 import { Question } from '../questions/interfaces/question.interface';
+import { GetOptions } from './interfaces/get-options.interface';
 
 @Injectable()
 export class TestsService {
@@ -33,6 +34,21 @@ export class TestsService {
       });
 
       return [test, count] as const;
+    });
+  }
+
+  async getAll({ limit, page, search }: GetOptions = {}) {
+    const skip = limit && page ? (page - 1) * limit : undefined;
+    const searchParams = { contains: search, mode: 'insensitive' } as {
+      contains: string;
+      mode: 'insensitive';
+    };
+    const where = search ? { OR: [{ description: searchParams }, { name: searchParams }] } : {};
+
+    return this.prismaService.test.findMany({
+      where,
+      skip,
+      take: limit,
     });
   }
 
