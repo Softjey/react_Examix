@@ -14,7 +14,7 @@ module.exports = {
   parserOptions: {
     project: '**/tsconfig.json',
   },
-  plugins: ['react-refresh', '@emotion'],
+  plugins: ['react-refresh', '@emotion', '@tanstack/eslint-plugin-query'],
   rules: {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'import/no-absolute-path': 'off',
