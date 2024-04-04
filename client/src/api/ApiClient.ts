@@ -11,7 +11,7 @@ export default class ApiClient {
     const { status, data } = await axios.get<AuthResponse>('/auth');
 
     if (status === 401) {
-      return null;
+      throw new Error('Unauthorized');
     }
 
     return data.user;
