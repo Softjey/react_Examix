@@ -1,0 +1,8 @@
+-- CreateEnum
+CREATE TYPE "Subject" AS ENUM ('MATH', 'ENGLISH', 'SCIENCE', 'HISTORY', 'GEOGRAPHY', 'COMPUTER_SCIENCE', 'PHYSICS', 'CHEMISTRY', 'BIOLOGY', 'ECONOMICS', 'CIVICS', 'GOVERNMENT', 'LITERATURE', 'ART', 'MUSIC', 'PHYSICAL_EDUCATION', 'HEALTH', 'SPANISH', 'FRENCH', 'GERMAN');
+
+-- AlterTable
+ALTER TABLE "Question" ADD COLUMN     "subject" "Subject";
+
+-- AlterTable
+ALTER TABLE "Test" ADD COLUMN     "subject" "Subject";

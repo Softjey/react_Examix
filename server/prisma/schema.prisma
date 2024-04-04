@@ -18,6 +18,29 @@ enum Role {
   ADMIN
 }
 
+enum Subject {
+  MATH
+  ENGLISH
+  SCIENCE
+  HISTORY
+  GEOGRAPHY
+  COMPUTER_SCIENCE
+  PHYSICS
+  CHEMISTRY
+  BIOLOGY
+  ECONOMICS
+  CIVICS
+  GOVERNMENT
+  LITERATURE
+  ART
+  MUSIC
+  PHYSICAL_EDUCATION
+  HEALTH
+  SPANISH
+  FRENCH
+  GERMAN
+}
+
 model User {
   id        Int        @id @default(autoincrement())
   name      String
@@ -37,6 +60,7 @@ model Question {
   answers       Json
   createdAt     DateTime       @default(now())
   authorId      Int?
+  subject       Subject?
   testQuestions TestQuestion[]
 }
 
@@ -44,6 +68,7 @@ model Test {
   id            Int            @id @default(autoincrement())
   name          String
   description   String
+  subject       Subject?
   authorId      Int?
   Author        User?          @relation(fields: [authorId], references: [id])
   createdAt     DateTime       @default(now())
