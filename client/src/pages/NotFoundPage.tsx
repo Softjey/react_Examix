@@ -1,6 +1,6 @@
 import Layout from '../Layout';
-import Routes from '../Routes';
 import Button from '../components/UI/buttons/Button';
+import Routes from '../constants/Router/Routes';
 
 const NotFoundPage: React.FC = () => (
   <Layout>

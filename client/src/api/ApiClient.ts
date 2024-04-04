@@ -8,11 +8,7 @@ const axios = axiosCLient.create({
 
 export default class ApiClient {
   static async authenticate() {
-    const { status, data } = await axios.get<AuthResponse>('/auth');
-
-    if (status === 401) {
-      throw new Error('Unauthorized');
-    }
+    const { data } = await axios.get<AuthResponse>('/auth');
 
     return data.user;
   }
