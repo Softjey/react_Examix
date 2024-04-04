@@ -23,6 +23,8 @@
     "@fontsource/roboto": "^5.0.8",
     "@mui/icons-material": "^5.15.11",
     "@mui/material": "^5.15.11",
+    "@tanstack/react-query": "^5.28.14",
+    "axios": "^1.6.8",
     "mobx": "^6.12.0",
     "mobx-react-lite": "^4.0.5",
     "react": "^18.2.0",
@@ -33,6 +35,7 @@
   },
   "devDependencies": {
     "@emotion/eslint-plugin": "^11.11.0",
+    "@tanstack/eslint-plugin-query": "^5.28.11",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@types/socket.io-client": "^3.0.0",

@@ -1,5 +1,6 @@
 import { InputBaseComponentProps } from '@mui/material';
 import { css } from '@emotion/react';
+import { useRef } from 'react';
 
 function getHiddenInputNumberCounterStyles() {
   return css`
@@ -76,9 +77,14 @@ function getFields(role: Role): Fields {
 }
 
 export function useLoginPage(role: Role) {
+  const input1Ref = useRef<HTMLInputElement>(null);
+  const input2Ref = useRef<HTMLInputElement>(null);
+
   const fields = getFields(role);
   const inputProps = getInputProps(role);
   return {
+    input1Ref,
+    input2Ref,
     fields,
     inputProps,
   };

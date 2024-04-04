@@ -14,11 +14,13 @@ module.exports = {
   parserOptions: {
     project: '**/tsconfig.json',
   },
-  plugins: ['react-refresh', '@emotion'],
+  plugins: ['react-refresh', '@emotion', '@tanstack/eslint-plugin-query'],
   rules: {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'import/no-absolute-path': 'off',
     'react/jsx-wrap-multilines': 'off',
+    'class-methods-use-this': 'off',
+    'object-curly-newline': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
     'react/destructuring-assignment': 'off',

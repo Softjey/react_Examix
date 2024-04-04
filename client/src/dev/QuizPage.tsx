@@ -1,5 +1,3 @@
-/* eslint-disable object-curly-newline */
-
 /* eslint-disable consistent-return */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import {
@@ -15,7 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import React, { memo, useEffect, useRef, useState } from 'react';
-import Layout from '../Layout';
+import StartLayout from '../components/Layout';
 // eslint-disable-next-line import/no-cycle
 import questions from './questions';
 
@@ -66,7 +64,7 @@ const QuizPage: React.FC = () => {
   }, [question]);
 
   return (
-    <Layout>
+    <StartLayout>
       {question !== null ? (
         <>
           <CircularProgressWithLabel value={time} max={question.timeLimit} />
@@ -77,7 +75,7 @@ const QuizPage: React.FC = () => {
           <CircularProgress />
         </div>
       )}
-    </Layout>
+    </StartLayout>
   );
 };
 
