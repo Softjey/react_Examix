@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage/LoginPage';
 import Routes from './constants/Router/Routes';
 import TestPage from './dev/TestPage';
 import QuizPage from './dev/QuizPage';
+import Authenticated from './components/Authenticated';
 
 const queryClient = new QueryClient();
 const router = createRouter([
@@ -29,7 +30,11 @@ const router = createRouter([
   },
   {
     path: 'test',
-    element: <TestPage />,
+    element: (
+      <Authenticated>
+        <TestPage />
+      </Authenticated>
+    ),
   },
   {
     path: 'quiz',

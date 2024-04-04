@@ -19,6 +19,7 @@ module.exports = {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'import/no-absolute-path': 'off',
     'react/jsx-wrap-multilines': 'off',
+    "class-methods-use-this": "off",
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
     'react/destructuring-assignment': 'off',
