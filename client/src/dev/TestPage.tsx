@@ -1,7 +1,7 @@
 import { List } from '@mui/material';
 import { Socket, io } from 'socket.io-client';
 import React, { useEffect, useState } from 'react';
-import Layout from '../Layout';
+import StartLayout from '../Layout';
 import StudentPanel from './StudentPanel';
 import Button from '../components/UI/buttons/Button';
 import log from './log';
@@ -36,7 +36,7 @@ const TestPage: React.FC = () => {
   }, [response]);
 
   return (
-    <Layout style={{ display: 'flex', justifyContent: 'space-around', flexDirection: 'row' }}>
+    <StartLayout style={{ display: 'flex', justifyContent: 'space-around', flexDirection: 'row' }}>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <h2>Test Page</h2>
 
@@ -75,7 +75,7 @@ const TestPage: React.FC = () => {
           />
         ))}
       </List>
-    </Layout>
+    </StartLayout>
   );
 };
 
