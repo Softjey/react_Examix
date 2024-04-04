@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+// eslint-disable-next-line max-len
+import { Body, Controller, Get, NotFoundException, Param, ParseIntPipe, Post, Query } from '@nestjs/common'; // prettier-ignore
 import { TestsService } from './tests.service';
 import { UseSessionGuard } from 'src/modules/auth/decorators/session-guard.decorator';
 import { CreateTestDto } from './dtos/create-test.dto';
@@ -23,5 +24,16 @@ export class TestsController {
   @Get()
   getAll(@Query() query: GetTestsDto) {
     return this.testsService.getAll(query);
+  }
+
+  @Get(':id')
+  async getOne(@Param('id', ParseIntPipe) id: number) {
+    const test = await this.testsService.getOne(id);
+
+    if (!test) {
+      throw new NotFoundException('Test not found. Check the ID and try again');
+    }
+
+    return test;
   }
 }
