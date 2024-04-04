@@ -11,7 +11,7 @@ const Header: React.FC<Props> = ({ disableBackBtn, style }) => (
     <h1>Examix</h1>
     {!disableBackBtn && (
       <BackButton
-        style={{ position: 'absolute', transform: 'translateY(-50%)', top: '50%', left: '-70px' }}
+        style={{ position: 'absolute', transform: 'translateY(-50%)', top: '50%', left: '-95px' }}
       />
     )}
   </header>

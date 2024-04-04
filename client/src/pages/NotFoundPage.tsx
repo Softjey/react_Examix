@@ -1,6 +1,6 @@
-import StartLayout from '../Layout';
+import StartLayout from '../components/Layout';
 import Button from '../components/UI/buttons/Button';
-import Routes from '../constants/Router/Routes';
+import Routes from '../services/Router/Routes';
 
 const NotFoundPage: React.FC = () => (
   <StartLayout>

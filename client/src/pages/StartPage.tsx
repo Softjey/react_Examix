@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material';
-import Routes from '../constants/Router/Routes';
-import StartLayout from '../Layout';
+import StartLayout from '../components/Layout';
 import MainButton from '../components/UI/buttons/MainButton';
+import Routes from '../services/Router/Routes';
 
 const StartPage: React.FC = () => (
   <StartLayout>

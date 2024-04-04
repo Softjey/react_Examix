@@ -1,7 +1,12 @@
+export interface User {
+  email: string;
+  password: string;
+}
+
 export interface UserResponse {
   id: number;
   name: string;
-  email: string;
+  email: User['email'];
   role: 'TEACHER' | 'ADMIN';
   createdAt: string;
 }

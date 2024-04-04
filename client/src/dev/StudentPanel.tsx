@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-curly-newline */
 /* eslint-disable operator-linebreak */
 import { io } from 'socket.io-client';
-// eslint-disable-next-line object-curly-newline
+
 import React, { memo, useEffect, useRef, useState } from 'react';
 
 import {
