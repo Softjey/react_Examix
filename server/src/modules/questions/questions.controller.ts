@@ -4,13 +4,26 @@ import { QuestionsService } from './questions.service';
 import { UseSessionGuard } from '../auth/decorators/session-guard.decorator';
 import { CreateQuestionDto } from './dtos/create-question.dto';
 import { User } from '../auth/decorators/user.decorator';
-import { GetQuestionDto } from './dtos/get-questions-dto';
+import { GetQuestionDto } from './dtos/get-questions.dto';
 import { Question } from './interfaces/question.interface';
 
 @UseSessionGuard()
 @Controller('questions')
 export class QuestionController {
   constructor(private readonly questionService: QuestionsService) {}
+
+  @Post()
+  async create(@Body() createQuestionDto: CreateQuestionDto, @User('id') authorId) {
+    const question = await this.questionService.create({
+      ...createQuestionDto,
+      authorId,
+    });
+
+    return {
+      message: 'Question was created successfully',
+      question,
+    };
+  }
 
   @Get()
   getAll(@Query() query: GetQuestionDto) {
@@ -26,13 +39,5 @@ export class QuestionController {
     }
 
     return question;
-  }
-
-  @Post()
-  create(@Body() createQuestionDto: CreateQuestionDto, @User('id') authorId) {
-    return this.questionService.create({
-      ...createQuestionDto,
-      authorId,
-    });
   }
 }

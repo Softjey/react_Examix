@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Answer, Question } from './interfaces/question.interface';
 import { CreateQuestionDto } from './dtos/create-question.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, User } from '@prisma/client';
-import { GetQuestionDto } from './dtos/get-questions-dto';
+import { Prisma, User, $Enums } from '@prisma/client';
+import { GetQuestionDto } from './dtos/get-questions.dto';
+import { QuestionTypeException } from './exceptions/question-type.exception';
 
 @Injectable()
 export class QuestionsService {
@@ -15,12 +16,16 @@ export class QuestionsService {
     return question;
   }
 
-  getAll({ authorId, search, subjects, limit, page }: GetQuestionDto = {}) {
+  getAll({ authorId, search, subjects, limit, page, types }: GetQuestionDto = {}) {
     const skip = limit && page ? (page - 1) * limit : 0;
     const where: Prisma.QuestionWhereInput = {};
 
     if (subjects && subjects.length > 0) {
       where.OR = [{ subject: { in: subjects } }, { subject: null }];
+    }
+
+    if (types && types.length > 0) {
+      where.type = { in: types };
     }
 
     if (search) {
@@ -35,13 +40,41 @@ export class QuestionsService {
   }
 
   async create(createQuestionDto: CreateQuestionDto & { authorId: User['id'] }) {
+    const { type, answers: rawAnswers } = createQuestionDto;
+    const answers = this.validateAnswers(type, rawAnswers) as Answer[];
+
     const newQuestion = await this.prismaService.question.create({
-      data: {
-        ...createQuestionDto,
-        answers: createQuestionDto.answers as Answer[],
-      },
+      data: { ...createQuestionDto, answers },
     });
 
     return newQuestion as Question;
+  }
+
+  validateAnswers(type: Question['type'], answers: Question['answers']) {
+    const correctAnswersLength = answers.filter((answer) => answer.isCorrect).length;
+
+    switch (type) {
+      case $Enums.Type.SINGLE_CHOICE:
+        if (answers.length < 2 || correctAnswersLength !== 1) {
+          throw QuestionTypeException.singleChoice();
+        }
+        break;
+      case $Enums.Type.MULTIPLE_CHOICE:
+        if (answers.length < 2 || correctAnswersLength < 1) {
+          throw QuestionTypeException.multipleChoice();
+        }
+        break;
+      case $Enums.Type.TRUE_FALSE:
+        if (answers.length !== 2 || correctAnswersLength !== 1) {
+          throw QuestionTypeException.trueFalse();
+        }
+        break;
+      case $Enums.Type.SHORT_ANSWER:
+        throw QuestionTypeException.willBeImplemented(type);
+      default:
+        throw new Error('Invalid question type');
+    }
+
+    return answers;
   }
 }
