@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { useState } from 'react';
-import Layout from '../Layout';
+import Layout from '../components/Layout';
 import { Answer, newQuestions as questions } from '../temp/questions';
 import QuizCard from '../components/QuizCard';
 import Result from '../components/Result';

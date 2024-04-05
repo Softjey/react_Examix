@@ -1,4 +1,3 @@
-// eslint-disable-next-line object-curly-newline
 import { CardActions, CardHeader, LinearProgress } from '@mui/material';
 import Card from '@mui/material/Card';
 import { Question, Answer } from '../temp/questions';
