@@ -131,8 +131,6 @@ export class ExamsService extends EventEmitter {
 
     this.removeAllListeners(`question-${examCode}`);
     exam.status = 'finished';
-    clearInterval(exam.intervalId);
-    exam.intervalId = null;
     this.emit(`finished-${examCode}`, exam);
     await this.setExam(examCode, exam);
   }
