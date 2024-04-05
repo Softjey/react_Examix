@@ -101,7 +101,7 @@ model Result {
   exam           Exam         @relation(fields: [examId], references: [id])
   testQuestion   TestQuestion @relation(fields: [testQuestionId], references: [id])
   studentName    String
-  studentAnswer  Json
+  studentAnswer  Json?
   testQuestionId Int
   examId         Int
 }
