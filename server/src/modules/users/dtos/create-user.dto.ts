@@ -14,7 +14,7 @@ export class CreateUserDto
   @IsString()
   password: string;
 
-  @ApiProperty({ enumName: 'Role', enum: $Enums.Role })
+  @ApiProperty({ enumName: 'Role', enum: $Enums.Role, required: false })
   @IsEnum($Enums.Role)
   role?: $Enums.Role;
 }
