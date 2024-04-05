@@ -1,11 +1,5 @@
-import {
-  ConnectedSocket,
-  MessageBody,
-  OnGatewayConnection,
-  SubscribeMessage,
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, OnGatewayConnection } from '@nestjs/websockets';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UseFilters, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { WsExamsAuthenticator } from './utils/ws-exams-authenticator';
@@ -65,11 +59,17 @@ export class ExamsGateway implements OnGatewayConnection {
       await this.handleRole(client, auth);
 
       const { test, questions } = await this.examsService.getExam(auth.examCode);
-      const testInfo = { test, questionsAmount: questions.length };
+      const testInfo = { ...test, questionsAmount: questions.length };
 
       client.join(auth.examCode);
       client.emit('test-info', testInfo);
     }
+  }
+
+  sendResults(client: Socket, examCode: string) {
+    this.examsService.getResults(examCode).then((results) => {
+      client.emit('results', results);
+    });
   }
 
   @UseGuards(RoomAuthorGuard)
@@ -87,13 +87,16 @@ export class ExamsGateway implements OnGatewayConnection {
     this.examsService.onQuestion(examCode, (question, questionIndex) => {
       const studentsQuestion = this.prepareQuestionForStudents(question, questionIndex);
 
-      client.emit('question', question);
+      if (questionIndex > 0) {
+        this.sendResults(client, examCode);
+      }
+
       client.broadcast.to(examCode).emit('question', studentsQuestion);
     });
 
-    this.examsService.onExamFinish(examCode, (exam) => {
+    this.examsService.onExamFinish(examCode, (results) => {
       client.broadcast.to(examCode).emit('exam-finished');
-      client.emit('exam-finished', exam);
+      client.emit('exam-finished', results);
       this.server.socketsLeave(examCode);
     });
   }

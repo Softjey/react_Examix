@@ -10,17 +10,24 @@ import { Author } from './entities/author.entity';
 import { Exam } from './entities/exam.entity';
 import config from 'src/config';
 import { StudentAnswer } from './dtos/question-answer.dto';
+import { ExamsResultsService } from '../exams-results/exams-results.service';
+import { TempResults } from '../exams-results/interfaces/temp-results.interface';
 
 @Injectable()
 export class ExamsService extends EventEmitter {
   private readonly redisPrefix = 'exam';
+  private readonly questionEventName: (examCode: string) => string;
+  private readonly examFinishedEventName: (examCode: string) => string;
 
   constructor(
     @Inject('REDIS_CLIENT') private readonly redisService: Redis,
     private readonly testsService: TestsService,
     private readonly uniqueIdService: UniqueIdService,
+    private readonly examsResultsService: ExamsResultsService,
   ) {
     super();
+    this.questionEventName = (examCode: string) => `question-${examCode}`;
+    this.examFinishedEventName = (examCode: string) => `finished-${examCode}`;
   }
 
   private async setExam(examCode: string, exam: Exam) {
@@ -37,6 +44,10 @@ export class ExamsService extends EventEmitter {
     const fieldExists = await this.redisService.hexists(this.redisPrefix, examCode);
 
     return fieldExists === 1;
+  }
+
+  private async deleteExamFromCache(examCode: string) {
+    await this.redisService.hdel(this.redisPrefix, examCode);
   }
 
   async create(userId: User['id'], testId: Test['id']) {
@@ -81,26 +92,27 @@ export class ExamsService extends EventEmitter {
   }
 
   private emitQuestion(examCode: string, question: ExamQuestion, questionIndex: number) {
-    this.emit(`question-${examCode}`, question, questionIndex);
+    this.emit(this.questionEventName(examCode), question, questionIndex);
   }
 
   async onQuestion(
     examCode: string,
     callback: (question: ExamQuestion, questionIndex: number) => void,
   ) {
-    this.on(`question-${examCode}`, callback);
+    this.on(this.questionEventName(examCode), callback);
   }
 
   private async processQuestion(examCode: string) {
     const exam = await this.getExam(examCode);
-    const questionTimeLimit = exam.questions[exam.currentQuestionIndex].timeLimit;
-    const timeLimit = (questionTimeLimit + config.NETWORK_DELAY_BUFFER) * 1000;
 
     exam.currentQuestionIndex += 1;
 
     if (exam.currentQuestionIndex >= exam.questions.length) {
-      return this.endExam(examCode);
+      return this.finishExam(examCode);
     }
+
+    const questionTimeLimit = exam.questions[exam.currentQuestionIndex].timeLimit;
+    const timeLimit = (questionTimeLimit + config.NETWORK_DELAY_BUFFER) * 1000;
 
     this.emitQuestion(
       examCode,
@@ -122,16 +134,24 @@ export class ExamsService extends EventEmitter {
     await this.setExam(examCode, exam);
   }
 
-  async onExamFinish(examCode: string, callback: (exam: Exam) => void) {
-    this.once(`finished-${examCode}`, callback);
+  async onExamFinish(examCode: string, callback: (results: TempResults) => void) {
+    this.once(this.examFinishedEventName(examCode), callback);
   }
 
-  async endExam(examCode: string) {
+  async getResults(examCode: string) {
     const exam = await this.getExam(examCode);
 
-    this.removeAllListeners(`question-${examCode}`);
+    return this.examsResultsService.parseResults(exam);
+  }
+
+  async finishExam(examCode: string) {
+    const exam = await this.getExam(examCode);
+    const results = await this.examsResultsService.parseResults(exam);
+
+    this.removeAllListeners(this.questionEventName(examCode));
     exam.status = 'finished';
-    this.emit(`finished-${examCode}`, exam);
-    await this.setExam(examCode, exam);
+    this.emit(this.examFinishedEventName(examCode), results);
+    this.examsResultsService.saveExam(exam);
+    this.deleteExamFromCache(examCode);
   }
 }
