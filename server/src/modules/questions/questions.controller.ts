@@ -6,7 +6,7 @@ import { CreateQuestionDto } from './dtos/create-question.dto';
 import { User } from '../auth/decorators/user.decorator';
 import { GetQuestionDto } from './dtos/get-questions.dto';
 import { Question } from './interfaces/question.interface';
-import { ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger';
 
 @UseSessionGuard()
 @Controller('questions')
@@ -23,6 +23,19 @@ export class QuestionController {
     return {
       message: 'Question was created successfully',
       question,
+    };
+  }
+
+  @ApiBody({ type: [CreateQuestionDto] })
+  @Post('many')
+  async createMany(@Body() createQuestionDto: CreateQuestionDto[], @User('id') authorId) {
+    const questionsCount = await this.questionService.createMany(
+      createQuestionDto.map((question) => ({ ...question, authorId })),
+    );
+
+    return {
+      message: 'Questions were created successfully',
+      questionsCount,
     };
   }
 
