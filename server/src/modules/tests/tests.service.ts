@@ -37,7 +37,7 @@ export class TestsService {
     });
   }
 
-  async getAll({ limit, page, search, subjects }: GetTestsDto = {}) {
+  async getAll({ limit, page, search, subjects, authorId }: GetTestsDto = {}) {
     const skip = limit && page ? (page - 1) * limit : 0;
     const where: Prisma.TestWhereInput = {};
 
@@ -55,7 +55,7 @@ export class TestsService {
     }
 
     return this.prismaService.test.findMany({
-      where,
+      where: { ...where, authorId },
       skip,
       take: limit,
     });

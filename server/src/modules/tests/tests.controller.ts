@@ -5,6 +5,7 @@ import { UseSessionGuard } from 'src/modules/auth/decorators/session-guard.decor
 import { CreateTestDto } from './dtos/create-test.dto';
 import { User } from 'src/modules/auth/decorators/user.decorator';
 import { GetTestsDto } from './dtos/get-tests.dto';
+import { ApiParam } from '@nestjs/swagger';
 
 @Controller('tests')
 @UseSessionGuard()
@@ -27,6 +28,7 @@ export class TestsController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id', type: 'number' })
   async getOne(@Param('id', ParseIntPipe) id: number) {
     const test = await this.testsService.getOne(id);
 

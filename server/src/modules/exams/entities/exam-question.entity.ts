@@ -3,7 +3,7 @@ import { Question } from '../../questions/interfaces/question.interface';
 
 export class ExamQuestion {
   id: TestQuestion['id'];
-  type: 'single' | 'multiple';
+  type: Question['type'];
   title: Question['title'];
   answers: Question['answers'];
   maxScore: TestQuestion['maxScore'];
@@ -13,13 +13,11 @@ export class ExamQuestion {
     id,
     maxScore,
     timeLimit,
-    question: { title, answers },
+    question: { title, answers, type },
   }: TestQuestion & { question: Question }) {
-    const correctLength = answers.filter((answer) => answer.isCorrect).length;
-
     this.id = id;
     this.title = title;
-    this.type = correctLength > 1 ? 'multiple' : 'single';
+    this.type = type;
     this.answers = answers;
     this.maxScore = maxScore;
     this.timeLimit = timeLimit;

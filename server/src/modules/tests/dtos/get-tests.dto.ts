@@ -1,15 +1,9 @@
-import {
-  ArrayMinSize,
-  IsArray,
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  Min,
-  ValidateNested,
-} from 'class-validator';
+// eslint-disable-next-line max-len
+import { ArrayMinSize, IsEnum, IsInt, IsNotEmpty, IsOptional, IsPositive, IsString, Min, } from 'class-validator'; // prettier-ignore
 import { Type } from 'class-transformer';
 import { $Enums } from '@prisma/client';
+import { ApiProperty } from '@nestjs/swagger';
+import { TransformToArray } from 'src/utils/validation/transform-to-array.decorator';
 
 export class GetTestsDto {
   @IsInt()
@@ -25,13 +19,20 @@ export class GetTestsDto {
   page?: number;
 
   @IsString()
+  @IsNotEmpty()
   @IsOptional()
   search?: string;
 
-  @IsArray()
+  @IsOptional()
+  @ApiProperty({ enumName: 'Subject', enum: $Enums.Subject, isArray: true })
   @ArrayMinSize(1)
-  @ValidateNested({ each: true })
-  @Type(() => String)
   @IsEnum($Enums.Subject, { each: true })
+  @TransformToArray()
   subjects?: $Enums.Subject[];
+
+  @IsInt()
+  @IsOptional()
+  @IsPositive()
+  @Type(() => Number)
+  authorId?: number;
 }
