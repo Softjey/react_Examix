@@ -18,6 +18,13 @@ enum Role {
   ADMIN
 }
 
+enum Type {
+  MULTIPLE_CHOICE
+  SINGLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+}
+
 enum Subject {
   MATH
   ENGLISH
@@ -57,6 +64,7 @@ model Question {
   id            Int            @id @default(autoincrement())
   title         String
   author        User?          @relation(fields: [authorId], references: [id])
+  type          Type
   answers       Json
   createdAt     DateTime       @default(now())
   authorId      Int?
