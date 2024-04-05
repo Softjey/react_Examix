@@ -6,6 +6,7 @@ import { CreateQuestionDto } from './dtos/create-question.dto';
 import { User } from '../auth/decorators/user.decorator';
 import { GetQuestionDto } from './dtos/get-questions.dto';
 import { Question } from './interfaces/question.interface';
+import { ApiParam, ApiResponse } from '@nestjs/swagger';
 
 @UseSessionGuard()
 @Controller('questions')
@@ -26,11 +27,13 @@ export class QuestionController {
   }
 
   @Get()
+  @ApiResponse({ status: 200, description: 'Return a list of questions' })
   getAll(@Query() query: GetQuestionDto) {
     return this.questionService.getAll(query);
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id', type: 'number' })
   async getOne(@Param('id', ParseIntPipe) id: Question['id']) {
     const question = await this.questionService.getOne(id);
 
