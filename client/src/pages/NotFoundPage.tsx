@@ -1,4 +1,4 @@
-import StartLayout from '../components/Layout';
+import StartLayout from '../components/StartLayout';
 import Button from '../components/UI/buttons/Button';
 import Routes from '../services/Router/Routes';
 

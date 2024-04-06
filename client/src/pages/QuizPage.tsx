@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { useState } from 'react';
-import Layout from '../components/Layout';
+import StartLayout from '../components/StartLayout';
 import { Answer, newQuestions as questions } from '../temp/questions';
 import QuizCard from '../components/QuizCard';
 import Result from '../components/Result';
@@ -19,7 +19,7 @@ const QuizPage: React.FC = () => {
   const [isStarted, setIsStarted] = useState(false);
 
   return (
-    <Layout>
+    <StartLayout>
       {!isStarted ? (
         <MainButton variant="contained" onClick={() => setIsStarted(true)}>
           Start
@@ -36,7 +36,7 @@ const QuizPage: React.FC = () => {
         // this is the test fragment, it should be replaced with results page
         <Result answers={answers} />
       )}
-    </Layout>
+    </StartLayout>
   );
 };
 

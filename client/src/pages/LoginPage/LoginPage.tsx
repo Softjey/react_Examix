@@ -1,5 +1,5 @@
 import { Stack, TextField } from '@mui/material';
-import StartLayout from '../../components/Layout';
+import StartLayout from '../../components/StartLayout';
 import MainButton from '../../components/UI/buttons/MainButton';
 import { Role, useLoginPage } from './useLoginPage';
 import { columnCenter } from '../../styles/flex';

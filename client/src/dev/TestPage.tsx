@@ -1,7 +1,7 @@
 import { List } from '@mui/material';
 import { Socket, io } from 'socket.io-client';
 import React, { useEffect, useState } from 'react';
-import StartLayout from '../components/Layout';
+import StartLayout from '../components/StartLayout';
 import StudentPanel from './StudentPanel';
 import Button from '../components/UI/buttons/Button';
 import log from './log';
