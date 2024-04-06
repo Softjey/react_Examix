@@ -50,6 +50,20 @@ export class QuestionsService {
     return newQuestion as Question;
   }
 
+  async createMany(createQuestionDtos: (CreateQuestionDto & { authorId: User['id'] })[]) {
+    const questionsData = createQuestionDtos.map(({ type, answers: rawAnswers, ...question }) => {
+      const answers = this.validateAnswers(type, rawAnswers) as Answer[];
+
+      return { ...question, type, answers };
+    });
+
+    const questions = await this.prismaService.question.createMany({
+      data: questionsData,
+    });
+
+    return questions.count;
+  }
+
   validateAnswers(type: Question['type'], answers: Question['answers']) {
     const correctAnswersLength = answers.filter((answer) => answer.isCorrect).length;
 
