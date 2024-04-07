@@ -7,6 +7,6 @@ export default function useAuth() {
     queryFn: ApiClient.authenticate,
     staleTime: 1000 * 60 * 60,
     gcTime: 1000 * 60 * 120,
-    retry: 2,
+    retry: false,
   });
 }
