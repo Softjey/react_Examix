@@ -1,34 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, IntersectionType } from '@nestjs/swagger';
 import { $Enums } from '@prisma/client';
-import { Type } from 'class-transformer';
-// eslint-disable-next-line max-len
-import { ArrayMinSize, IsEnum, IsInt, IsNotEmpty, IsOptional, IsPositive, IsString, Min } from 'class-validator'; // prettier-ignore
+import { ArrayMinSize, IsEnum, IsOptional } from 'class-validator';
+import { AuthorIdDto } from 'src/utils/validation/dtos/author-Id.dto';
+import { PaginationDto } from 'src/utils/validation/dtos/pagination.dto';
+import { SearchDto } from 'src/utils/validation/dtos/search.dto';
 import { TransformToArray } from 'src/utils/validation/transform-to-array.decorator';
 
-export class GetQuestionDto {
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Type(() => Number)
-  page?: number;
-
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Type(() => Number)
-  limit?: number;
-
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  @Type(() => Number)
-  authorId?: number;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  search?: string;
-
+export class GetQuestionDto extends IntersectionType(AuthorIdDto(), PaginationDto(), SearchDto()) {
   @ApiProperty({ enumName: 'Type', enum: $Enums.Type, isArray: true })
   @IsOptional()
   @IsEnum($Enums.Type, { each: true })
