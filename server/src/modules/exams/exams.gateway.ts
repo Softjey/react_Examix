@@ -8,7 +8,7 @@ import { ClientAuth } from '../../utils/websockets/decorators/client-auth.decora
 import { WsExceptionsFilter } from 'src/utils/websockets/exceptions/ws-exceptions.filter';
 import { WebSocketException } from 'src/utils/websockets/exceptions/websocket.exception';
 import { RoomStudentGuard } from './guards/room-student.guard';
-import { ExamsService } from './exams.service';
+import { ExamsService } from './services/exams.service';
 import { ExamQuestion } from './entities/exam-question.entity';
 import { ExamClientAuthDto } from './dtos/client-auth.dto';
 import { QuestionAnswerDto, StudentAnswer } from './dtos/question-answer.dto';

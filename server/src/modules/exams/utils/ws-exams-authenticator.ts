@@ -8,7 +8,7 @@ import {
 } from '../dtos/client-auth.dto';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { ExamsService } from '../exams.service';
+import { ExamsService } from '../services/exams.service';
 import { Author } from '../entities/author.entity';
 
 export class WsExamsAuthenticator {

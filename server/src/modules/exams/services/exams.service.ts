@@ -1,17 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Test, User } from '@prisma/client';
-import { TestsService } from '../tests/tests.service';
-import { ExamQuestion } from './entities/exam-question.entity';
-import { Student } from './entities/student.entity';
-import { UniqueIdService } from '../unique-id/unique-id.service';
+import { TestsService } from '../../tests/tests.service';
+import { ExamQuestion } from '../entities/exam-question.entity';
+import { Student } from '../entities/student.entity';
+import { UniqueIdService } from '../../unique-id/unique-id.service';
 import { Redis } from 'ioredis';
 import { EventEmitter } from 'stream';
-import { Author } from './entities/author.entity';
-import { Exam } from './entities/exam.entity';
+import { Author } from '../entities/author.entity';
+import { Exam } from '../entities/exam.entity';
 import config from 'src/config';
-import { StudentAnswer } from './dtos/question-answer.dto';
-import { ExamsResultsService } from '../exams-results/exams-results.service';
-import { TempResults } from '../exams-results/interfaces/temp-results.interface';
+import { StudentAnswer } from '../dtos/question-answer.dto';
+import { ExamsHistoryService } from './exams-history.service';
+import { TempResults } from '../interfaces/temp-results.interface';
 
 @Injectable()
 export class ExamsService extends EventEmitter {
@@ -23,7 +23,7 @@ export class ExamsService extends EventEmitter {
     @Inject('REDIS_CLIENT') private readonly redisService: Redis,
     private readonly testsService: TestsService,
     private readonly uniqueIdService: UniqueIdService,
-    private readonly examsResultsService: ExamsResultsService,
+    private readonly examsResultsService: ExamsHistoryService,
   ) {
     super();
     this.questionEventName = (examCode: string) => `question-${examCode}`;
