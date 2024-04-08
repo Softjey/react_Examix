@@ -58,7 +58,6 @@ const StudentPanel: React.FC<Props> = memo(({ name, examCode, onDisconnect }) =>
     socket.connect();
     socket.on('open', log(`${name} connected`));
     socket.on('close', () => {
-      log(`${name} disconnected`)();
       onDisconnect();
     });
     socket.on('error', log(`${name} error`));
@@ -66,6 +65,7 @@ const StudentPanel: React.FC<Props> = memo(({ name, examCode, onDisconnect }) =>
     socket.on('test-info', log(`${name} test-info:`));
     socket.on('student-joined', (body) => setStudentId(body.id));
     socket.on('exam-started', log(`${name} exam-started`));
+    socket.on('exam-finished', log(`${name} exam-finished`));
     socket.on('question', (body) => setQuestion(body));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, examCode]);
@@ -92,7 +92,8 @@ const StudentPanel: React.FC<Props> = memo(({ name, examCode, onDisconnect }) =>
           <Ava name={name} />
         </ListItemAvatar>
         <ListItemText
-          primary={question?.title || 'No question yet'}
+          primary={name}
+          title={studentId ? ` (${studentId})` : ''}
           secondary={
             <>
               <Typography
@@ -101,8 +102,7 @@ const StudentPanel: React.FC<Props> = memo(({ name, examCode, onDisconnect }) =>
                 variant="body2"
                 color="text.primary"
               >
-                {name}
-                {studentId ? ` (${studentId})` : ''}
+                {question?.title || 'No question yet'}
               </Typography>
               {question &&
                 question.answers.map((answer) => (
@@ -112,7 +112,7 @@ const StudentPanel: React.FC<Props> = memo(({ name, examCode, onDisconnect }) =>
                     variant="body2"
                     color="text.primary"
                   >
-                    {answer.title}
+                    {` ${answer.title} `}
                   </Typography>
                 ))}
             </>

@@ -29,6 +29,7 @@ const TestPage: React.FC = () => {
       authorSocket.on('student-joined', log('author student-joined'));
       authorSocket.on('exam-started', log('author exam-started'));
       authorSocket.on('question', log('author question:'));
+      authorSocket.on('results', log('author results:'));
       authorSocket.on('exam-finished', log('author exam-finished'));
 
       setSocket(authorSocket);
@@ -40,7 +41,7 @@ const TestPage: React.FC = () => {
       <div css={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <h2>Test Page</h2>
 
-        <Button onClick={async () => setResponse(await createExam())} size="large">
+        <Button onClick={async () => setResponse(await createExam(2))} size="large">
           Create Exam
         </Button>
 
