@@ -3,15 +3,15 @@ import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/web
 import { Server, Socket } from 'socket.io';
 import { UseFilters, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { WsExamsAuthenticator } from './utils/ws-exams-authenticator';
-import { RoomAuthorGuard } from './guards/room-author.guard';
 import { ClientAuth } from '../../utils/websockets/decorators/client-auth.decorator';
 import { WsExceptionsFilter } from 'src/utils/websockets/exceptions/ws-exceptions.filter';
 import { WebSocketException } from 'src/utils/websockets/exceptions/websocket.exception';
-import { RoomStudentGuard } from './guards/room-student.guard';
-import { ExamsService } from './services/exams.service';
+import { ExamManagementService } from './services/exams-management.service';
 import { ExamQuestion } from './entities/exam-question.entity';
 import { ExamClientAuthDto } from './dtos/client-auth.dto';
 import { QuestionAnswerDto, StudentAnswer } from './dtos/question-answer.dto';
+import { RoomAuthorGuard } from './guards/room-author.guard';
+import { RoomStudentGuard } from './guards/room-student.guard';
 
 @UseFilters(WsExceptionsFilter)
 @UsePipes(new ValidationPipe())
@@ -22,7 +22,7 @@ import { QuestionAnswerDto, StudentAnswer } from './dtos/question-answer.dto';
 export class ExamsGateway implements OnGatewayConnection {
   @WebSocketServer() server: Server;
 
-  constructor(private readonly examsService: ExamsService) {}
+  constructor(private readonly examsService: ExamManagementService) {}
 
   private prepareQuestionForStudents(question: ExamQuestion, index: number) {
     const answers: StudentAnswer[] = question.answers.map(({ title }) => ({ title }));
@@ -37,13 +37,13 @@ export class ExamsGateway implements OnGatewayConnection {
         break;
       case 'student':
         const { author } = await this.examsService.getExam(auth.examCode);
-        const [studentId, student] = await this.examsService.joinStudent(
+        const [studentId, { clientId, name }] = await this.examsService.joinStudent(
           auth.examCode,
           auth.studentName,
           client.id,
         );
 
-        this.server.to(author.clientId).emit('student-joined', { name: student.name });
+        this.server.to(author.clientId!).emit('student-joined', { name, clientId });
         client.emit('student-joined', { id: studentId });
         break;
       default:
@@ -75,10 +75,14 @@ export class ExamsGateway implements OnGatewayConnection {
   @UseGuards(RoomAuthorGuard)
   @SubscribeMessage('start-exam')
   async startExam(@ConnectedSocket() client: Socket, @ClientAuth('examCode') examCode: string) {
-    const { status } = await this.examsService.getExam(examCode);
+    const { status, students } = await this.examsService.getExam(examCode);
 
     if (status !== 'created') {
       throw WebSocketException.BadRequest('Exam is already started or finished');
+    }
+
+    if (Object.keys(students).length === 0) {
+      throw WebSocketException.BadRequest('There are no students in the exam');
     }
 
     await this.examsService.startExam(examCode);
@@ -94,10 +98,14 @@ export class ExamsGateway implements OnGatewayConnection {
       client.broadcast.to(examCode).emit('question', studentsQuestion);
     });
 
-    this.examsService.onExamFinish(examCode, (results) => {
+    this.examsService.onExamFinish(examCode, async (detailedExamPromise) => {
       client.broadcast.to(examCode).emit('exam-finished');
-      client.emit('exam-finished', results);
-      this.server.socketsLeave(examCode);
+      client.broadcast.in(examCode).disconnectSockets(true);
+      detailedExamPromise.then((detailedExam) => {
+        client.emit('exam-finished', detailedExam);
+        client.leave(examCode);
+        client.disconnect(true);
+      });
     });
   }
 
@@ -119,6 +127,10 @@ export class ExamsGateway implements OnGatewayConnection {
       );
     }
 
-    await this.examsService.answerQuestion(examCode, studentId, answers);
+    const studentExist = await this.examsService.answerQuestion(examCode, studentId, answers);
+
+    if (!studentExist) {
+      throw WebSocketException.BadRequest('Student id is invalid. You are not in the exam room');
+    }
   }
 }
