@@ -9,6 +9,7 @@ import { ExamManagementService } from '../../services/exams-management.service';
 import { Author } from '../../entities/author.entity';
 import { Student } from '../../entities/student.entity';
 import { AuthorizeStudentReturnType } from './ws-exams-authenticator.types';
+import { Exam } from '../../entities/exam.entity';
 
 export class WsExamsAuthenticator {
   constructor(
@@ -27,7 +28,7 @@ export class WsExamsAuthenticator {
   async authorizeStudent(auth: ClientStudentAuthDto): AuthorizeStudentReturnType {
     const { client } = this;
     const { studentId, examCode } = auth;
-    const { students } = await this.examsService.getExam(auth.examCode);
+    const { students, status } = await this.examsService.getExam(auth.examCode);
 
     if (!studentId) {
       const [studentId] = await this.examsService.joinNewStudent(
@@ -35,6 +36,10 @@ export class WsExamsAuthenticator {
         auth.studentName,
         this.client.id,
       );
+
+      if (this.hasStudentExamStartedError(status)) {
+        return ['error', null];
+      }
 
       return ['new', studentId];
     }
@@ -60,6 +65,18 @@ export class WsExamsAuthenticator {
 
   private handleError(error: WSException) {
     WsExceptionsFilter.handleError(this.client, error);
+
+    return false;
+  }
+
+  private async hasStudentExamStartedError(status: Exam['status']) {
+    if (status !== 'created') {
+      return !this.handleError(
+        WSException.BadRequest('Exam is already started or finished', {
+          disconnect: true,
+        }),
+      );
+    }
 
     return false;
   }
