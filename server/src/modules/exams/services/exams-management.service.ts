@@ -30,7 +30,7 @@ export class ExamManagementService extends EventEmitter {
   }
 
   examExists(examCode: string) {
-    this.examsCacheService.examExists(examCode);
+    return this.examsCacheService.examExists(examCode);
   }
 
   async joinAuthor(examCode: string, clientId: Author['clientId']) {
@@ -39,16 +39,37 @@ export class ExamManagementService extends EventEmitter {
     await this.examsCacheService.setExam(examCode, exam);
   }
 
-  async joinStudent(examCode: string, studentName: Student['name'], clientId: Student['clientId']) {
+  async joinNewStudent(
+    examCode: string,
+    studentName: Student['name'],
+    clientId: Student['clientId'],
+  ) {
     const exam = await this.examsCacheService.getExam(examCode);
+    const studentId = this.uniqueIdService.generateUUID();
     const studentToken = this.uniqueIdService.generateUUID();
-    const newStudent = new Student(clientId, studentName);
+    const newStudent = new Student(clientId, studentName, studentToken);
 
-    exam.students[studentToken] = newStudent;
+    exam.students[studentId] = newStudent;
 
     await this.examsCacheService.setExam(examCode, exam);
 
-    return [studentToken, newStudent] as const;
+    return [studentId, newStudent] as const;
+  }
+
+  async updateStudentClientId(
+    examCode: string,
+    studentId: Student['clientId'],
+    clientId: Student['clientId'],
+  ) {
+    const exam = await this.examsCacheService.getExam(examCode);
+    const changedId = exam.students[studentId].clientId;
+
+    exam.students[studentId].clientId = clientId;
+    await this.examsCacheService.setExam(examCode, exam);
+
+    const newStudent = exam.students[studentId];
+
+    return [changedId, newStudent] as const;
   }
 
   async startExam(examCode: string) {
@@ -93,19 +114,15 @@ export class ExamManagementService extends EventEmitter {
     setTimeout(() => this.processQuestion(examCode), timeLimit);
   }
 
-  async answerQuestion(
-    examCode: string,
-    studentToken: Student['clientId'],
-    answers: StudentAnswer[],
-  ) {
+  async answerQuestion(examCode: string, studentId: Student['clientId'], answers: StudentAnswer[]) {
     const exam = await this.examsCacheService.getExam(examCode);
     const questionId = exam.questions[exam.currentQuestionIndex].id;
 
-    if (!exam.students[studentToken]) {
+    if (!exam.students[studentId]) {
       return false;
     }
 
-    exam.students[studentToken].results[questionId] = { answers };
+    exam.students[studentId].results[questionId] = { answers };
     await this.examsCacheService.setExam(examCode, exam);
 
     return true;

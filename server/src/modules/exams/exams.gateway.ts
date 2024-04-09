@@ -2,7 +2,7 @@ import { ConnectedSocket, MessageBody, OnGatewayConnection } from '@nestjs/webso
 import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UseFilters, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
-import { WsExamsAuthenticator } from './utils/ws-exams-authenticator';
+import { WsExamsAuthenticator } from './utils/ws-exams-authenticator/ws-exams-authenticator';
 import { ClientAuth } from '../../utils/websockets/decorators/client-auth.decorator';
 import { WsExceptionsFilter } from 'src/utils/websockets/exceptions/ws-exceptions.filter';
 import { WebSocketException } from 'src/utils/websockets/exceptions/websocket.exception';
@@ -30,21 +30,29 @@ export class ExamsGateway implements OnGatewayConnection {
     return { ...question, index, answers };
   }
 
-  private async handleRole(client: Socket, auth: ExamClientAuthDto) {
+  private async handleRole(authenticator: WsExamsAuthenticator, client: Socket) {
+    const auth = client.handshake.auth as ExamClientAuthDto;
+
     switch (auth.role) {
       case 'author':
         await this.examsService.joinAuthor(auth.examCode, client.id);
         break;
       case 'student':
-        const { author } = await this.examsService.getExam(auth.examCode);
-        const [studentToken, { clientId, name }] = await this.examsService.joinStudent(
-          auth.examCode,
-          auth.studentName,
-          client.id,
-        );
+        const [status, studentId] = await authenticator.authorizeStudent(auth);
+        const { author, students } = await this.examsService.getExam(auth.examCode);
 
-        this.server.to(author.clientId!).emit('student-joined', { name, clientId });
-        client.emit('student-joined', { studentToken });
+        switch (status) {
+          case 'error':
+            break;
+          case 'new':
+            const { studentToken, name } = students[studentId];
+            this.server.to(author.clientId!).emit('student-joined', { name, studentId });
+            client.emit('student-joined', { studentId, studentToken });
+            break;
+          case 'reconnected':
+            client.emit('student-reconnected');
+            break;
+        }
         break;
       default:
         throw WebSocketException.ServerError('Invalid auth role');
@@ -52,11 +60,11 @@ export class ExamsGateway implements OnGatewayConnection {
   }
 
   async handleConnection(@ConnectedSocket() client: Socket) {
-    const authenticator = new WsExamsAuthenticator(this.examsService, client);
-    const { isAuthorized, auth } = await authenticator.authenticate();
+    const authenticator = new WsExamsAuthenticator(this.examsService, this.server, client);
+    const { isAuthenticated, auth } = await authenticator.authenticate();
 
-    if (isAuthorized) {
-      await this.handleRole(client, auth);
+    if (isAuthenticated) {
+      await this.handleRole(authenticator, client);
 
       const { test, questions } = await this.examsService.getExam(auth.examCode);
       const testInfo = { ...test, questionsAmount: questions.length };
@@ -112,13 +120,17 @@ export class ExamsGateway implements OnGatewayConnection {
   @UseGuards(RoomStudentGuard)
   @SubscribeMessage('answer')
   async answerQuestion(
-    @MessageBody() { studentToken, questionIndex, answers }: QuestionAnswerDto,
+    @MessageBody() { studentToken, studentId, questionIndex, answers }: QuestionAnswerDto,
     @ClientAuth('examCode') examCode: string,
   ) {
-    const { status, currentQuestionIndex } = await this.examsService.getExam(examCode);
+    const { status, currentQuestionIndex, students } = await this.examsService.getExam(examCode);
 
     if (status !== 'started') {
       throw WebSocketException.BadRequest('Exam is not started or already finished');
+    }
+
+    if (students[studentId].studentToken !== studentToken) {
+      throw WebSocketException.Forbidden('Student token is invalid');
     }
 
     if (questionIndex !== currentQuestionIndex) {
@@ -127,7 +139,7 @@ export class ExamsGateway implements OnGatewayConnection {
       );
     }
 
-    const studentExist = await this.examsService.answerQuestion(examCode, studentToken, answers);
+    const studentExist = await this.examsService.answerQuestion(examCode, studentId, answers);
 
     if (!studentExist) {
       throw WebSocketException.BadRequest('Student id is invalid. You are not in the exam room');
