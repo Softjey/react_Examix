@@ -9,7 +9,7 @@ export default [
     type: 'single',
     title: 'Which of these is a scripting language primarily used for client-side web development?',
     maxScore: 10,
-    timeLimit: 30,
+    timeLimit: 10,
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ export default [
     type: 'single',
     title: 'How is a function declared in JavaScript?',
     maxScore: 10,
-    timeLimit: 30,
+    timeLimit: 10,
   },
   {
     id: 3,
@@ -31,7 +31,7 @@ export default [
     type: 'single',
     title: "In JavaScript, the statement 'x == y' checks both value and type of x and y.",
     maxScore: 10,
-    timeLimit: 30,
+    timeLimit: 10,
   },
   {
     id: 4,
@@ -40,7 +40,7 @@ export default [
     type: 'multiple',
     title: 'Which of the following are falsy values in JavaScript?',
     maxScore: 20,
-    timeLimit: 45,
+    timeLimit: 10,
   },
   {
     id: 5,
@@ -49,7 +49,7 @@ export default [
     type: 'multiple',
     title: 'In JavaScript, which of the following are considered first-class objects?',
     maxScore: 20,
-    timeLimit: 45,
+    timeLimit: 10,
   },
   {
     id: 6,
@@ -58,7 +58,7 @@ export default [
     type: 'multiple',
     title: 'Which of the following keywords can be used to define variables in JavaScript?',
     maxScore: 15,
-    timeLimit: 40,
+    timeLimit: 10,
   },
   {
     id: 7,
@@ -71,7 +71,7 @@ export default [
     type: 'single',
     title: 'What does DOM stand for in the context of web development?',
     maxScore: 10,
-    timeLimit: 30,
+    timeLimit: 10,
   },
   {
     id: 8,
@@ -84,7 +84,7 @@ export default [
     type: 'single',
     title: 'What does AJAX stand for?',
     maxScore: 10,
-    timeLimit: 30,
+    timeLimit: 10,
   },
   {
     id: 9,
@@ -98,7 +98,7 @@ export default [
     type: 'multiple',
     title: 'Which of the following are methods for handling asynchronous operations in JavaScript?',
     maxScore: 20,
-    timeLimit: 45,
+    timeLimit: 10,
   },
   {
     id: 10,
@@ -111,6 +111,6 @@ export default [
     type: 'multiple',
     title: 'Which programming paradigms are supported by JavaScript?',
     maxScore: 20,
-    timeLimit: 45,
+    timeLimit: 10,
   },
 ] as Question[];

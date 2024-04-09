@@ -12,6 +12,7 @@ const Timer: React.FC<Props> = ({ seconds, onEnd }) => {
   const duration = seconds * 1000;
 
   const fixProgressAnimationStyles = {
+    width: '100%',
     '&[aria-valuenow="100"]': {
       '& > .progressBarInner': {
         transition: 'none',

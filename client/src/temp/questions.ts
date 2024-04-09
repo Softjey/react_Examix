@@ -1,290 +1,127 @@
 export interface Question {
   id: number;
+  index: number;
+  answers: StudentAnswer[];
+  type: 'single' | 'multiple';
   title: string;
-  variants: string[];
+  maxScore: number;
+  timeLimit: number;
 }
 
-export interface Answer {
-  questionId?: number;
-  answer?: string;
+export interface StudentAnswer {
+  title: string;
 }
 
 export const questions: Question[] = [
   {
     id: 1,
-    title: 'React - это ... ?',
-    variants: ['библиотека', 'фреймворк', 'приложение'],
+    index: 1,
+    answers: [{ title: 'JavaScript' }, { title: 'Java' }, { title: 'Python' }, { title: 'C#' }],
+    type: 'single',
+    title: 'Which of these is a scripting language primarily used for client-side web development?',
+    maxScore: 10,
+    timeLimit: 30,
   },
   {
     id: 2,
-    title: 'Компонент - это ... ',
-    variants: ['приложение', 'часть приложения или страницы', 'то, что я не знаю что такое'],
+    index: 2,
+    answers: [
+      { title: 'function myFunction()' },
+      { title: 'function:myFunction()' },
+      { title: 'function = myFunction()' },
+    ],
+    type: 'single',
+    title: 'How is a function declared in JavaScript?',
+    maxScore: 10,
+    timeLimit: 30,
   },
   {
     id: 3,
-    title: 'Что такое JSX?',
-    variants: [
-      'Это простой HTML',
-      'Это функция',
-      'Это тот же HTML, но с возможностью выполнять JS-код',
-    ],
-  },
-];
-
-export const newQuestions: Question[] = [
-  {
-    id: 1,
-    title: 'Что такое алгоритм?',
-    variants: [
-      'A. Последовательность действий для решения задачи',
-      'B. Математическая функция',
-      'C. Язык программирования',
-    ],
-  },
-  {
-    id: 2,
-    title: 'Какой из перечисленных языков программирования является декларативным?',
-    variants: ['A. Python', 'B. C++', 'C. Prolog'],
-  },
-  {
-    id: 3,
-    title: 'Что такое ООП в программировании?',
-    variants: [
-      'A. Объединение данных и методов, работающих с ними, в единый объект',
-      'B. Способ создания интерфейсов для веб-приложений',
-      'C. Методология управления проектами',
-    ],
+    index: 3,
+    answers: [{ title: 'True' }, { title: 'False' }],
+    type: 'single',
+    title: "In JavaScript, the statement 'x == y' checks both value and type of x and y.",
+    maxScore: 10,
+    timeLimit: 30,
   },
   {
     id: 4,
-    title: 'Что такое HTML?',
-    variants: [
-      'A. Язык разметки гипертекста',
-      'B. Язык программирования',
-      'C. Метод аутентификации в компьютерных сетях',
-    ],
+    index: 4,
+    answers: [{ title: 'null' }, { title: 'undefined' }, { title: '0' }, { title: "''" }],
+    type: 'multiple',
+    title: 'Which of the following are falsy values in JavaScript?',
+    maxScore: 20,
+    timeLimit: 45,
   },
   {
     id: 5,
-    title: 'Что такое алгоритм сортировки?',
-    variants: [
-      'A. Метод организации данных в базе данных',
-      'B. Процесс упорядочивания элементов массива по определенному критерию',
-      'C. Технология передачи данных через сеть',
-    ],
+    index: 5,
+    answers: [{ title: 'Array' }, { title: 'Object' }, { title: 'Function' }, { title: 'String' }],
+    type: 'multiple',
+    title: 'In JavaScript, which of the following are considered first-class objects?',
+    maxScore: 20,
+    timeLimit: 45,
   },
   {
     id: 6,
-    title: 'Что такое SQL?',
-    variants: [
-      'A. Язык программирования для разработки игр',
-      'B. Язык запросов к базам данных',
-      'C. Язык описания стилей веб-страниц',
-    ],
+    index: 6,
+    answers: [{ title: 'let' }, { title: 'const' }, { title: 'var' }],
+    type: 'multiple',
+    title: 'Which of the following keywords can be used to define variables in JavaScript?',
+    maxScore: 15,
+    timeLimit: 40,
   },
   {
     id: 7,
-    title: 'Что такое алгоритм поиска?',
-    variants: [
-      'A. Процесс нахождения информации в базе данных',
-      'B. Процесс упорядочивания данных в массиве',
-      'C. Процесс нахождения элемента в коллекции данных',
+    index: 7,
+    answers: [
+      { title: 'Document Object Model' },
+      { title: 'Data Object Model' },
+      { title: 'Display Object Management' },
     ],
+    type: 'single',
+    title: 'What does DOM stand for in the context of web development?',
+    maxScore: 10,
+    timeLimit: 30,
   },
   {
     id: 8,
-    title: 'Что такое компилятор?',
-    variants: [
-      'A. Программа для выполнения команд в терминале',
-      'B. Программа для преобразования исходного кода в машинный код',
-      'C. Среда разработки для веб-приложений',
+    index: 8,
+    answers: [
+      { title: 'Synchronous JavaScript and XML' },
+      { title: 'Simple JSON and XML' },
+      { title: 'Synchronized JavaScript and XML' },
     ],
+    type: 'single',
+    title: 'What does AJAX stand for?',
+    maxScore: 10,
+    timeLimit: 30,
   },
   {
     id: 9,
-    title: 'Какие из перечисленных видов хранения данных являются нереляционными?',
-    variants: ['A. SQL', 'B. NoSQL', 'C. XML'],
+    index: 9,
+    answers: [
+      { title: 'Callback' },
+      { title: 'Promise' },
+      { title: 'Async/Await' },
+      { title: 'Event Loop' },
+    ],
+    type: 'multiple',
+    title: 'Which of the following are methods for handling asynchronous operations in JavaScript?',
+    maxScore: 20,
+    timeLimit: 45,
   },
   {
     id: 10,
-    title: 'Что такое абстракция в программировании?',
-    variants: [
-      'A. Процесс представления сложных систем через их основные характеристики',
-      'B. Программа для анализа кода',
-      'C. Методология разработки ПО',
+    index: 10,
+    answers: [
+      { title: 'Object-oriented programming' },
+      { title: 'Functional programming' },
+      { title: 'Procedural programming' },
     ],
-  },
-  {
-    id: 11,
-    title: 'Что такое многозадачность в операционных системах?',
-    variants: [
-      'A. Возможность выполнения нескольких задач одновременно',
-      'B. Возможность подключения нескольких мониторов к одному компьютеру',
-      'C. Метод обеспечения безопасности данных',
-    ],
-  },
-  {
-    id: 12,
-    title: 'Что такое HTTP?',
-    variants: [
-      'A. Протокол передачи данных в сети интернет',
-      'B. Язык программирования для веб-разработки',
-      'C. Метод кодирования данных',
-    ],
-  },
-  {
-    id: 13,
-    title: 'Что такое IP-адрес?',
-    variants: [
-      'A. Уникальный идентификатор устройства в сети интернет',
-      'B. Компьютерный вирус',
-      'C. Метод обработки данных',
-    ],
-  },
-  {
-    id: 14,
-    title: 'Что такое архитектура ПО?',
-    variants: [
-      'A. Структура программного обеспечения, определяющая взаимодействие его компонентов',
-      'B. Метод поиска ошибок в коде',
-      'C. Способ хранения данных',
-    ],
-  },
-  {
-    id: 15,
-    title: 'Что такое бинарное дерево?',
-    variants: [
-      'A. Способ хранения файлов на компьютере',
-      'B. Структура данных, каждый узел которой имеет не более двух потомков',
-      'C. Метод шифрования данных',
-    ],
-  },
-  {
-    id: 16,
-    title: 'Что такое метаданные?',
-    variants: [
-      'A. Данные, описывающие другие данные',
-      'B. Метод хранения больших объемов информации',
-      'C. Технология сжатия данных',
-    ],
-  },
-  {
-    id: 17,
-    title: 'Что такое рекурсия?',
-    variants: [
-      'A. Способ организации цикла в программировании',
-      'B. Способ организации данных в базе данных',
-      'C. Техника программирования, при которой функция вызывает сама себя',
-    ],
-  },
-  {
-    id: 18,
-    title: 'Что такое виртуальная машина?',
-    variants: [
-      'A. Программа, эмулирующая работу реального компьютера',
-      'B. Устройство для виртуальной реальности',
-      'C. Метод защиты данных',
-    ],
-  },
-  {
-    id: 19,
-    title: 'Что такое аутентификация?',
-    variants: [
-      'A. Процесс проверки подлинности пользователя',
-      'B. Программа для создания резервных копий данных',
-      'C. Метод шифрования данных',
-    ],
-  },
-  {
-    id: 20,
-    title: 'Что такое криптография?',
-    variants: [
-      'A. Наука о методах обеспечения конфиденциальности данных',
-      'B. Наука о сжатии данных',
-      'C. Метод создания искусственного интеллекта',
-    ],
-  },
-];
-
-export const answers: Answer[] = [
-  {
-    questionId: 1,
-    answer: 'A',
-  },
-  {
-    questionId: 2,
-    answer: 'C',
-  },
-  {
-    questionId: 3,
-    answer: 'A',
-  },
-  {
-    questionId: 4,
-    answer: 'A',
-  },
-  {
-    questionId: 5,
-    answer: 'B',
-  },
-  {
-    questionId: 6,
-    answer: 'B',
-  },
-  {
-    questionId: 7,
-    answer: 'C',
-  },
-  {
-    questionId: 8,
-    answer: 'B',
-  },
-  {
-    questionId: 9,
-    answer: 'B',
-  },
-  {
-    questionId: 10,
-    answer: 'A',
-  },
-  {
-    questionId: 11,
-    answer: 'A',
-  },
-  {
-    questionId: 12,
-    answer: 'A',
-  },
-  {
-    questionId: 13,
-    answer: 'A',
-  },
-  {
-    questionId: 14,
-    answer: 'A',
-  },
-  {
-    questionId: 15,
-    answer: 'B',
-  },
-  {
-    questionId: 16,
-    answer: 'A',
-  },
-  {
-    questionId: 17,
-    answer: 'C',
-  },
-  {
-    questionId: 18,
-    answer: 'A',
-  },
-  {
-    questionId: 19,
-    answer: 'A',
-  },
-  {
-    questionId: 20,
-    answer: 'A',
+    type: 'multiple',
+    title: 'Which programming paradigms are supported by JavaScript?',
+    maxScore: 20,
+    timeLimit: 45,
   },
 ];

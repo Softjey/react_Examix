@@ -17,7 +17,7 @@ const StartLayout: React.FC<Props> = ({ children, style, header = true, backBtn 
   <div css={{ minHeight: '100vh', ...center, ...style }}>
     <div
       css={{
-        height: '300px',
+        // height: '300px',
         justifyContent: 'flex-start',
         gap: '20px',
         ...columnCenter,

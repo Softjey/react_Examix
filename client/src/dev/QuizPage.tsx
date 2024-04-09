@@ -1,21 +1,24 @@
 /* eslint-disable consistent-return */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import {
+  Alert,
+  AlertTitle,
   Box,
-  Button,
-  ButtonGroup,
   Card,
   CardActions,
   CardContent,
   CardHeader,
   CircularProgress,
   CircularProgressProps,
+  // LinearProgress,
+  // LinearProgressProps,
   Typography,
 } from '@mui/material';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import StartLayout from '../components/StartLayout';
 // eslint-disable-next-line import/no-cycle
 import questions from './questions';
+import { MultipleButtonGroup, SingleButtonGroup } from '../components/UI/AnswersButtonGroups';
 
 interface StudentAnswer {
   title: string;
@@ -67,6 +70,7 @@ const QuizPage: React.FC = () => {
     <StartLayout>
       {question !== null ? (
         <>
+          {/* <LinearProgressWithCSS value={time} max={question.timeLimit} /> */}
           <CircularProgressWithLabel value={time} max={question.timeLimit} />
           <QuizCard question={question} sendAnswer={() => {}} />
         </>
@@ -83,32 +87,71 @@ export default QuizPage;
 
 interface CardProps {
   question: Question;
-  sendAnswer: (answer: StudentAnswer) => void;
+  sendAnswer: (answer: StudentAnswer[]) => void;
 }
 
 export const QuizCard: React.FC<CardProps> = memo(
-  ({ question: { title, answers, maxScore }, sendAnswer }) => (
-    <Card>
-      <CardHeader title="Max score:" subheader={maxScore} />
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {title}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <ButtonGroup>
-          {answers.map((answer) => (
-            <Button key={answer.title} onClick={() => sendAnswer(answer)}>
-              {answer.title}
-            </Button>
-          ))}
-        </ButtonGroup>
+  ({ question: { title, answers, maxScore, type } }) => {
+    const [selectedValue, setSelectedValue] = useState<StudentAnswer[]>([]);
+    const [isShowAnswers, setIsShowAnswers] = useState(true);
 
-        <Button size="small">Submit</Button>
-      </CardActions>
-    </Card>
-  ),
+    useEffect(() => {
+      setIsShowAnswers(true);
+    }, [answers]);
+
+    return isShowAnswers ? (
+      <Card>
+        <CardHeader title="Max score:" subheader={maxScore} />
+        <CardContent>
+          <Typography variant="body2" color="text.secondary">
+            {title}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          { }
+          {type === 'single' ? (
+            <SingleButtonGroup
+              answers={answers}
+              setIsShowAnswers={setIsShowAnswers}
+              setValue={setSelectedValue}
+            />
+          ) : (
+            <MultipleButtonGroup
+              answers={answers}
+              setIsShowAnswers={setIsShowAnswers}
+              setValue={setSelectedValue}
+            />
+          )}
+        </CardActions>
+      </Card>
+    ) : (
+      <Alert severity="info">
+        <AlertTitle>Wait for the timer ends</AlertTitle>
+        {JSON.stringify(selectedValue)}
+      </Alert>
+    );
+  },
 );
+
+/* const LinearProgressWithCSS = (props: LinearProgressProps & { value: number; max: number }) => {
+  const fixProgressAnimationStyles = {
+    width: '100%',
+    '&[aria-valuenow="100"]': {
+      '& > .progressBarInner': {
+        transition: 'none',
+      },
+    },
+  };
+  const progress = (props.value / props.max) * 100;
+  return (
+    <LinearProgress
+      sx={fixProgressAnimationStyles}
+      classes={{ bar: 'progressBarInner' }}
+      variant="determinate"
+      value={progress}
+    />
+  );
+}; */
 
 const CircularProgressWithLabel = (
   props: CircularProgressProps & { value: number; max: number },
