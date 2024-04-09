@@ -25,8 +25,13 @@ export class ExamManagementService extends EventEmitter {
     this.examFinishedEventName = (examCode: string) => `finished-${examCode}`;
   }
 
-  getExam = this.examsCacheService.getExam.bind(this.examsCacheService);
-  examExists = this.examsCacheService.examExists.bind(this.examsCacheService);
+  getExam(examCode: string) {
+    return this.examsCacheService.getExam(examCode);
+  }
+
+  examExists(examCode: string) {
+    this.examsCacheService.examExists(examCode);
+  }
 
   async joinAuthor(examCode: string, clientId: Author['clientId']) {
     const exam = await this.examsCacheService.getExam(examCode);
