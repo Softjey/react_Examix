@@ -22,7 +22,7 @@ export interface Response {
   authorToken: string;
 }
 
-export const createExam = async () => {
+export const createExam = async (testId: number) => {
   await login();
 
   log('Login successful')();
@@ -33,6 +33,6 @@ export const createExam = async () => {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-    body: JSON.stringify({ testId: 34 }),
+    body: JSON.stringify({ testId }),
   }).then((res) => res.json()) as Promise<Response>;
 };

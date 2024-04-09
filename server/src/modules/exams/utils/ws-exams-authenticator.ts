@@ -1,19 +1,16 @@
 import { Socket } from 'socket.io';
 import { WsExceptionsFilter } from 'src/utils/websockets/exceptions/ws-exceptions.filter';
 import { WebSocketException } from 'src/utils/websockets/exceptions/websocket.exception';
-import {
-  ExamClientAuthDto,
-  ClientAuthorAuthDto,
-  ClientStudentAuthDto,
-} from '../dtos/client-auth.dto';
+import { ClientAuthorAuthDto, ClientStudentAuthDto } from '../dtos/client-auth.dto';
+import { ExamClientAuthDto } from '../dtos/client-auth.dto';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { ExamsService } from '../exams.service';
+import { ExamManagementService } from '../services/exams-management.service';
 import { Author } from '../entities/author.entity';
 
 export class WsExamsAuthenticator {
   constructor(
-    private readonly examsService: ExamsService,
+    private readonly examsService: ExamManagementService,
     private readonly client: Socket,
   ) {}
 
@@ -88,14 +85,14 @@ export class WsExamsAuthenticator {
     if (errors.length > 0) {
       return this.handleError(
         WebSocketException.BadRequest(
-          errors.map((error) => Object.values(error.constraints)).flat(),
+          errors.map((error) => Object.values(error.constraints ?? {})).flat(),
           { disconnect: true },
         ),
       );
     }
   }
 
-  private async validateAuthDto(): Promise<ExamClientAuthDto> {
+  private async validateAuthDto(): Promise<ExamClientAuthDto | null> {
     const auth = this.client.handshake.auth;
 
     switch (auth.role) {

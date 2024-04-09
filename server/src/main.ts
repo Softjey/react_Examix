@@ -9,7 +9,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const { httpAdapter } = app.get(HttpAdapterHost);
 
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }),
+  );
   app.useGlobalFilters(new ServerExceptionFilter(httpAdapter));
   app.enableCors({
     origin: config.CLIENT_URL,

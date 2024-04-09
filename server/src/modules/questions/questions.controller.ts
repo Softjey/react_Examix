@@ -1,5 +1,5 @@
-// eslint-disable-next-line max-len
-import { Body, Controller, Get, NotFoundException, Param, ParseIntPipe, Post, Query } from '@nestjs/common'; // prettier-ignore
+import { Body, Controller, Get, NotFoundException } from '@nestjs/common';
+import { Param, ParseArrayPipe, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { QuestionsService } from './questions.service';
 import { UseSessionGuard } from '../auth/decorators/session-guard.decorator';
 import { CreateQuestionDto } from './dtos/create-question.dto';
@@ -28,7 +28,13 @@ export class QuestionController {
 
   @ApiBody({ type: [CreateQuestionDto] })
   @Post('many')
-  async createMany(@Body() createQuestionDto: CreateQuestionDto[], @User('id') authorId) {
+  async createMany(
+    @User('id') authorId,
+    @Body(
+      new ParseArrayPipe({ items: CreateQuestionDto, whitelist: true, forbidNonWhitelisted: true }),
+    )
+    createQuestionDto: CreateQuestionDto[],
+  ) {
     const questionsCount = await this.questionService.createMany(
       createQuestionDto.map((question) => ({ ...question, authorId })),
     );
