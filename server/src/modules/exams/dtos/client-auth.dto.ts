@@ -31,5 +31,5 @@ export class ClientStudentAuthDto {
 
   @IsUUID()
   @IsOptional()
-  studentId?: string;
+  studentToken?: string;
 }

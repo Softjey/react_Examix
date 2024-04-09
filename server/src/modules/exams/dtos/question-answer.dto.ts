@@ -5,7 +5,7 @@ import { Answer } from 'src/modules/questions/interfaces/question.interface';
 
 export class QuestionAnswerDto {
   @IsUUID()
-  studentId: string;
+  studentToken: string;
 
   @IsNumber()
   @Min(0)

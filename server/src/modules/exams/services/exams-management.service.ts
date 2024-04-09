@@ -41,14 +41,14 @@ export class ExamManagementService extends EventEmitter {
 
   async joinStudent(examCode: string, studentName: Student['name'], clientId: Student['clientId']) {
     const exam = await this.examsCacheService.getExam(examCode);
-    const studentId = this.uniqueIdService.generateUUID();
+    const studentToken = this.uniqueIdService.generateUUID();
     const newStudent = new Student(clientId, studentName);
 
-    exam.students[studentId] = newStudent;
+    exam.students[studentToken] = newStudent;
 
     await this.examsCacheService.setExam(examCode, exam);
 
-    return [studentId, newStudent] as const;
+    return [studentToken, newStudent] as const;
   }
 
   async startExam(examCode: string) {
@@ -93,15 +93,19 @@ export class ExamManagementService extends EventEmitter {
     setTimeout(() => this.processQuestion(examCode), timeLimit);
   }
 
-  async answerQuestion(examCode: string, studentId: Student['clientId'], answers: StudentAnswer[]) {
+  async answerQuestion(
+    examCode: string,
+    studentToken: Student['clientId'],
+    answers: StudentAnswer[],
+  ) {
     const exam = await this.examsCacheService.getExam(examCode);
     const questionId = exam.questions[exam.currentQuestionIndex].id;
 
-    if (!exam.students[studentId]) {
+    if (!exam.students[studentToken]) {
       return false;
     }
 
-    exam.students[studentId].results[questionId] = { answers };
+    exam.students[studentToken].results[questionId] = { answers };
     await this.examsCacheService.setExam(examCode, exam);
 
     return true;

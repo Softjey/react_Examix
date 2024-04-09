@@ -37,14 +37,14 @@ export class ExamsGateway implements OnGatewayConnection {
         break;
       case 'student':
         const { author } = await this.examsService.getExam(auth.examCode);
-        const [studentId, { clientId, name }] = await this.examsService.joinStudent(
+        const [studentToken, { clientId, name }] = await this.examsService.joinStudent(
           auth.examCode,
           auth.studentName,
           client.id,
         );
 
         this.server.to(author.clientId!).emit('student-joined', { name, clientId });
-        client.emit('student-joined', { id: studentId });
+        client.emit('student-joined', { studentToken });
         break;
       default:
         throw WebSocketException.ServerError('Invalid auth role');
@@ -112,7 +112,7 @@ export class ExamsGateway implements OnGatewayConnection {
   @UseGuards(RoomStudentGuard)
   @SubscribeMessage('answer')
   async answerQuestion(
-    @MessageBody() { studentId, questionIndex, answers }: QuestionAnswerDto,
+    @MessageBody() { studentToken, questionIndex, answers }: QuestionAnswerDto,
     @ClientAuth('examCode') examCode: string,
   ) {
     const { status, currentQuestionIndex } = await this.examsService.getExam(examCode);
@@ -127,7 +127,7 @@ export class ExamsGateway implements OnGatewayConnection {
       );
     }
 
-    const studentExist = await this.examsService.answerQuestion(examCode, studentId, answers);
+    const studentExist = await this.examsService.answerQuestion(examCode, studentToken, answers);
 
     if (!studentExist) {
       throw WebSocketException.BadRequest('Student id is invalid. You are not in the exam room');
