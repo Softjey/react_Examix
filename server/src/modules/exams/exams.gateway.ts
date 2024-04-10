@@ -1,4 +1,9 @@
-import { ConnectedSocket, MessageBody, OnGatewayConnection } from '@nestjs/websockets';
+import {
+  ConnectedSocket,
+  MessageBody,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+} from '@nestjs/websockets';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UseFilters, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
@@ -8,7 +13,7 @@ import { WsExceptionsFilter } from 'src/utils/websockets/exceptions/ws-exception
 import { WebSocketException } from 'src/utils/websockets/exceptions/websocket.exception';
 import { ExamManagementService } from './services/exams-management.service';
 import { ExamQuestion } from './entities/exam-question.entity';
-import { ExamClientAuthDto } from './dtos/client-auth.dto';
+import { ClientStudentAuthDto, ExamClientAuthDto } from './dtos/client-auth.dto';
 import { QuestionAnswerDto, StudentAnswer } from './dtos/question-answer.dto';
 import { RoomAuthorGuard } from './guards/room-author.guard';
 import { RoomStudentGuard } from './guards/room-student.guard';
@@ -19,7 +24,7 @@ import { RoomStudentGuard } from './guards/room-student.guard';
   namespace: 'join-exam',
   cors: { origin: '*' },
 })
-export class ExamsGateway implements OnGatewayConnection {
+export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
   constructor(private readonly examsService: ExamManagementService) {}
@@ -72,6 +77,21 @@ export class ExamsGateway implements OnGatewayConnection {
       client.join(auth.examCode);
       client.emit('test-info', testInfo);
     }
+  }
+
+  async handleDisconnect(@ConnectedSocket() client: Socket) {
+    client.rooms.forEach(async (room) => {
+      const clients = await this.server.in(room).fetchSockets();
+
+      if (clients.length === 1) {
+        const auth = client.handshake.auth as ClientStudentAuthDto;
+        const exam = await this.examsService.getExam(auth.examCode);
+
+        if (exam.status !== 'started') {
+          await this.examsService.deleteExam(auth.examCode);
+        }
+      }
+    });
   }
 
   sendResults(client: Socket, examCode: string) {

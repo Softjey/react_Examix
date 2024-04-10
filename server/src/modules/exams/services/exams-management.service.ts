@@ -138,6 +138,11 @@ export class ExamManagementService extends EventEmitter {
     return this.examsHistoryService.parseResults(exam);
   }
 
+  async deleteExam(examCode: string) {
+    this.removeAllListeners(this.questionEventName(examCode));
+    await this.examsCacheService.deleteExamFromCache(examCode);
+  }
+
   async finishExam(examCode: string) {
     const exam = await this.examsCacheService.getExam(examCode);
 
