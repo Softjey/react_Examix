@@ -20,5 +20,6 @@ import { ExamsInitService } from './services/exams-init.service';
     ExamsGateway,
   ],
   controllers: [ExamsController],
+  exports: [ExamsHistoryService],
 })
 export class ExamsModule {}
