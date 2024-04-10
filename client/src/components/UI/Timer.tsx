@@ -1,12 +1,13 @@
 import { LinearProgress } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
+import { Question } from '../../temp/questions';
 
 interface Props {
-  seconds: number;
+  question: Question;
   onEnd: () => void;
 }
 
-const Timer: React.FC<Props> = ({ seconds, onEnd }) => {
+const Timer: React.FC<Props> = ({ onEnd, question: { timeLimit: seconds }, question }) => {
   const [progress, setProgress] = useState(100);
   const timer = useRef<number>(-1);
   const duration = seconds * 1000;
@@ -47,7 +48,7 @@ const Timer: React.FC<Props> = ({ seconds, onEnd }) => {
   useEffect(() => {
     startTimer();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [question]);
 
   return (
     <LinearProgress

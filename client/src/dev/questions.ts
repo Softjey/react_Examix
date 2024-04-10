@@ -1,5 +1,16 @@
-// eslint-disable-next-line import/no-cycle
-import { Question } from './QuizPage';
+export interface StudentAnswer {
+  title: string;
+}
+
+export interface Question {
+  id: number;
+  index: number;
+  answers: StudentAnswer[];
+  type: 'single' | 'multiple';
+  title: string;
+  maxScore: number;
+  timeLimit: number;
+}
 
 export default [
   {
