@@ -1,5 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AuthModule } from './modules/auth/auth.module';
+import { AuthModule } from './utils/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { TestsModule } from './modules/tests/tests.module';
 import { QuestionsModule } from './modules/questions/questions.module';
