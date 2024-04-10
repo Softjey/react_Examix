@@ -21,19 +21,23 @@ export class ExamsHistoryService {
     return this.mapPrismaDetailedExamToDetailedExam(exam);
   }
 
-  async getAll(options: GetExamsResultsDto = {}) {
-    const { search, authorId, testId, page, limit } = options;
+  async getAll(options: GetExamsResultsDto & { searchTest?: boolean } = {}) {
+    const { search, authorId, testId, page, limit, searchTest = true } = options;
     const whereCond: Prisma.ExamWhereInput = {};
     const skip = limit && page ? (page - 1) * limit : 0;
     const createdAt = { lte: options.dateTo, gte: options.dateFrom };
-    const selectTest = { id: true, name: true, description: true, subject: true };
-    const select = { id: true, authorId: true, createdAt: true, test: { select: selectTest } };
+    const test = { select: { id: true, name: true, description: true, subject: true } };
+    const results = { select: { studentName: true } };
+    const select = { id: true, authorId: true, createdAt: true, test, results };
 
     if (search) {
       whereCond.OR = [
-        { results: { some: { studentName: { contains: search } } } },
-        { test: { name: { contains: search } } },
+        { results: { some: { studentName: { contains: search, mode: 'insensitive' } } } },
       ];
+
+      if (searchTest) {
+        whereCond.OR.push({ test: { name: { contains: search, mode: 'insensitive' } } });
+      }
     }
 
     const where: Prisma.ExamWhereInput = { authorId, testId, createdAt, ...whereCond };
