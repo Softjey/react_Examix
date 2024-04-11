@@ -3,6 +3,7 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
+    "assets": ["src/modules/main/templates/**/*.hbs"],
     "deleteOutDir": true,
     "plugins": ["@nestjs/swagger"]
   }
