@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import config from './config';
 import { enableApiDocs } from './utils/documentation';
 import { ValidationPipe } from '@nestjs/common';
-import { ServerExceptionFilter } from './utils/exceptions/server-exception.filter';
+import { GlobalExceptionFilter } from './utils/exceptions/global-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,7 +12,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }),
   );
-  app.useGlobalFilters(new ServerExceptionFilter(httpAdapter));
+  app.useGlobalFilters(new GlobalExceptionFilter(httpAdapter));
   app.enableCors({
     origin: config.CLIENT_URL,
     credentials: true,

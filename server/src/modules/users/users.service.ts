@@ -35,4 +35,13 @@ export class UsersService {
       },
     });
   }
+
+  async updatePassword(id: User['id'], newPassword: User['password']) {
+    const encryptedPassword = await this.hashService.hash(newPassword);
+
+    return this.prismaService.user.update({
+      where: { id },
+      data: { password: encryptedPassword },
+    });
+  }
 }
