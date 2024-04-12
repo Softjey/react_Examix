@@ -6,6 +6,7 @@ import { Test, User } from '@prisma/client';
 import { Author } from '../entities/author.entity';
 import { Exam } from '../entities/exam.entity';
 import { ExamQuestion } from '../entities/exam-question.entity';
+import config from 'src/config';
 
 @Injectable()
 export class ExamsInitService {
@@ -23,7 +24,7 @@ export class ExamsInitService {
   }
 
   async init(examCode: string, exam: Exam) {
-    await this.examsCacheService.setExam(examCode, exam);
+    await this.examsCacheService.setExam(examCode, exam, config.EXAM_PRE_AUTHOR_TIMEOUT);
   }
 
   async create(userId: User['id'], testId: Test['id']) {
