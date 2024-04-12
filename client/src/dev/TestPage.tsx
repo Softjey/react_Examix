@@ -33,6 +33,8 @@ const TestPage: React.FC = () => {
       authorSocket.on('exam-finished', log('author exam-finished'));
 
       setSocket(authorSocket);
+
+      log(response.examCode);
     }
   }, [response]);
 
@@ -40,21 +42,21 @@ const TestPage: React.FC = () => {
     <StartLayout style={{ display: 'flex', justifyContent: 'space-around', flexDirection: 'row' }}>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <h2>Test Page</h2>
-
-        <Button onClick={async () => setResponse(await createExam(2))} size="large">
+        <Button onClick={async () => setResponse(await createExam(3))} size="large">
           Create Exam
         </Button>
-
-        <Button size="large" onClick={() => socket!.emit('start-exam')}>
-          Start exam
-        </Button>
-
         <Button size="large" onClick={() => socket!.connect()}>
           Connect Author
         </Button>
-
+        {/* eslint-disable-next-line no-console */}
+        <Button size="large" onClick={() => console.log(response!.examCode)}>
+          Get code
+        </Button>
         <Button size="large" onClick={() => setStudents([...students, getRandomName()])}>
           Connect Student
+        </Button>
+        <Button size="large" onClick={() => socket!.emit('start-exam')}>
+          Start exam
         </Button>
       </div>
 

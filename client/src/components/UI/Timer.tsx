@@ -1,6 +1,6 @@
 import { LinearProgress } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
-import { Question } from '../../temp/questions';
+import { Question } from '../../dev/questions';
 
 interface Props {
   question: Question;

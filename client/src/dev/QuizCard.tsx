@@ -33,7 +33,7 @@ const QuizCard: React.FC<CardProps> = memo(({ question: { title, answers, maxSco
         </Typography>
       </CardContent>
       <CardActions>
-        {type === 'single' ? (
+        {type === 'SINGLE_CHOICE' ? (
           <SingleButtonGroup
             answers={answers}
             setIsShowAnswers={setIsShowAnswers}
