@@ -60,7 +60,7 @@ const LoginPage: React.FC<Props> = ({ role }) => {
             required
           />
         </Stack>
-        <MainButton variant="contained" type="submit">
+        <MainButton disableElevation variant="contained" type="submit">
           {fields.buttonText}
         </MainButton>
       </form>

@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { StudentAnswer } from '../../../temp/questions';
+import { StudentAnswer } from '../../../dev/questions';
 
 interface Props {
   setValue: React.Dispatch<React.SetStateAction<StudentAnswer[]>>;

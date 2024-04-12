@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { ButtonGroup, Button } from '@mui/material';
-import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
-import { StudentAnswer } from '../../temp/questions';
+import {
+  CheckBox,
+  CheckBoxOutlineBlank,
+  RadioButtonCheckedOutlined,
+  RadioButtonUncheckedOutlined,
+} from '@mui/icons-material';
+import { StudentAnswer } from '../../dev/questions';
 import SubmitButton from './buttons/SubmitButton';
 
 interface Props {
@@ -13,19 +18,31 @@ interface Props {
 export const SingleButtonGroup: React.FC<Props> = ({ answers, setValue, setIsShowAnswers }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<StudentAnswer>({ title: '' });
   return (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
       <ButtonGroup fullWidth orientation="vertical">
-        {answers.map((answer) => (
-          <Button
-            key={answer.title}
-            variant={selectedAnswer.title === answer.title ? 'contained' : 'outlined'}
-            onClick={() => setSelectedAnswer(answer)}
-            sx={{ height: '60px' }}
-            size="large"
-          >
-            {answer.title}
-          </Button>
-        ))}
+        {answers.map((answer) => {
+          const isSelected = selectedAnswer.title === answer.title;
+          return (
+            <Button
+              key={answer.title}
+              disableElevation
+              // variant={isSelected ? 'contained' : 'outlined'}
+              variant="outlined"
+              onClick={() => setSelectedAnswer(answer)}
+              sx={{
+                height: '60px',
+                display: 'flex',
+                justifyContent: 'start',
+                alignItems: 'center',
+                gap: '10px',
+              }}
+              size="large"
+            >
+              {isSelected ? <RadioButtonCheckedOutlined /> : <RadioButtonUncheckedOutlined />}
+              {answer.title}
+            </Button>
+          );
+        })}
       </ButtonGroup>
       <SubmitButton
         setIsShowAnswers={setIsShowAnswers}

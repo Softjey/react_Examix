@@ -11,7 +11,7 @@ export const LinkBehavior = React.forwardRef<HTMLAnchorElement, Omit<RouterLinkP
 
 const Button: React.FC<MuiButtonProps & Partial<To>> = (props) => {
   if ('to' in props && props.to !== undefined) {
-    return <MuiButton component={LinkBehavior} {...props} />;
+    return <MuiButton disableElevation component={LinkBehavior} {...props} />;
   }
 
   return <MuiButton {...props} />;

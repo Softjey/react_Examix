@@ -1,4 +1,4 @@
-import { LinearProgress } from '@mui/material';
+import { LinearProgress, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { Question } from '../../dev/questions';
 
@@ -12,8 +12,27 @@ const Timer: React.FC<Props> = ({ onEnd, question: { timeLimit: seconds }, quest
   const timer = useRef<number>(-1);
   const duration = seconds * 1000;
 
+  function formatTime(sec: number): string {
+    const hours: number = Math.floor(sec / 3600);
+    const minutes: number = Math.floor((sec % 3600) / 60);
+    const remainingSeconds: number = sec % 60;
+
+    let formattedTime: string = '';
+
+    if (hours > 0) {
+      formattedTime += `${hours} h `;
+    }
+    if (minutes > 0 || hours > 0) {
+      formattedTime += `${minutes} min `;
+    }
+    if (remainingSeconds > 0 || (minutes === 0 && hours === 0)) {
+      formattedTime += `${remainingSeconds} sec`;
+    }
+
+    return formattedTime;
+  }
+
   const fixProgressAnimationStyles = {
-    width: '100%',
     '&[aria-valuenow="100"]': {
       '& > .progressBarInner': {
         transition: 'none',
@@ -51,12 +70,17 @@ const Timer: React.FC<Props> = ({ onEnd, question: { timeLimit: seconds }, quest
   }, [question]);
 
   return (
-    <LinearProgress
-      sx={fixProgressAnimationStyles}
-      classes={{ bar: 'progressBarInner' }}
-      variant="determinate"
-      value={progress}
-    />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+      <Typography variant="body2" color="text.secondary" align="left">
+        Time Left: {formatTime(Math.ceil((progress * seconds) / 100))}
+      </Typography>
+      <LinearProgress
+        sx={{ ...fixProgressAnimationStyles, borderRadius: '15px' }}
+        classes={{ bar: 'progressBarInner' }}
+        variant="determinate"
+        value={progress}
+      />
+    </div>
   );
 };
 

@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { memo, useState, useEffect } from 'react';
 import { SingleButtonGroup, MultipleButtonGroup } from '../components/UI/AnswersButtonGroups';
-import { Question, StudentAnswer } from './questions';
+import { Question, QuestionType, StudentAnswer } from './questions';
 
 interface CardProps {
   question: Question;
@@ -24,16 +24,24 @@ const QuizCard: React.FC<CardProps> = memo(({ question: { title, answers, maxSco
     setIsShowAnswers(true);
   }, [answers]);
 
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log(selectedValue);
+  }, [selectedValue]);
+
   return isShowAnswers ? (
-    <Card>
-      <CardHeader title="Max score:" subheader={maxScore} />
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {title}
+    <Card
+      elevation={3}
+      sx={{ minWidth: '350px', maxWidth: '500px', padding: '15px', borderRadius: '10px' }}
+    >
+      <CardHeader title={title} />
+      <CardContent sx={{ paddingTop: 0, paddingBottom: 0 }}>
+        <Typography variant="body1" color="text.secondary">
+          Max score: {maxScore}
         </Typography>
       </CardContent>
-      <CardActions>
-        {type === 'SINGLE_CHOICE' ? (
+      <CardActions sx={{ padding: '12px' }}>
+        {type === QuestionType.SINGLE_CHOICE ? (
           <SingleButtonGroup
             answers={answers}
             setIsShowAnswers={setIsShowAnswers}
@@ -49,9 +57,8 @@ const QuizCard: React.FC<CardProps> = memo(({ question: { title, answers, maxSco
       </CardActions>
     </Card>
   ) : (
-    <Alert severity="info">
-      <AlertTitle>Wait for the timer ends</AlertTitle>
-      {JSON.stringify(selectedValue)}
+    <Alert sx={{ width: '400px' }} severity="info">
+      <AlertTitle>Wait for the timer to end</AlertTitle>
     </Alert>
   );
 });

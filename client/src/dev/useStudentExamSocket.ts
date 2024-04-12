@@ -6,8 +6,8 @@ const useStudentExamSocket = (addListeners: (socket: Socket) => void) => {
   const [socket, isLoading, setIsLoading] = useExamSocket(
     {
       role: 'student',
-      examCode: '085397' /* response.examCode */,
-      studentName: 'BigDick',
+      examCode: '044722' /* response.examCode */,
+      studentName: 'Test',
       // studentId: // later,
       // studentToken: // later
     },
