@@ -80,6 +80,16 @@ export class ExamManagementService extends EventEmitter {
     this.processQuestion(examCode);
   }
 
+  async kickStudent(examCode: string, studentId: string) {
+    const exam = await this.examsCacheService.getExam(examCode);
+    const studentClientId = exam.students[studentId].clientId;
+
+    delete exam.students[studentId];
+    await this.examsCacheService.setExam(examCode, exam);
+
+    return studentClientId;
+  }
+
   private emitQuestion(examCode: string, question: ExamQuestion, questionIndex: number) {
     this.emit(this.questionEventName(examCode), question, questionIndex);
   }

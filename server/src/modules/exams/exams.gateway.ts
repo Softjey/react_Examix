@@ -17,6 +17,7 @@ import { ClientStudentAuthDto, ExamClientAuthDto } from './dtos/client-auth.dto'
 import { QuestionAnswerDto, StudentAnswer } from './dtos/question-answer.dto';
 import { RoomAuthorGuard } from './guards/room-author.guard';
 import { RoomStudentGuard } from './guards/room-student.guard';
+import { KickStudentDto } from './dtos/kick-student.dto';
 
 @UseFilters(WsExceptionsFilter)
 @UsePipes(new ValidationPipe())
@@ -164,5 +165,26 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!studentExist) {
       throw WebSocketException.BadRequest('Student id is invalid. You are not in the exam room');
     }
+  }
+
+  @UseGuards(RoomAuthorGuard)
+  @SubscribeMessage('kick-student')
+  async kickStudent(
+    @MessageBody() { studentId }: KickStudentDto,
+    @ClientAuth('examCode') examCode: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const exam = await this.examsService.getExam(examCode);
+
+    if (exam.status !== 'created') {
+      throw WebSocketException.BadRequest('You can not kick student after exam started');
+    }
+
+    const deletedStudentClientId = await this.examsService.kickStudent(examCode, studentId);
+
+    this.server.to(deletedStudentClientId).emit('student-kicked', { studentId });
+    this.server.sockets.sockets.get(deletedStudentClientId)?.disconnect(true);
+
+    client.emit('student-kicked', { studentId });
   }
 }
