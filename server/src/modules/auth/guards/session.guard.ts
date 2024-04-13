@@ -10,6 +10,7 @@ export class SessionGuard implements CanActivate {
         return true;
       }
     } catch (e) {
+      console.log('SessionGuard error: ', request.session.passport.user);
       throw new UnauthorizedException();
     }
   }
