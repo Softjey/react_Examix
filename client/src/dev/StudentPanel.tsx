@@ -1,8 +1,10 @@
-/* eslint-disable react/jsx-curly-newline */
-/* eslint-disable operator-linebreak */
-import { io } from 'socket.io-client';
+/* eslint-disable function-paren-newline */
+/* eslint-disable implicit-arrow-linebreak */
 
-import React, { memo, useEffect, useRef, useState } from 'react';
+/* eslint-disable operator-linebreak */
+import { Socket } from 'socket.io-client';
+
+import React, { memo, useEffect, useState } from 'react';
 
 import {
   Avatar,
@@ -13,7 +15,9 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material';
+import { columnCenter } from '../styles/flex';
 import log from './log';
+import createStudentSocket from './createStudentSocket';
 
 interface StudentAnswer {
   title: string;
@@ -35,6 +39,11 @@ interface Props {
   onDisconnect: () => void;
 }
 
+interface StudentAuth {
+  studentId: string;
+  studentToken: string;
+}
+
 const Ava: React.FC<{ name: string }> = memo(({ name }) => (
   <Avatar
     alt="Remy Sharp"
@@ -42,58 +51,46 @@ const Ava: React.FC<{ name: string }> = memo(({ name }) => (
   />
 ));
 
-const StudentPanel: React.FC<Props> = memo(({ name, examCode, onDisconnect }) => {
-  const [studentId, setStudentId] = useState<string | null>(null);
+const StudentPanel: React.FC<Props> = memo(({ name, examCode }) => {
+  const [studentAuth, setStudentAuth] = useState<StudentAuth | null>(null);
   const [question, setQuestion] = useState<Question | null>(null);
-  const socketRef = useRef(
-    io('ws://localhost:3005/join-exam', {
-      autoConnect: false,
-      auth: { role: 'student', examCode, studentName: name },
-    }),
+  const [socket, setSocket] = useState<Socket>(() =>
+    createStudentSocket(
+      name,
+      examCode,
+      setQuestion,
+      setStudentAuth,
+      studentAuth?.studentId,
+      studentAuth?.studentToken,
+    ),
   );
 
   useEffect(() => {
-    const socket = socketRef.current;
-
-    socket.connect();
-    socket.on('open', log(`${name} connected`));
-    socket.on('close', () => {
-      onDisconnect();
-    });
-    socket.on('error', log(`${name} error`));
-    socket.on('exception', log(`${name} exception`));
-    socket.on('test-info', log(`${name} test-info:`));
-    socket.on('student-joined', (body) => setStudentId(body.id));
-    socket.on('exam-started', log(`${name} exam-started`));
-    socket.on('exam-finished', log(`${name} exam-finished`));
-    socket.on('question', (body) => setQuestion(body));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, examCode]);
-
-  useEffect(() => {
-    if (!question) return;
-
     setTimeout(() => {
+      if (!question) return;
       const randomAnswer = question?.answers[Math.floor(Math.random() * question.answers.length)];
 
-      socketRef.current.emit('answer', {
-        studentId,
+      socket.emit('answer', {
         questionIndex: question?.index,
         answers: [randomAnswer],
+        studentId: studentAuth!.studentId,
+        studentToken: studentAuth!.studentToken,
       });
+
       log(`${name} answered ${randomAnswer?.title} to question ${question?.title}`);
     }, Math.random() * 3000);
-  }, [question, name, studentId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question]);
 
   return (
     <>
-      <ListItem alignItems="flex-start">
+      <ListItem alignItems="flex-start" css={columnCenter}>
         <ListItemAvatar>
           <Ava name={name} />
         </ListItemAvatar>
         <ListItemText
           primary={name}
-          title={studentId ? ` (${studentId})` : ''}
+          title={studentAuth ? ` (${studentAuth})` : ''}
           secondary={
             <>
               <Typography
@@ -118,17 +115,22 @@ const StudentPanel: React.FC<Props> = memo(({ name, examCode, onDisconnect }) =>
             </>
           }
         />
+        <Button onClick={() => socket.disconnect()}>Disconnect</Button>
         <Button
-          onClick={() =>
-            // eslint-disable-next-line implicit-arrow-linebreak
-            socketRef.current.emit('answer', {
-              studentId,
-              questionIndex: question?.index,
-              answers: [question?.answers[Math.floor(Math.random() * question.answers.length)]],
-            })
-          }
+          onClick={() => {
+            const newSocket = createStudentSocket(
+              name,
+              examCode,
+              setQuestion,
+              setStudentAuth,
+              studentAuth?.studentId,
+              studentAuth?.studentToken,
+            );
+
+            setSocket(newSocket);
+          }}
         >
-          Send random answer
+          Reconnect
         </Button>
       </ListItem>
       <Divider variant="inset" component="li" />
