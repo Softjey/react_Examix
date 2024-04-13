@@ -1,9 +1,5 @@
-import {
-  ConnectedSocket,
-  MessageBody,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-} from '@nestjs/websockets';
+import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody } from '@nestjs/websockets';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UseFilters, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
@@ -13,7 +9,7 @@ import { WsExceptionsFilter } from 'src/utils/websockets/exceptions/ws-exception
 import { WebSocketException } from 'src/utils/websockets/exceptions/websocket.exception';
 import { ExamManagementService } from './services/exams-management.service';
 import { ExamQuestion } from './entities/exam-question.entity';
-import { ClientStudentAuthDto, ExamClientAuthDto } from './dtos/client-auth.dto';
+import { ExamClientAuthDto } from './dtos/client-auth.dto';
 import { QuestionAnswerDto, StudentAnswer } from './dtos/question-answer.dto';
 import { RoomAuthorGuard } from './guards/room-author.guard';
 import { RoomStudentGuard } from './guards/room-student.guard';
@@ -81,18 +77,13 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleDisconnect(@ConnectedSocket() client: Socket) {
-    client.rooms.forEach(async (room) => {
-      const clients = await this.server.in(room).fetchSockets();
+    const { examCode } = client.handshake.auth as ExamClientAuthDto;
+    const room = await this.server.in(examCode).fetchSockets();
+    const exam = await this.examsService.getExam(examCode, true);
 
-      if (clients.length === 1) {
-        const auth = client.handshake.auth as ClientStudentAuthDto;
-        const exam = await this.examsService.getExam(auth.examCode);
-
-        if (exam.status !== 'started') {
-          await this.examsService.deleteExam(auth.examCode);
-        }
-      }
-    });
+    if (exam && room.length === 0 && exam.status !== 'started') {
+      await this.examsService.deleteExam(examCode);
+    }
   }
 
   sendResults(client: Socket, examCode: string) {
@@ -182,8 +173,12 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     const deletedStudentClientId = await this.examsService.kickStudent(examCode, studentId);
 
+    if (!deletedStudentClientId) {
+      throw WebSocketException.NotFound('Student with this id is not in the exam');
+    }
+
     this.server.to(deletedStudentClientId).emit('student-kicked', { studentId });
-    this.server.sockets.sockets.get(deletedStudentClientId)?.disconnect(true);
+    this.server.to(deletedStudentClientId).disconnectSockets(true);
 
     client.emit('student-kicked', { studentId });
   }

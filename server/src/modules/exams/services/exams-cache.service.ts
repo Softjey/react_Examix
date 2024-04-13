@@ -9,6 +9,12 @@ export class ExamsCacheService {
   constructor(@Inject('REDIS_CLIENT') private readonly redisService: Redis) {}
 
   async setExam(examCode: string, exam: Exam, expiration?: number) {
+    if (!expiration) {
+      await this.redisService.set(`${this.redisPrefix}:${examCode}`, JSON.stringify(exam));
+
+      return;
+    }
+
     await this.redisService.set(
       `${this.redisPrefix}:${examCode}`,
       JSON.stringify(exam),

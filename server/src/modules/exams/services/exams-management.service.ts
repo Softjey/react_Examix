@@ -25,8 +25,14 @@ export class ExamManagementService extends EventEmitter {
     this.examFinishedEventName = (examCode: string) => `finished-${examCode}`;
   }
 
-  getExam(examCode: string) {
-    return this.examsCacheService.getExam(examCode);
+  getExam(examCode: string, nullable = false) {
+    return this.examsCacheService.getExam(examCode).catch((exam) => {
+      if (nullable) {
+        return null;
+      }
+
+      throw exam;
+    });
   }
 
   examExists(examCode: string) {
@@ -82,12 +88,14 @@ export class ExamManagementService extends EventEmitter {
 
   async kickStudent(examCode: string, studentId: string) {
     const exam = await this.examsCacheService.getExam(examCode);
-    const studentClientId = exam.students[studentId].clientId;
+    const studentClientId = exam.students[studentId]?.clientId;
 
-    delete exam.students[studentId];
-    await this.examsCacheService.setExam(examCode, exam);
+    if (studentClientId !== undefined) {
+      delete exam.students[studentId];
+      await this.examsCacheService.setExam(examCode, exam);
+    }
 
-    return studentClientId;
+    return studentClientId ?? null;
   }
 
   private emitQuestion(examCode: string, question: ExamQuestion, questionIndex: number) {
