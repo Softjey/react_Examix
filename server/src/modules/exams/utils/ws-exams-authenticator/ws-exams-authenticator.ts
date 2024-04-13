@@ -31,15 +31,15 @@ export class WsExamsAuthenticator {
     const { students, status } = await this.examsService.getExam(auth.examCode);
 
     if (!studentId) {
+      if (this.hasStudentExamStartedError(status)) {
+        return ['error', null];
+      }
+
       const [studentId] = await this.examsService.joinNewStudent(
         auth.examCode,
         auth.studentName,
         this.client.id,
       );
-
-      if (this.hasStudentExamStartedError(status)) {
-        return ['error', null];
-      }
 
       return ['new', studentId];
     }
@@ -51,11 +51,11 @@ export class WsExamsAuthenticator {
     }
 
     const [oldId] = await this.examsService.updateStudentClientId(examCode, studentId, client.id);
-    const oldSocket = this.server.sockets.sockets.get(oldId);
+    const [oldSocket] = await this.server.in(oldId).fetchSockets();
 
     if (oldSocket) {
       WsExceptionsFilter.handleError(
-        oldSocket,
+        oldSocket as unknown as Socket,
         WSException.Conflict('New client connected with that studentId', { disconnect: true }),
       );
     }
@@ -69,7 +69,7 @@ export class WsExamsAuthenticator {
     return false;
   }
 
-  private async hasStudentExamStartedError(status: Exam['status']) {
+  private hasStudentExamStartedError(status: Exam['status']) {
     if (status !== 'created') {
       return !this.handleError(
         WSException.BadRequest('Exam is already started or finished', {
@@ -81,7 +81,7 @@ export class WsExamsAuthenticator {
     return false;
   }
 
-  private async hasStudentErrors(student: Student, auth: ClientStudentAuthDto) {
+  private hasStudentErrors(student: Student, auth: ClientStudentAuthDto) {
     if (!student) {
       return !this.handleError(
         WSException.NotFound('Student not found. Please, check the student id', {
