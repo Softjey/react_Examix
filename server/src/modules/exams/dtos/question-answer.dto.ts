@@ -7,6 +7,9 @@ export class QuestionAnswerDto {
   @IsUUID()
   studentId: string;
 
+  @IsUUID()
+  studentToken: string;
+
   @IsNumber()
   @Min(0)
   questionIndex: number;

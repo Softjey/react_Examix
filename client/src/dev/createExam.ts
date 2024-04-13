@@ -1,7 +1,5 @@
 /* eslint-disable */
 
-import log from './log';
-
 export const login = () => {
   return fetch('http://localhost:3005/auth/login', {
     method: 'POST',
@@ -23,10 +21,6 @@ export interface Response {
 }
 
 export const createExam = async (testId: number) => {
-  await login();
-
-  log('Login successful')();
-
   return fetch('http://localhost:3005/exams', {
     method: 'POST',
     headers: {

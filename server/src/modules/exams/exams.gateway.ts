@@ -1,8 +1,9 @@
-import { ConnectedSocket, MessageBody, OnGatewayConnection } from '@nestjs/websockets';
+import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody } from '@nestjs/websockets';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UseFilters, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
-import { WsExamsAuthenticator } from './utils/ws-exams-authenticator';
+import { WsExamsAuthenticator } from './utils/ws-exams-authenticator/ws-exams-authenticator';
 import { ClientAuth } from '../../utils/websockets/decorators/client-auth.decorator';
 import { WsExceptionsFilter } from 'src/utils/websockets/exceptions/ws-exceptions.filter';
 import { WebSocketException } from 'src/utils/websockets/exceptions/websocket.exception';
@@ -12,6 +13,7 @@ import { ExamClientAuthDto } from './dtos/client-auth.dto';
 import { QuestionAnswerDto, StudentAnswer } from './dtos/question-answer.dto';
 import { RoomAuthorGuard } from './guards/room-author.guard';
 import { RoomStudentGuard } from './guards/room-student.guard';
+import { KickStudentDto } from './dtos/kick-student.dto';
 
 @UseFilters(WsExceptionsFilter)
 @UsePipes(new ValidationPipe())
@@ -19,7 +21,7 @@ import { RoomStudentGuard } from './guards/room-student.guard';
   namespace: 'join-exam',
   cors: { origin: '*' },
 })
-export class ExamsGateway implements OnGatewayConnection {
+export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
   constructor(private readonly examsService: ExamManagementService) {}
@@ -30,21 +32,29 @@ export class ExamsGateway implements OnGatewayConnection {
     return { ...question, index, answers };
   }
 
-  private async handleRole(client: Socket, auth: ExamClientAuthDto) {
+  private async handleRole(authenticator: WsExamsAuthenticator, client: Socket) {
+    const auth = client.handshake.auth as ExamClientAuthDto;
+
     switch (auth.role) {
       case 'author':
         await this.examsService.joinAuthor(auth.examCode, client.id);
         break;
       case 'student':
-        const { author } = await this.examsService.getExam(auth.examCode);
-        const [studentId, { clientId, name }] = await this.examsService.joinStudent(
-          auth.examCode,
-          auth.studentName,
-          client.id,
-        );
+        const [status, studentId] = await authenticator.authorizeStudent(auth);
+        const { author, students } = await this.examsService.getExam(auth.examCode);
 
-        this.server.to(author.clientId!).emit('student-joined', { name, clientId });
-        client.emit('student-joined', { id: studentId });
+        switch (status) {
+          case 'error':
+            break;
+          case 'new':
+            const { studentToken, name } = students[studentId];
+            this.server.to(author.clientId!).emit('student-joined', { name, studentId });
+            client.emit('student-joined', { studentId, studentToken });
+            break;
+          case 'reconnected':
+            client.emit('student-reconnected');
+            break;
+        }
         break;
       default:
         throw WebSocketException.ServerError('Invalid auth role');
@@ -52,17 +62,27 @@ export class ExamsGateway implements OnGatewayConnection {
   }
 
   async handleConnection(@ConnectedSocket() client: Socket) {
-    const authenticator = new WsExamsAuthenticator(this.examsService, client);
-    const { isAuthorized, auth } = await authenticator.authenticate();
+    const authenticator = new WsExamsAuthenticator(this.examsService, this.server, client);
+    const { isAuthenticated, auth } = await authenticator.authenticate();
 
-    if (isAuthorized) {
-      await this.handleRole(client, auth);
+    if (isAuthenticated) {
+      await this.handleRole(authenticator, client);
 
       const { test, questions } = await this.examsService.getExam(auth.examCode);
       const testInfo = { ...test, questionsAmount: questions.length };
 
       client.join(auth.examCode);
       client.emit('test-info', testInfo);
+    }
+  }
+
+  async handleDisconnect(@ConnectedSocket() client: Socket) {
+    const { examCode } = client.handshake.auth as ExamClientAuthDto;
+    const room = await this.server.in(examCode).fetchSockets();
+    const exam = await this.examsService.getExam(examCode, true);
+
+    if (exam && room.length === 0 && exam.status !== 'started') {
+      await this.examsService.deleteExam(examCode);
     }
   }
 
@@ -112,13 +132,17 @@ export class ExamsGateway implements OnGatewayConnection {
   @UseGuards(RoomStudentGuard)
   @SubscribeMessage('answer')
   async answerQuestion(
-    @MessageBody() { studentId, questionIndex, answers }: QuestionAnswerDto,
+    @MessageBody() { studentToken, studentId, questionIndex, answers }: QuestionAnswerDto,
     @ClientAuth('examCode') examCode: string,
   ) {
-    const { status, currentQuestionIndex } = await this.examsService.getExam(examCode);
+    const { status, currentQuestionIndex, students } = await this.examsService.getExam(examCode);
 
     if (status !== 'started') {
       throw WebSocketException.BadRequest('Exam is not started or already finished');
+    }
+
+    if (students[studentId].studentToken !== studentToken) {
+      throw WebSocketException.Forbidden('Student token is invalid');
     }
 
     if (questionIndex !== currentQuestionIndex) {
@@ -132,5 +156,30 @@ export class ExamsGateway implements OnGatewayConnection {
     if (!studentExist) {
       throw WebSocketException.BadRequest('Student id is invalid. You are not in the exam room');
     }
+  }
+
+  @UseGuards(RoomAuthorGuard)
+  @SubscribeMessage('kick-student')
+  async kickStudent(
+    @MessageBody() { studentId }: KickStudentDto,
+    @ClientAuth('examCode') examCode: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const exam = await this.examsService.getExam(examCode);
+
+    if (exam.status !== 'created') {
+      throw WebSocketException.BadRequest('You can not kick student after exam started');
+    }
+
+    const deletedStudentClientId = await this.examsService.kickStudent(examCode, studentId);
+
+    if (!deletedStudentClientId) {
+      throw WebSocketException.NotFound('Student with this id is not in the exam');
+    }
+
+    this.server.to(deletedStudentClientId).emit('student-kicked', { studentId });
+    this.server.to(deletedStudentClientId).disconnectSockets(true);
+
+    client.emit('student-kicked', { studentId });
   }
 }
