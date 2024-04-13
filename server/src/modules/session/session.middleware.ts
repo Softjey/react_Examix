@@ -11,7 +11,7 @@ export class SessionMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     session({
-      secret: config.SESSION_SECRET,
+      secret: process.env.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
       rolling: true,
