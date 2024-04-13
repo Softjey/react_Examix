@@ -19,11 +19,15 @@ export class AuthService {
   async validateUser(email: User['email'], password: User['password']): Promise<User | null> {
     const user = await this.usersService.getByEmail(email);
 
+    console.log('user: ', user);
+
     if (!user) {
       return null;
     }
 
     const passwordIsCorrect = await this.hashService.compare(password, user.password);
+
+    console.log('passwordIsCorrect: ', passwordIsCorrect);
 
     return passwordIsCorrect ? user : null;
   }
