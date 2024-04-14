@@ -44,4 +44,8 @@ export class WebSocketException {
       { date: new Date(), ...details },
     );
   }
+
+  public static Conflict(message?: Message, details?: WebSocketExceptionDetails) {
+    return new WebSocketException(message ?? 'Conflict', HttpStatus.CONFLICT, details);
+  }
 }

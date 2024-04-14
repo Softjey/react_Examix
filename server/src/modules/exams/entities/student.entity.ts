@@ -10,5 +10,6 @@ export class Student {
   constructor(
     public clientId: Socket['id'],
     public name: string,
+    public studentToken: string,
   ) {}
 }

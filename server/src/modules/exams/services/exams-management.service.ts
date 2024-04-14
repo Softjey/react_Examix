@@ -25,8 +25,19 @@ export class ExamManagementService extends EventEmitter {
     this.examFinishedEventName = (examCode: string) => `finished-${examCode}`;
   }
 
-  getExam = this.examsCacheService.getExam.bind(this.examsCacheService);
-  examExists = this.examsCacheService.examExists.bind(this.examsCacheService);
+  getExam(examCode: string, nullable = false) {
+    return this.examsCacheService.getExam(examCode).catch((exam) => {
+      if (nullable) {
+        return null;
+      }
+
+      throw exam;
+    });
+  }
+
+  examExists(examCode: string) {
+    return this.examsCacheService.examExists(examCode);
+  }
 
   async joinAuthor(examCode: string, clientId: Author['clientId']) {
     const exam = await this.examsCacheService.getExam(examCode);
@@ -34,10 +45,15 @@ export class ExamManagementService extends EventEmitter {
     await this.examsCacheService.setExam(examCode, exam);
   }
 
-  async joinStudent(examCode: string, studentName: Student['name'], clientId: Student['clientId']) {
+  async joinNewStudent(
+    examCode: string,
+    studentName: Student['name'],
+    clientId: Student['clientId'],
+  ) {
     const exam = await this.examsCacheService.getExam(examCode);
     const studentId = this.uniqueIdService.generateUUID();
-    const newStudent = new Student(clientId, studentName);
+    const studentToken = this.uniqueIdService.generateUUID();
+    const newStudent = new Student(clientId, studentName, studentToken);
 
     exam.students[studentId] = newStudent;
 
@@ -46,12 +62,40 @@ export class ExamManagementService extends EventEmitter {
     return [studentId, newStudent] as const;
   }
 
+  async updateStudentClientId(
+    examCode: string,
+    studentId: Student['clientId'],
+    clientId: Student['clientId'],
+  ) {
+    const exam = await this.examsCacheService.getExam(examCode);
+    const changedId = exam.students[studentId].clientId;
+
+    exam.students[studentId].clientId = clientId;
+    await this.examsCacheService.setExam(examCode, exam);
+
+    const newStudent = exam.students[studentId];
+
+    return [changedId, newStudent] as const;
+  }
+
   async startExam(examCode: string) {
     const exam = await this.examsCacheService.getExam(examCode);
     exam.status = 'started';
     await this.examsCacheService.setExam(examCode, exam);
 
     this.processQuestion(examCode);
+  }
+
+  async kickStudent(examCode: string, studentId: string) {
+    const exam = await this.examsCacheService.getExam(examCode);
+    const studentClientId = exam.students[studentId]?.clientId;
+
+    if (studentClientId !== undefined) {
+      delete exam.students[studentId];
+      await this.examsCacheService.setExam(examCode, exam);
+    }
+
+    return studentClientId ?? null;
   }
 
   private emitQuestion(examCode: string, question: ExamQuestion, questionIndex: number) {
@@ -110,6 +154,11 @@ export class ExamManagementService extends EventEmitter {
     const exam = await this.examsCacheService.getExam(examCode);
 
     return this.examsHistoryService.parseResults(exam);
+  }
+
+  async deleteExam(examCode: string) {
+    this.removeAllListeners(this.questionEventName(examCode));
+    await this.examsCacheService.deleteExamFromCache(examCode);
   }
 
   async finishExam(examCode: string) {

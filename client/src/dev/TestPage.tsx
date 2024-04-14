@@ -9,6 +9,7 @@ import { getRandomName } from './randomNames';
 import { Response, createExam } from './createExam';
 
 const TestPage: React.FC = () => {
+  const [studentIds, setStudentIds] = useState<string[]>([]);
   const [response, setResponse] = useState<Response | null>(null);
   const [students, setStudents] = useState<string[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -26,17 +27,27 @@ const TestPage: React.FC = () => {
       authorSocket.io.on('error', log('author error'));
       authorSocket.on('exception', log('author exception'));
       authorSocket.on('test-info', log('author test-info:'));
-      authorSocket.on('student-joined', log('author student-joined'));
+      authorSocket.on('student-joined', ({ name, studentId }) => {
+        setStudentIds((currStudentIds) => [...currStudentIds, studentId]);
+        log('author student-joined')({ name, studentId });
+      });
       authorSocket.on('exam-started', log('author exam-started'));
       authorSocket.on('question', log('author question:'));
       authorSocket.on('results', log('author results:'));
       authorSocket.on('exam-finished', log('author exam-finished'));
+      authorSocket.on('student-kicked', log('author Student kicked'));
 
       setSocket(authorSocket);
 
       log(response.examCode);
     }
   }, [response]);
+
+  const kickRandomStudent = () => {
+    const randomStudentId = studentIds[Math.floor(Math.random() * studentIds.length)];
+    log('author kick student requested')(randomStudentId);
+    socket!.emit('kick-student', { studentId: randomStudentId });
+  };
 
   return (
     <StartLayout style={{ display: 'flex', justifyContent: 'space-around', flexDirection: 'row' }}>
@@ -57,6 +68,10 @@ const TestPage: React.FC = () => {
         </Button>
         <Button size="large" onClick={() => socket!.emit('start-exam')}>
           Start exam
+        </Button>
+
+        <Button size="large" onClick={kickRandomStudent}>
+          Kick Random Student
         </Button>
       </div>
 
