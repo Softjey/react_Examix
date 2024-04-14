@@ -54,7 +54,7 @@ Environment variables must be configured before running the application. Create 
 
 After installing all dependencies, migrate the database schema with the following Prisma command:
 
-`cd server && npx prisma migrate deploy`
+`cd server && npx prisma migrate deploy && npx prisma generate`
 
 Starting Development
 --------------------
