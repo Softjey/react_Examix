@@ -16,7 +16,8 @@ export class SessionMiddleware implements NestMiddleware {
       saveUninitialized: false,
       rolling: true,
       cookie: {
-        sameSite: 'lax',
+        secure: true,
+        sameSite: 'none',
         maxAge: 1000 * 60 * 60 * 24 * config.SESSION_MAX_AGE,
       },
       store: new RedisStore({
