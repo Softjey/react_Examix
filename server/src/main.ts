@@ -14,7 +14,7 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new GlobalExceptionFilter(httpAdapter));
   app.enableCors({
-    origin: config.CLIENT_URL,
+    origin: config.CLIENT_URLS,
     credentials: true,
   });
   enableApiDocs('api/docs', app);
