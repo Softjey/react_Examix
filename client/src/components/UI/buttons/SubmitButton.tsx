@@ -1,14 +1,15 @@
-import { Button } from '@mui/material';
+import Button from './Button';
 import { StudentAnswer } from '../../../dev/questions';
 
 interface Props {
-  setValue: React.Dispatch<React.SetStateAction<StudentAnswer[]>>;
+  setValue: React.Dispatch<React.SetStateAction<StudentAnswer[] | null>>;
   setIsShowAnswers: React.Dispatch<React.SetStateAction<boolean>>;
-  value: StudentAnswer[];
+  value: StudentAnswer[] | null;
 }
 
 const SubmitButton: React.FC<Props> = ({ setValue, value, setIsShowAnswers }) => (
   <Button
+    disableElevation
     variant="contained"
     sx={{ alignSelf: 'center', width: '120px' }}
     onClick={() => {

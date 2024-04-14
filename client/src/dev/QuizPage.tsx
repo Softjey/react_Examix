@@ -37,14 +37,21 @@ const QuizPage: React.FC = () => {
     }
   };
 
+  // const [i, setI] = useState(0);
+
   if (isFinished) {
     return <Navigate to={Routes.NOT_FOUND_PAGE} />;
   }
 
   return (
     <StartLayout header={false}>
-      {/* <Timer question={questions[1]} onEnd={() => console.log('done')} />
-      <QuizCard question={questions[0]} sendAnswer={sendAnswer} /> */}
+      { }
+      {/* {i < questions.length && (
+        <>
+          <Timer question={questions[i]} onEnd={() => setI((prev) => prev + 1)} />
+          <QuizCard question={questions[i]} sendAnswer={sendAnswer} />
+        </>
+      )} */}
       <Alert>
         <AlertTitle>{testInfo?.questionsAmount}</AlertTitle>
       </Alert>

@@ -27,12 +27,12 @@ export enum QuestionType {
   MULTIPLE_CHOICE,
 }
 
-export default [
+const questions = [
   {
     id: 1,
     index: 1,
     answers: [{ title: 'JavaScript' }, { title: 'Java' }, { title: 'Python' }, { title: 'C#' }],
-    type: QuestionType.SINGLE_CHOICE,
+    type: QuestionType.MULTIPLE_CHOICE,
     title: 'Which of these is a scripting language primarily used for client-side web development?',
     maxScore: 10,
     timeLimit: 10,
@@ -139,4 +139,6 @@ export default [
     maxScore: 20,
     timeLimit: 10,
   },
-] as unknown as Question[];
+] as Question[];
+
+export default questions;

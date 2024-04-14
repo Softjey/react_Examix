@@ -8,8 +8,8 @@ import {
   AlertTitle,
 } from '@mui/material';
 import { memo, useState, useEffect } from 'react';
-import { SingleButtonGroup, MultipleButtonGroup } from '../components/UI/AnswersButtonGroups';
-import { Question, QuestionType, StudentAnswer } from './questions';
+import AnswersButtonGroup from '../components/UI/AnswersButtonGroup';
+import { Question, StudentAnswer } from './questions';
 
 interface CardProps {
   question: Question;
@@ -17,7 +17,7 @@ interface CardProps {
 }
 
 const QuizCard: React.FC<CardProps> = memo(({ question: { title, answers, maxScore, type } }) => {
-  const [selectedValue, setSelectedValue] = useState<StudentAnswer[]>([]);
+  const [selectedValue, setSelectedValue] = useState<StudentAnswer[] | null>([]);
   const [isShowAnswers, setIsShowAnswers] = useState(true);
 
   useEffect(() => {
@@ -41,19 +41,12 @@ const QuizCard: React.FC<CardProps> = memo(({ question: { title, answers, maxSco
         </Typography>
       </CardContent>
       <CardActions sx={{ padding: '12px' }}>
-        {type === QuestionType.SINGLE_CHOICE ? (
-          <SingleButtonGroup
-            answers={answers}
-            setIsShowAnswers={setIsShowAnswers}
-            setValue={setSelectedValue}
-          />
-        ) : (
-          <MultipleButtonGroup
-            answers={answers}
-            setIsShowAnswers={setIsShowAnswers}
-            setValue={setSelectedValue}
-          />
-        )}
+        <AnswersButtonGroup
+          answers={answers}
+          setIsShowAnswers={setIsShowAnswers}
+          setValue={setSelectedValue}
+          type={type}
+        />
       </CardActions>
     </Card>
   ) : (
