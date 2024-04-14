@@ -15,8 +15,9 @@ export class SessionMiddleware implements NestMiddleware {
       resave: false,
       saveUninitialized: false,
       rolling: true,
+      proxy: true,
       cookie: {
-        secure: 'auto',
+        secure: true,
         sameSite: 'none',
         maxAge: 1000 * 60 * 60 * 24 * config.SESSION_MAX_AGE,
       },
