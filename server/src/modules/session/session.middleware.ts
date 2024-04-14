@@ -15,10 +15,10 @@ export class SessionMiddleware implements NestMiddleware {
       resave: false,
       saveUninitialized: false,
       rolling: true,
-      proxy: true,
+      proxy: process.env.NODE_ENV === 'production' ? true : false,
       cookie: {
-        secure: true,
-        sameSite: 'none',
+        secure: process.env.NODE_ENV === 'production' ? true : false,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 1000 * 60 * 60 * 24 * config.SESSION_MAX_AGE,
       },
       store: new RedisStore({
