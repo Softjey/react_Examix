@@ -1,8 +1,8 @@
 import axiosCLient from 'axios';
-import { AuthResponse, User } from './interfaces';
+import { AuthResponse, CreateUserDto, CreateUserResponse, User } from './interfaces';
 
 const axios = axiosCLient.create({
-  baseURL: 'http://localhost:3005',
+  baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
   withCredentials: true,
 });
 
@@ -20,5 +20,16 @@ export default class ApiClient {
     });
 
     return data.user;
+  }
+
+  static async createUser({ email, password, name, role }: CreateUserDto) {
+    const { data } = await axios.post<CreateUserResponse>('/users', {
+      email,
+      password,
+      name,
+      role,
+    });
+
+    return data;
   }
 }
