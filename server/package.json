@@ -1,8 +1,7 @@
 {
   "name": "react-examix",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "version": "1.0.0",
+  "author": "Softjey",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
