@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable no-alert */
 import { List } from '@mui/material';
 import { Socket, io } from 'socket.io-client';
 import React, { useEffect, useState } from 'react';
@@ -7,6 +9,7 @@ import Button from '../components/UI/buttons/Button';
 import log from './log';
 import { getRandomName } from './randomNames';
 import { Response, createExam } from './createExam';
+import ApiClient from '../services/Api/ApiClient';
 
 const TestPage: React.FC = () => {
   const [studentIds, setStudentIds] = useState<string[]>([]);
@@ -17,7 +20,7 @@ const TestPage: React.FC = () => {
   useEffect(() => {
     if (response) {
       log('Exam created')();
-      const authorSocket = io('ws://localhost:3005/join-exam', {
+      const authorSocket = io(`${import.meta.env.VITE_SERVER_WS_URL}/join-exam`, {
         autoConnect: false,
         auth: { role: 'author', examCode: response.examCode, authorToken: response.authorToken },
       });
@@ -47,11 +50,36 @@ const TestPage: React.FC = () => {
     socket!.emit('kick-student', { studentId: randomStudentId });
   };
 
+  const createUser = async () => {
+    const email = prompt('Enter email');
+    const password = prompt('Enter password');
+    const name = prompt('Enter name');
+    const role = prompt('Enter role');
+
+    if (role !== 'TEACHER' && role !== 'ADMIN') {
+      throw new Error('Invalid role. Must be TEACHER or ADMIN');
+    }
+
+    if (!email || !password || !name) {
+      throw new Error('Invalid input email or password or name');
+    }
+
+    const createUserResponse = await ApiClient.createUser({
+      email,
+      password,
+      name,
+      role,
+    });
+
+    console.log(createUserResponse);
+  };
+
   return (
     <StartLayout style={{ display: 'flex', justifyContent: 'space-around', flexDirection: 'row' }}>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <h2>Test Page</h2>
 
+        <Button onClick={createUser}>Create User</Button>
         <Button onClick={async () => setResponse(await createExam(2))} size="large">
           Create Exam
         </Button>

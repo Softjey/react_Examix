@@ -8,10 +8,10 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" --ignore-path .gitignore --log-level warn",
-    "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start": "cross-env NODE_ENV=production nest start",
+    "start:dev": "cross-env NODE_ENV=development nest start --watch",
+    "start:debug": "cross-env NODE_ENV=development nest start --debug --watch",
+    "start:prod": "cross-env NODE_ENV=production node dist/main",
     "lint": "npm run format && eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "dependencies": {
@@ -55,6 +55,7 @@
     "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",

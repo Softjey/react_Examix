@@ -1,10 +1,10 @@
 import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
-// import { UseSessionGuard } from 'src/modules/auth/decorators/session-guard.decorator';
+import { UseSessionGuard } from 'src/modules/auth/decorators/session-guard.decorator';
 
 @Controller('users')
-// @UseSessionGuard()
+@UseSessionGuard()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

@@ -28,7 +28,7 @@ export class AuthService {
     return passwordIsCorrect ? user : null;
   }
 
-  async forgotPassword(email: User['email']) {
+  async forgotPassword(email: User['email'], redirectUrl: string) {
     const user = await this.usersService.getByEmail(email);
     const confirmToken = this.uniqueIdService.generateUUID();
 
@@ -37,7 +37,12 @@ export class AuthService {
     }
 
     await this.authCacheService.setResetPasswordToken(confirmToken, user.id);
-    await this.mailService.sendPasswordForgotEmail(user.name, email, confirmToken);
+    await this.mailService.sendPasswordForgotEmail({
+      email,
+      redirectUrl,
+      name: user.name,
+      token: confirmToken,
+    });
   }
 
   async resetPassword(token: string, password: User['password']) {

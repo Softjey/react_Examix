@@ -15,3 +15,15 @@ export interface AuthResponse {
   message: string;
   user: UserResponse;
 }
+
+export interface CreateUserDto {
+  email: string;
+  password: string;
+  name: string;
+  role: 'TEACHER' | 'ADMIN';
+}
+
+export interface CreateUserResponse {
+  message: string;
+  newUser: UserResponse;
+}
