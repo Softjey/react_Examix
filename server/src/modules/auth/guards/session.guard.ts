@@ -11,7 +11,7 @@ export class SessionGuard implements CanActivate {
         return true;
       }
     } catch (e) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Unauthorized. Please log in.');
     }
   }
 }

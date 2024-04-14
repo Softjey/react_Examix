@@ -1,7 +1,7 @@
 import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import * as session from 'express-session';
-// import RedisStore from 'connect-redis';
+import RedisStore from 'connect-redis';
 import config from 'src/config';
 import { NextFunction, Request, Response } from 'express';
 
@@ -18,11 +18,11 @@ export class SessionMiddleware implements NestMiddleware {
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * config.SESSION_MAX_AGE,
       },
-      // store: new RedisStore({
-      //   client: this.redisClient,
-      //   prefix: 'session:',
-      //   ttl: 60 * 60 * 24 * config.SESSION_MAX_AGE,
-      // }),
+      store: new RedisStore({
+        client: this.redisClient,
+        prefix: 'session:',
+        ttl: 60 * 60 * 24 * config.SESSION_MAX_AGE,
+      }),
     })(req, res, next);
   }
 }
