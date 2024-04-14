@@ -21,8 +21,6 @@ export class LoginGuard extends AuthGuard('local') {
     const canActivateResult = (await super.canActivate(context)) as boolean;
     await super.logIn(request);
 
-    console.log('canActivateResult: ', canActivateResult);
-
     return canActivateResult;
   }
 }
