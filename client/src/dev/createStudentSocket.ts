@@ -10,7 +10,7 @@ export default function createStudentSocket(
   studentId?: string,
   studentToken?: string,
 ) {
-  const socket = io('ws://localhost:3005/join-exam', {
+  const socket = io(`${import.meta.env.VITE_SERVER_WS_URL}/join-exam`, {
     autoConnect: false,
     auth: {
       role: 'student',

@@ -20,7 +20,7 @@ const TestPage: React.FC = () => {
   useEffect(() => {
     if (response) {
       log('Exam created')();
-      const authorSocket = io('ws://localhost:3005/join-exam', {
+      const authorSocket = io(`${import.meta.env.VITE_SERVER_WS_URL}/join-exam`, {
         autoConnect: false,
         auth: { role: 'author', examCode: response.examCode, authorToken: response.authorToken },
       });
