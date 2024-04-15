@@ -23,8 +23,8 @@ export interface Question {
 }
 
 export enum QuestionType {
-  SINGLE_CHOICE,
-  MULTIPLE_CHOICE,
+  SINGLE_CHOICE = 'SINGLE_CHOICE',
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
 }
 
 const questions = [

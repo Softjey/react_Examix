@@ -81,7 +81,14 @@ const TestPage: React.FC = () => {
       <div css={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <h2>Test Page</h2>
         <Button onClick={createUser}>Create User</Button>
-        <Button onClick={async () => setResponse(await createExam(3))} size="large">
+        <Button
+          onClick={async () => {
+            const res = await createExam(1);
+            console.log(res);
+            setResponse(res);
+          }}
+          size="large"
+        >
           Create Exam
         </Button>
         <Button size="large" onClick={() => socket!.connect()}>

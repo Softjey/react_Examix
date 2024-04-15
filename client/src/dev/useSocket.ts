@@ -21,7 +21,7 @@ const useExamSocket = (auth: Auth, addListeners: (socket: Socket) => void) => {
   const [isLoading, setIsLoading] = useState(true);
   const [socket, setSocket] = useState<Socket | null>(null);
   useEffect(() => {
-    const newSocket = io('ws://localhost:3005/join-exam', { auth });
+    const newSocket = io(`${import.meta.env.VITE_SERVER_HTTP_URL}/join-exam`, { auth });
 
     addListeners(newSocket);
     setSocket(newSocket);
