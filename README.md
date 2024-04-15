@@ -1,74 +1,93 @@
+Examix Project Documentation
+============================
 
-# Examix Project Documentation
+Introduction
+------------
 
-## Introduction
-This documentation outlines the process for setting up and developing the "Examix" project, which consists of two main parts: the client (`client`) and the server (`server`). The project utilizes `npm` for dependency management and script execution.
+Examix is an examination platform that allows educators to create, distribute, and administer tests with ease. Teachers can effortlessly craft tests and evaluate their students, making the platform a convenient solution for academic testing. The frontend is designed with React for a responsive user experience, while the backend uses Nest.js to ensure scalability and effective performance.
 
-## Project Setup
+Prerequisites
+-------------
+
+Before initiating the setup process, ensure the following prerequisites are met:
+
+*   Node.js is installed on your system.
+*   npm (Node Package Manager) is available for managing dependencies.
+*   Docker is installed for service containerization. It can be downloaded from [Docker's official website](https://www.docker.com/get-started).
+
+Project Setup
+-------------
 
 ### Initial Setup
 
-- Before running any other scripts, make sure to execute:
+To install all required node packages, run the following command in the terminal:
 
-  ```bash
-  npm install
-  ```
+`npm install`
 
-  This will install the necessary packages for the project's root.
+### Setting Up Services with Docker
 
-### Installing Dependencies
+Use Docker to create service containers for PostgreSQL and Redis:
 
-- To install all dependencies simultaneously in both `client` and `server` directories, run the following command:
+`docker run -d --name postgres-examix -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=yourpassword -e POSTGRES_DB=examix -p 5432:5432 postgres`  
+`docker run -d --name redis-examix -p 6379:6379 redis`
 
-  ```bash
-  npm run install-all
-  ```
+### Configuring .env Files
 
-## Starting Development
+Environment variables must be configured before running the application. Create a `.env` file in both the `client` and `server` directories using the provided `.env.example` as a template.
 
-### Concurrent Client and Server Development
+### Client Configuration
 
-- While you can start development servers for both the client and server simultaneously with:
+`VITE_SERVER_HTTP_URL="http://localhost:4000"`  
+`VITE_SERVER_WS_URL="ws://localhost:4000"`
 
-  ```bash
-  npm run dev
-  ```
+### Server Configuration
 
-  It is often more convenient to open the client and server in separate console windows. This approach provides better visibility and control over the output and processes of each part of the application. However, if preferred, they can still be run concurrently in a single console.
+`PORT=4000`  
+`SESSION_SECRET="your_secret"`  
+`DATABASE_URL="postgresql://username:password@localhost:5432/database_name?schema=public"`  
+`CACHE_URL="redis://localhost:6379"`  
+`MAIL_TRANSPORT_URL="smtps://your_email_address:your_email_password@smtp.gmail.com"`
 
-  This command runs two processes in parallel: `dev:client` (client development server) and `dev:server` (server development server).
+### Database Migration
 
-### Client Development
+After installing all dependencies, migrate the database schema with the following Prisma command:
 
-- To work solely on the client, execute:
+`cd server && npx prisma migrate deploy && npx prisma generate`
 
-  ```bash
-  npm run dev:client
-  ```
+Starting Development
+--------------------
 
-  This will start the development server for the client part of the project.
+Run the following command to start the development servers for both the client and the server:
 
-### Server Development
+`npm run dev`
 
-- For server-side development only, use:
+Client Development
+------------------
 
-  ```bash
-  npm run dev:server
-  ```
+To start the client in development mode, use:
 
-  This will start the development server for the server part of the project.
+`npm run dev:client`
 
-## Linting
+Server Development
+------------------
 
-- To perform linting (code style checks) for both the client and server simultaneously, use the command:
+To start the server in development mode, use:
 
-  ```bash
-  npm run lint
-  ```
+`npm run dev:server`
 
-## Notes
+Linting
+-------
 
-- Ensure you have `Node.js` and `npm` installed before running these commands.
-- Husky configuration depends on your project's needs, make sure it is set up according to your requirements.
+Run the linting process for both the client and the server with:
 
-This documentation should assist you in efficiently starting work on the "Examix" project, utilizing defined scripts for development, testing, and project management.
+`npm run lint`
+
+Additional Commands
+-------------------
+
+For a comprehensive list of available commands for development, testing, and deployment, refer to the `package.json` files located in the root directory, and within the `client` and `server` directories of the project.
+
+API Documentation
+-----------------
+
+Once the server is operational, you can access the full server documentation at the `/api/docs` endpoint.

@@ -45,7 +45,6 @@ const QuizPage: React.FC = () => {
 
   return (
     <StartLayout header={false}>
-      { }
       {/* {i < questions.length && (
         <>
           <Timer question={questions[i]} onEnd={() => setI((prev) => prev + 1)} />

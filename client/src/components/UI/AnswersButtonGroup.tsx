@@ -64,7 +64,6 @@ const AnswersButtonGroup: React.FC<Props> = ({ answers, setValue, setIsShowAnswe
               }}
               size="large"
             >
-              { }
               {isTypeSingle ? (
                 isSelected ? (
                   <RadioButtonCheckedOutlined />
