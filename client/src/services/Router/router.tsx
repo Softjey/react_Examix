@@ -39,11 +39,7 @@ const router = createRouter([
   },
   {
     path: 'quiz',
-    element: (
-      <Authenticated>
-        <QuizPage />
-      </Authenticated>
-    ),
+    element: <QuizPage />,
   },
 ]);
 
