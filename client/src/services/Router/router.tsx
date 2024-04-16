@@ -1,11 +1,12 @@
 import { createHashRouter as createRouter } from 'react-router-dom';
 import Routes from './Routes';
 import StartPage from '../../pages/StartPage';
-import LoginPage from '../../pages/LoginPage/LoginPage';
 import NotFoundPage from '../../pages/NotFoundPage';
 import Authenticated from '../../components/Authenticated';
 import TestPage from '../../dev/TestPage';
 import QuizPage from '../../dev/QuizPage';
+import TeacherLoginPage from '../../pages/LoginPage/TeacherLoginPage';
+import StudentJoinPage from '../../pages/LoginPage/StudentJoinPage';
 
 const router = createRouter([
   {
@@ -14,11 +15,11 @@ const router = createRouter([
   },
   {
     path: Routes.LOGIN_PAGE,
-    element: <LoginPage role="teacher" />,
+    element: <TeacherLoginPage />,
   },
   {
     path: Routes.JOIN_PAGE,
-    element: <LoginPage role="student" />,
+    element: <StudentJoinPage />,
   },
   {
     path: Routes.NOT_FOUND_PAGE,

@@ -56,8 +56,8 @@ const QuizCard: React.FC<CardProps> = memo(
             <CircularProgressWithLabel
               size={50}
               thickness={3}
-              value={(index / questionsAmount) * 100}
-              label={`${index}/${questionsAmount}`}
+              value={((index + 1) / questionsAmount) * 100}
+              label={`${index + 1}/${questionsAmount}`}
             />
           )}
         </CardContent>

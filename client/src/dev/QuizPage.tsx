@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, AlertTitle, CircularProgress } from '@mui/material';
+import { CircularProgress } from '@mui/material';
 import { Socket } from 'socket.io-client';
 import { Navigate } from 'react-router';
 import StartLayout from '../components/StartLayout';
@@ -9,7 +9,6 @@ import { /* questions */ Question, StudentAnswer, TestInfo } from './questions';
 import log from './log';
 import { center } from '../styles/flex';
 import useStudentExamSocket from './useStudentExamSocket';
-import Button from '../components/UI/buttons/Button';
 import Routes from '../services/Router/Routes';
 import { StudentAuth } from './StudentPanel';
 
@@ -18,7 +17,7 @@ const QuizPage: React.FC = () => {
   const [isFinished, setIsFinished] = useState(false);
   const [testInfo, setTestInfo] = useState<TestInfo | null>(null);
   const [studentAuth, setStudentAuth] = useState<StudentAuth | null>(null);
-  const [socket, isLoading, setIsLoading] = useStudentExamSocket((newSocket: Socket) => {
+  const { socket, isLoading, setIsLoading } = useStudentExamSocket((newSocket: Socket) => {
     newSocket.on('question', (newQuestion: Question) => {
       setCurrQuestion(newQuestion);
       // eslint-disable-next-line no-console
@@ -46,6 +45,7 @@ const QuizPage: React.FC = () => {
       });
     }
   };
+
   // const [i, setI] = useState(0);
 
   if (isFinished) {
@@ -76,14 +76,6 @@ const QuizPage: React.FC = () => {
             question={currQuestion}
             sendAnswer={sendAnswer}
           />
-        </>
-      )}
-      {isFinished && (
-        <>
-          <Alert severity="success">
-            <AlertTitle>Finished</AlertTitle>
-          </Alert>
-          <Button onClick={() => setIsLoading(true)}>restart</Button>
         </>
       )}
     </StartLayout>

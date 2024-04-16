@@ -1,13 +1,15 @@
 import { Socket } from 'socket.io-client';
 import log from './log';
 import useExamSocket from './useSocket';
+import examCode from '../store/examCode';
+import studentName from '../store/studentName';
 
 const useStudentExamSocket = (addListeners: (socket: Socket) => void) => {
   const [socket, isLoading, setIsLoading] = useExamSocket(
     {
       role: 'student',
-      examCode: '044722' /* response.examCode */,
-      studentName: 'Test',
+      examCode: examCode.code,
+      studentName: studentName.name,
       // studentId: // later,
       // studentToken: // later
     },
@@ -21,7 +23,7 @@ const useStudentExamSocket = (addListeners: (socket: Socket) => void) => {
       addListeners(newSocket);
     },
   );
-  return [socket, isLoading, setIsLoading] as const;
+  return { socket, isLoading, setIsLoading };
 };
 
 export default useStudentExamSocket;
