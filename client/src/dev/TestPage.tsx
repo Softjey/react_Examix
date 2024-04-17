@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-alert */
-import { List } from '@mui/material';
+import { List, Typography } from '@mui/material';
 import { Socket, io } from 'socket.io-client';
 import React, { useEffect, useState } from 'react';
 import StartLayout from '../components/StartLayout';
@@ -79,7 +79,9 @@ const TestPage: React.FC = () => {
   return (
     <StartLayout style={{ display: 'flex', justifyContent: 'space-around', flexDirection: 'row' }}>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <h2>Test Page</h2>
+        <Typography variant="h5" align="center">
+          Test Page
+        </Typography>
         <Button onClick={createUser}>Create User</Button>
         <Button
           onClick={async () => {

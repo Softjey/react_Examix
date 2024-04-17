@@ -7,6 +7,7 @@ import TestPage from '../../dev/TestPage';
 import QuizPage from '../../dev/QuizPage';
 import TeacherLoginPage from '../../pages/LoginPage/TeacherLoginPage';
 import StudentJoinPage from '../../pages/LoginPage/StudentJoinPage';
+import WaitingPage from '../../dev/WaitingPage';
 
 const router = createRouter([
   {
@@ -40,6 +41,10 @@ const router = createRouter([
   {
     path: 'quiz',
     element: <QuizPage />,
+  },
+  {
+    path: Routes.WAITING_PAGE,
+    element: <WaitingPage />,
   },
 ]);
 

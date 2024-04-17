@@ -5,6 +5,7 @@ enum Routes {
   JOIN_PAGE = '/join',
   NOT_FOUND_PAGE = '*',
   HOME_PAGE = '/home',
+  WAITING_PAGE = '/waiting',
 }
 
 export default Routes;

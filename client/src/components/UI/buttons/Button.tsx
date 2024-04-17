@@ -14,7 +14,7 @@ const Button: React.FC<MuiButtonProps & Partial<To>> = (props) => {
     return <MuiButton disableElevation component={LinkBehavior} {...props} />;
   }
 
-  return <MuiButton {...props} />;
+  return <MuiButton disableElevation {...props} />;
 };
 
 export default Button;

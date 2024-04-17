@@ -9,7 +9,6 @@ interface Props {
 
 const SubmitButton: React.FC<Props> = ({ setValue, value, setIsShowAnswers }) => (
   <Button
-    disableElevation
     variant="contained"
     sx={{ alignSelf: 'center', width: '120px' }}
     onClick={() => {
