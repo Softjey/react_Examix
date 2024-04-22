@@ -1,6 +1,8 @@
+/* eslint-disable no-nested-ternary */
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { Socket } from 'socket.io-client';
-import { Card, CardContent, CardHeader, Typography } from '@mui/material';
+import { Alert, AlertTitle, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
 import StartLayout from '../components/StartLayout';
 import Button from '../components/UI/buttons/Button';
 import BookLoader from './BookLoader/BookLoader';
@@ -8,15 +10,38 @@ import DottedText from './DottedText/DottedText';
 import useStudentExamSocket from './useStudentExamSocket';
 import { TestInfo } from './questions';
 import { snakeCaseToNormal } from './formatter';
+import log from './log';
+import Routes from '../services/Router/Routes';
+
+interface Error {
+  status: number;
+  message: string | string[];
+}
 
 const WaitingPage: React.FC = () => {
+  const [error, setError] = useState<Error | null>();
   const [testInfo, setTestInfo] = useState<TestInfo | null>(null);
-  const { isLoading } = useStudentExamSocket((newSocket: Socket) => {
+  const [isKicked, setIsKicked] = useState(false);
+
+  const navigate = useNavigate();
+
+  const { isLoading, setIsLoading } = useStudentExamSocket((newSocket: Socket) => {
     newSocket.on('test-info', (newTestInfo) => setTestInfo(newTestInfo));
+    newSocket.on('exception', (newException) => {
+      setError(newException);
+      setIsLoading(true);
+    });
+    newSocket.on('student-kicked', () => {
+      setIsKicked(true);
+      setIsLoading(true);
+    });
+    newSocket.io.on('error', log('error'));
   });
+  // TODO: Add error handling
+
   return (
     <StartLayout innerStyle={{ gap: '100px' }} header={false}>
-      {!isLoading && (
+      {!isLoading ? (
         <>
           <Typography sx={{ fontWeight: '500' }} variant="h2">
             <DottedText text="Waiting for the exam to start" />
@@ -92,11 +117,41 @@ const WaitingPage: React.FC = () => {
               </CardContent>
             </Card>
           )}
-          <Button variant="contained" size="large" color="error">
-            Leave
-          </Button>
         </>
+      ) : error ? (
+        <>
+          <Typography sx={{ fontWeight: '500' }} variant="h2">
+            Ooops, something went wrong...
+          </Typography>
+          <Stack spacing={1}>
+            {Array.isArray(error.message) ? (
+              error.message.map((msg) => (
+                <Alert key={msg} severity="error">
+                  <AlertTitle>{msg}</AlertTitle>
+                </Alert>
+              ))
+            ) : (
+              <Alert severity="error">
+                <AlertTitle>{error.message}</AlertTitle>
+              </Alert>
+            )}
+          </Stack>
+        </>
+      ) : isKicked ? (
+        <Alert severity="error">
+          <AlertTitle>You have been kicked</AlertTitle>
+        </Alert>
+      ) : (
+        ''
       )}
+      <Button
+        onClick={() => navigate(Routes.JOIN_PAGE)}
+        variant="contained"
+        size="large"
+        color="error"
+      >
+        Leave
+      </Button>
     </StartLayout>
   );
 };

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-alert */
-import { List, Typography } from '@mui/material';
+import { List, TextField, Typography } from '@mui/material';
 import { Socket, io } from 'socket.io-client';
 import React, { useEffect, useState } from 'react';
 import StartLayout from '../components/StartLayout';
@@ -16,6 +16,7 @@ const TestPage: React.FC = () => {
   const [response, setResponse] = useState<Response | null>(null);
   const [students, setStudents] = useState<string[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [inputStudentId, setInputStudentId] = useState('');
 
   useEffect(() => {
     if (response) {
@@ -45,6 +46,11 @@ const TestPage: React.FC = () => {
       log(response.examCode);
     }
   }, [response]);
+
+  const kickStudent = (studentId: string) => {
+    log('author kick student requested')(studentId);
+    socket!.emit('kick-student', { studentId });
+  };
 
   const kickRandomStudent = () => {
     const randomStudentId = studentIds[Math.floor(Math.random() * studentIds.length)];
@@ -109,6 +115,15 @@ const TestPage: React.FC = () => {
         <Button size="large" onClick={kickRandomStudent}>
           Kick Random Student
         </Button>
+
+        <TextField
+          label="enter student id to kick"
+          value={inputStudentId}
+          onChange={(e) => {
+            setInputStudentId(e.currentTarget.value);
+          }}
+        />
+        <Button onClick={() => kickStudent(inputStudentId)}>Kick</Button>
       </div>
 
       <List
