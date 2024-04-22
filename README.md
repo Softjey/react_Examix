@@ -1,5 +1,3 @@
-  Examix Project Documentation
-
 Examix Project Documentation
 ============================
 
