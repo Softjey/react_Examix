@@ -18,7 +18,7 @@ const StudentJoinPage: React.FC = () => {
       examCode.setCode(input2Ref.current.value);
     }
     if (input1Ref.current?.value && input2Ref.current?.value) {
-      navigate(Routes.QUIZ_PAGE);
+      navigate(Routes.WAITING_PAGE);
     }
   };
 

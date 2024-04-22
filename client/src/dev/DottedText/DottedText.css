@@ -3,12 +3,14 @@
 }
 
 .dotted-text::after {
+  content: '';
   position: absolute;
   padding-left: 10px;
-  animation: dots 1.5s infinite;
+  animation: dots 2s infinite;
 }
 
 @keyframes dots {
+
   0%,
   20% {
     content: '';
