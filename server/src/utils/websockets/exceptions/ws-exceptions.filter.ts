@@ -27,24 +27,27 @@ export class WsExceptionsFilter extends BaseWsExceptionFilter {
       const clientToHandle = exception.details.client ?? client;
 
       WsExceptionsFilter.handleError(clientToHandle, exception);
-
-      return;
     }
-
-    const serverError = WebSocketException.ServerError('Internal server error', {
-      cause: exception,
-    });
-
-    console.log(exception);
-    client.emit(WsExceptionsFilter.eventName, new WebSocketExceptionResponse(serverError));
-
-    return;
   }
 
-  public static handleError(client: Socket, exception: WebSocketException) {
-    client.emit(WsExceptionsFilter.eventName, new WebSocketExceptionResponse(exception));
+  public static handleError(client: Socket, exception: WebSocketException | Error) {
+    let error: WebSocketException;
+    const isServerWsException = exception instanceof WebSocketException;
+    const isServerError = !(exception instanceof WebSocketException);
 
-    if (exception.details.disconnect) {
+    if (isServerWsException || isServerError) {
+      console.error(exception);
+
+      error = isServerWsException
+        ? exception
+        : WebSocketException.ServerError('Internal server error', {
+            cause: exception,
+          });
+    }
+
+    client.emit(WsExceptionsFilter.eventName, new WebSocketExceptionResponse(error));
+
+    if (exception instanceof WebSocketException && exception.details.disconnect) {
       client.disconnect();
     }
   }
