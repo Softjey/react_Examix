@@ -102,7 +102,13 @@ const TestPage: React.FC = () => {
         <Button size="large" onClick={() => socket!.connect()}>
           Connect Author
         </Button>
-        <Button size="large" onClick={() => console.log(response!.examCode)}>
+        <Button
+          size="large"
+          onClick={() => {
+            console.log(response!.examCode);
+            navigator.clipboard.writeText(response!.examCode).then(() => console.log('copied'));
+          }}
+        >
           Get code
         </Button>
         <Button size="large" onClick={() => setStudents([...students, getRandomName()])}>

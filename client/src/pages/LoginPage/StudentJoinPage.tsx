@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { useNavigate } from 'react-router';
 import LoginPage from './LoginPage';
-import examCode from '../../store/examCode';
-import studentName from '../../store/studentName';
+
+import examSocket, { ExamRole } from '../../store/examSocket';
 import Routes from '../../services/Router/Routes';
 
 const StudentJoinPage: React.FC = () => {
@@ -11,13 +11,13 @@ const StudentJoinPage: React.FC = () => {
   const input2Ref = useRef<HTMLInputElement>(null);
 
   const onSubmit = () => {
-    if (input1Ref.current?.value) {
-      studentName.setName(input1Ref.current.value);
-    }
-    if (input2Ref.current?.value) {
-      examCode.setCode(input2Ref.current.value);
-    }
     if (input1Ref.current?.value && input2Ref.current?.value) {
+      examSocket.createSocket({
+        role: ExamRole.STUDENT,
+        examCode: input2Ref.current.value,
+        studentName: input1Ref.current.value,
+      });
+
       navigate(Routes.WAITING_PAGE);
     }
   };

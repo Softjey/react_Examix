@@ -1,16 +1,23 @@
 /* eslint-disable no-nested-ternary */
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Socket } from 'socket.io-client';
-import { Alert, AlertTitle, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
+import {
+  Alert,
+  AlertTitle,
+  Card,
+  CardContent,
+  CardHeader,
+  CircularProgress,
+  Stack,
+  Typography,
+} from '@mui/material';
 import StartLayout from '../components/StartLayout';
 import Button from '../components/UI/buttons/Button';
 import BookLoader from './BookLoader/BookLoader';
 import DottedText from './DottedText/DottedText';
-import useStudentExamSocket from './useStudentExamSocket';
+import studentExamSocket, { MessageNames } from '../store/examSocket';
 import { TestInfo } from './questions';
-import { snakeCaseToNormal } from './formatter';
-import log from './log';
+import { camelCaseToNormal, snakeCaseToNormal } from './formatter';
 import Routes from '../services/Router/Routes';
 
 interface Error {
@@ -22,22 +29,31 @@ const WaitingPage: React.FC = () => {
   const [error, setError] = useState<Error | null>();
   const [testInfo, setTestInfo] = useState<TestInfo | null>(null);
   const [isKicked, setIsKicked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
 
-  const { isLoading, setIsLoading } = useStudentExamSocket((newSocket: Socket) => {
-    newSocket.on('test-info', (newTestInfo) => setTestInfo(newTestInfo));
-    newSocket.on('exception', (newException) => {
-      setError(newException);
-      setIsLoading(true);
-    });
-    newSocket.on('student-kicked', () => {
-      setIsKicked(true);
-      setIsLoading(true);
-    });
-    newSocket.io.on('error', log('error'));
+  studentExamSocket.onOpen(() => setIsLoading(false));
+  // studentExamSocket.onClose(() => setIsLoading(true));
+
+  studentExamSocket.on(MessageNames.EXAM_STARTED, () => navigate(Routes.QUIZ_PAGE));
+  studentExamSocket.on(MessageNames.TEST_INFO, (newTestInfo) => setTestInfo(newTestInfo));
+  studentExamSocket.on(MessageNames.EXAM_FINISHED, () => navigate(Routes.QUIZ_PAGE));
+  studentExamSocket.on(MessageNames.EXCEPTION, (newException) => {
+    // eslint-disable-next-line no-console
+    console.error(newException);
+    setError(newException);
+    setIsLoading(true);
   });
-  // TODO: Add error handling
+  studentExamSocket.on(MessageNames.STUDENT_JOINED, ({ studentId, studentToken }) => {
+    localStorage.setItem('studentAuth', `${studentId}\n${studentToken}`);
+  });
+  studentExamSocket.on(MessageNames.STUDENT_KICKED, () => {
+    setIsKicked(true);
+    setIsLoading(true);
+  });
+  // TODO: Add normal error handling
+  // FIXME: fix problem with incorrect connecting
 
   return (
     <StartLayout innerStyle={{ gap: '100px' }} header={false}>
@@ -127,7 +143,7 @@ const WaitingPage: React.FC = () => {
             {Array.isArray(error.message) ? (
               error.message.map((msg) => (
                 <Alert key={msg} severity="error">
-                  <AlertTitle>{msg}</AlertTitle>
+                  <AlertTitle>{camelCaseToNormal(msg)}</AlertTitle>
                 </Alert>
               ))
             ) : (
@@ -142,7 +158,7 @@ const WaitingPage: React.FC = () => {
           <AlertTitle>You have been kicked</AlertTitle>
         </Alert>
       ) : (
-        ''
+        <CircularProgress />
       )}
       <Button
         onClick={() => navigate(Routes.JOIN_PAGE)}
