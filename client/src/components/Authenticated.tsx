@@ -3,7 +3,7 @@ import { CircularProgress } from '@mui/material';
 import { Navigate, useLocation } from 'react-router-dom';
 import useAuth from '../hooks/queries/useAuth';
 import Routes from '../services/Router/Routes';
-import StartLayout from './Layout';
+import StartLayout from './layouts/StartLayout';
 
 interface Props {
   children: React.ReactNode;

@@ -1,20 +1,18 @@
-import { CSSObject } from '@emotion/react';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import React from 'react';
-import Header from './Header';
-import { center, columnCenter } from '../styles/flex';
+import Header from '../Header';
+import { center, columnCenter } from '../../styles/flex';
+import { ComponentProps } from '../../types/ComponentProps';
 
-interface Props {
-  children: React.ReactNode;
-  style?: CSSObject;
+interface Props extends ComponentProps<'div'> {
   header?: boolean;
   backBtn?: boolean;
 }
 
-const StartLayout: React.FC<Props> = ({ children, style, header = true, backBtn = false }) => (
-  <div css={{ minHeight: '100vh', ...center, ...style }}>
+const StartLayout: React.FC<Props> = ({ children, css, header = true, backBtn = false }) => (
+  <div css={{ minHeight: '100vh', ...center, ...css }}>
     <div
       css={{
         height: '300px',
