@@ -6,6 +6,7 @@ import NotFoundPage from '../../pages/NotFoundPage';
 import Authenticated from '../../components/Authenticated';
 import TestPage from '../../dev/TestPage';
 import QuizPage from '../../dev/QuizPage';
+import HomePage from '../../pages/HomePage';
 
 const router = createRouter([
   {
@@ -26,7 +27,11 @@ const router = createRouter([
   },
   {
     path: Routes.HOME,
-    element: <div>Home page</div>,
+    element: (
+      <Authenticated>
+        <HomePage />
+      </Authenticated>
+    ),
   },
   {
     path: 'test',
