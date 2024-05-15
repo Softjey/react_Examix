@@ -11,8 +11,8 @@ export class UsersService {
     private readonly hashService: HashService,
   ) {}
 
-  normalize({ id, email, createdAt, name, role }: User) {
-    return { id, name, email, role, createdAt };
+  normalize({ id, email, createdAt, name, role, photo }: User) {
+    return { id, name, email, role, createdAt, photo };
   }
 
   getByEmail(email: User['email']) {
