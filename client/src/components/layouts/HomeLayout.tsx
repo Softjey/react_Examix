@@ -1,13 +1,14 @@
-import React, { ComponentPropsWithRef } from 'react';
+import React from 'react';
+import { Box, BoxProps } from '@mui/material';
 import { Menu } from '../menu/Menu';
 
-export interface Props extends ComponentPropsWithRef<'div'> {}
+export interface Props extends BoxProps {}
 
-const HomeLayout: React.FC<Props> = ({ children, ...rest }) => (
-  <div {...rest}>
-    <Menu />
-    {children}
-  </div>
+const HomeLayout: React.FC<Props> = ({ children, sx, ...rest }) => (
+  <Box sx={{ display: 'flex', ...sx }} {...rest}>
+    <Menu width={220} />
+    <div>{children}</div>
+  </Box>
 );
 
 export default HomeLayout;
