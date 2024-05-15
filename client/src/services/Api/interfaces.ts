@@ -1,29 +1,16 @@
-export interface User {
-  email: string;
-  password: string;
-}
+/* eslint-disable @typescript-eslint/ban-types */
+import { User } from '../../types/user';
 
-export interface UserResponse {
-  id: number;
-  name: string;
-  email: User['email'];
-  role: 'TEACHER' | 'ADMIN';
-  createdAt: string;
-}
-
-export interface AuthResponse {
+export type WithMessage<T extends Record<string, unknown> = {}> = {
   message: string;
-  user: UserResponse;
-}
+} & T;
+
+export type AuthResponse = WithMessage<{ user: User }>;
+export type CreateUserResponse = WithMessage<{ newUser: User }>;
 
 export interface CreateUserDto {
-  email: string;
+  email: User['email'];
   password: string;
   name: string;
   role: 'TEACHER' | 'ADMIN';
-}
-
-export interface CreateUserResponse {
-  message: string;
-  newUser: UserResponse;
 }

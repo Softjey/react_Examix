@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 export interface Response {
   message: string;
   examCode: string;

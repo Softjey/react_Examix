@@ -6,27 +6,32 @@ import NotFoundPage from '../../pages/NotFoundPage';
 import Authenticated from '../../components/Authenticated';
 import TestPage from '../../dev/TestPage';
 import QuizPage from '../../dev/QuizPage';
+import HomePage from '../../pages/HomePage';
 
 const router = createRouter([
   {
-    path: Routes.START_PAGE,
+    path: Routes.START,
     element: <StartPage />,
   },
   {
-    path: Routes.LOGIN_PAGE,
+    path: Routes.LOGIN,
     element: <LoginPage role="teacher" />,
   },
   {
-    path: Routes.JOIN_PAGE,
+    path: Routes.JOIN,
     element: <LoginPage role="student" />,
   },
   {
-    path: Routes.NOT_FOUND_PAGE,
+    path: Routes.NOT_FOUND,
     element: <NotFoundPage />,
   },
   {
-    path: Routes.HOME_PAGE,
-    element: <div>Home page</div>,
+    path: Routes.HOME,
+    element: (
+      <Authenticated>
+        <HomePage />
+      </Authenticated>
+    ),
   },
   {
     path: 'test',

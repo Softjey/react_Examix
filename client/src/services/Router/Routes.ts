@@ -1,9 +1,14 @@
 enum Routes {
-  START_PAGE = '/',
-  LOGIN_PAGE = '/login',
-  JOIN_PAGE = '/join',
-  NOT_FOUND_PAGE = '*',
-  HOME_PAGE = '/home',
+  START = '/',
+  LOGIN = '/login',
+  JOIN = '/join',
+  NOT_FOUND = '*',
+  HOME = '/home',
+  TESTS_LIBRARY = '/tests',
+  TEST = '/test',
+  CREATE_TEST = '/create-test',
+  EXAMS_HISTORY = '/history',
+  SETTINGS = '/settings',
 }
 
 export default Routes;
