@@ -22,7 +22,7 @@ const Authenticated: React.FC<Props> = ({ children }) => {
   }
 
   if (!user) {
-    return <Navigate to={Routes.LOGIN_PAGE} state={{ redirect: location.pathname }} replace />;
+    return <Navigate to={Routes.LOGIN} state={{ redirect: location.pathname }} replace />;
   }
 
   return children;

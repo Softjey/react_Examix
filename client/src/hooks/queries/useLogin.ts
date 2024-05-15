@@ -10,7 +10,7 @@ export default function useLogin() {
   const loginMutation = useMutation({
     mutationFn: ({ email, password }: User) => ApiClient.login(email, password),
     onSuccess: () => {
-      navigate(location.state?.redirect ?? Routes.HOME_PAGE, { replace: true });
+      navigate(location.state?.redirect ?? Routes.HOME, { replace: true });
     },
   });
 
