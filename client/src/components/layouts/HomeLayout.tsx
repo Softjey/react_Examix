@@ -2,12 +2,14 @@ import React from 'react';
 import { Box, BoxProps } from '@mui/material';
 import { Menu } from '../Menu/Menu';
 
-export interface Props extends BoxProps {}
+export interface Props extends BoxProps {
+  contentSx?: BoxProps['sx'];
+}
 
-const HomeLayout: React.FC<Props> = ({ children, sx, ...rest }) => (
+const HomeLayout: React.FC<Props> = ({ children, sx, contentSx, ...rest }) => (
   <Box sx={{ display: 'flex', ...sx }} {...rest}>
     <Menu width={220} />
-    {children}
+    <Box sx={{ flexGrow: '1', minHeight: '100vh', ...contentSx }}>{children}</Box>
   </Box>
 );
 
