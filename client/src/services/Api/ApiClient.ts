@@ -1,6 +1,9 @@
 import axiosCLient from 'axios';
-import { AuthResponse, CreateUserDto, CreateUserResponse, WithMessage } from './interfaces';
-import { User } from '../../types/user';
+import { User } from '../../types/api/user';
+import { AuthResponse } from './types/auth';
+import { CreateUserDto, CreateUserResponse } from './types/create-user';
+import { WithMessage } from './types/utils';
+import { GlobalSearchResponse } from './types/global-search';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
@@ -38,5 +41,13 @@ export default class ApiClient {
     });
 
     return data;
+  }
+
+  static async globalSearch(query: string, limit: number = 9) {
+    const { data } = await axios.get<GlobalSearchResponse>('/search', {
+      params: { query, limit },
+    });
+
+    return data.results;
   }
 }
