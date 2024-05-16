@@ -1,5 +1,6 @@
 import { CSSObject } from '@emotion/react';
 import BackButton from './UI/buttons/BackButton';
+import Logo from './UI/Logo';
 
 interface Props {
   disableBackBtn?: boolean;
@@ -8,7 +9,7 @@ interface Props {
 
 const Header: React.FC<Props> = ({ disableBackBtn, style }) => (
   <header css={{ position: 'relative', ...style }}>
-    <h1>Examix</h1>
+    <Logo />
     {!disableBackBtn && (
       <BackButton
         style={{ position: 'absolute', transform: 'translateY(-50%)', top: '50%', left: '-95px' }}
