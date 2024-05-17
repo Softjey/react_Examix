@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link as ReactLink, LinkProps, NavLink } from 'react-router-dom';
-import { ExtendsComponentProps } from '../../types/ComponentProps';
 
-export interface Props extends ExtendsComponentProps<LinkProps> {
+export interface Props extends LinkProps {
   activeClassnames?: string[];
 }
 const Link: React.FC<Props> = ({ activeClassnames, className, ...rest }) => {

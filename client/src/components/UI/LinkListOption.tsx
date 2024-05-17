@@ -12,13 +12,13 @@ interface Props extends ListItemProps {
 }
 
 const LinkListOption: React.FC<Props> = ({ title, subtitle, icon, to, linkProps, ...rest }) => {
-  const linkCss = linkProps?.css;
+  const linkStyle = linkProps?.style;
 
   return (
     <ListItem disablePadding {...rest}>
       <Link
         to={to}
-        css={{ textDecoration: 'none', color: 'inherit', width: '100%', ...linkCss }}
+        style={{ textDecoration: 'none', color: 'inherit', width: '100%', ...linkStyle }}
         {...linkProps}
       >
         <ListItemButton>
