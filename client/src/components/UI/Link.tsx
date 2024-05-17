@@ -5,23 +5,21 @@ import { ExtendsComponentProps } from '../../types/ComponentProps';
 export interface Props extends ExtendsComponentProps<LinkProps> {
   activeClassnames?: string[];
 }
-const Link: React.FC<Props> = ({ activeClassnames, className, children }) => {
+const Link: React.FC<Props> = ({ activeClassnames, className, ...rest }) => {
   if (activeClassnames) {
     return (
       <NavLink
-        to="/"
         className={({ isActive }: { isActive: boolean }) => {
           const classStr = className ?? '';
 
           return isActive ? `${activeClassnames.join(' ')} ${classStr}` : classStr;
         }}
-      >
-        {children}
-      </NavLink>
+        {...rest}
+      />
     );
   }
 
-  return <ReactLink to="/">{children}</ReactLink>;
+  return <ReactLink {...rest} />;
 };
 
 export default Link;
