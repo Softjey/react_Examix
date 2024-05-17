@@ -6,3 +6,4 @@ interface CssProps {
 }
 
 export type ComponentProps<T extends ElementType> = ComponentPropsWithoutRef<T> & CssProps;
+export type ExtendsComponentProps<T> = T & CssProps;

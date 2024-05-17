@@ -26,16 +26,16 @@ export const Menu: React.FC<Props> = ({ width, sx, ...rest }) => {
 
   return (
     <Drawer variant="permanent" sx={drawerSx} {...rest}>
-      <section>
+      <nav>
         <MenuHeader />
         <Divider />
         <MenuList />
-      </section>
+      </nav>
 
-      <section>
+      <div>
         <Divider />
         <MenuFooter />
-      </section>
+      </div>
     </Drawer>
   );
 };

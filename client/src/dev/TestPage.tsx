@@ -3,13 +3,14 @@
 import { List } from '@mui/material';
 import { Socket, io } from 'socket.io-client';
 import React, { useEffect, useState } from 'react';
-import StartLayout from '../components/layouts/StartLayout';
 import StudentPanel from './StudentPanel';
 import Button from '../components/UI/buttons/Button';
 import log from './log';
 import { getRandomName } from './randomNames';
 import { Response, createExam } from './createExam';
 import ApiClient from '../services/Api/ApiClient';
+import HomeLayout from '../components/layouts/HomeLayout';
+import Role from '../types/api/Role';
 
 const TestPage: React.FC = () => {
   const [studentIds, setStudentIds] = useState<string[]>([]);
@@ -56,7 +57,7 @@ const TestPage: React.FC = () => {
     const name = prompt('Enter name');
     const role = prompt('Enter role');
 
-    if (role !== 'TEACHER' && role !== 'ADMIN') {
+    if (role !== Role.TEACHER && role !== Role.ADMIN) {
       throw new Error('Invalid role. Must be TEACHER or ADMIN');
     }
 
@@ -75,8 +76,16 @@ const TestPage: React.FC = () => {
   };
 
   return (
-    <StartLayout style={{ display: 'flex', justifyContent: 'space-around', flexDirection: 'row' }}>
-      <div css={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <HomeLayout style={{ display: 'flex' }}>
+      <div
+        css={{
+          display: 'flex',
+          paddingTop: '100px',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '20px',
+        }}
+      >
         <h2>Test Page</h2>
 
         <Button onClick={createUser}>Create User</Button>
@@ -119,7 +128,7 @@ const TestPage: React.FC = () => {
           />
         ))}
       </List>
-    </StartLayout>
+    </HomeLayout>
   );
 };
 
