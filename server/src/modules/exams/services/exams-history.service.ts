@@ -27,7 +27,7 @@ export class ExamsHistoryService {
     const skip = limit && page ? (page - 1) * limit : 0;
     const createdAt = { lte: options.dateTo, gte: options.dateFrom };
     const test = { select: { id: true, name: true, description: true, subject: true } };
-    const results = { select: { studentName: true } };
+    const results = { distinct: ['studentName' as const], select: { studentName: true } };
     const select = { id: true, authorId: true, createdAt: true, test, results };
 
     if (search) {
