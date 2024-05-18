@@ -1,5 +1,6 @@
-import Subject from '../../../types/api/Subject';
+import { Exam } from '../../../types/api/exam';
 import { Question } from '../../../types/api/question';
+import { Test } from '../../../types/api/test';
 import { WithMessage } from './utils';
 
 export type GlobalSearchResponse = WithMessage<{
@@ -13,30 +14,12 @@ export type GlobalSearchResult =
 
 interface GlobalSearchResultExam {
   type: 'exam';
-  item: {
-    id: number;
-    authorId: number;
-    createdAt: string;
-    test: {
-      id: number;
-      name: string;
-      description: string;
-      subject: Subject;
-    };
-    results: { studentName: string }[];
-  };
+  item: Exam;
 }
 
 interface GlobalSearchResultTest {
   type: 'test';
-  item: {
-    id: number;
-    name: string;
-    description: string;
-    subject?: Subject;
-    authorId: number;
-    createdAt: string;
-  };
+  item: Test;
 }
 
 interface GlobalSearchResultQuestion {
