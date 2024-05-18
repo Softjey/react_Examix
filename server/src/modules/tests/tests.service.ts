@@ -20,10 +20,10 @@ export class TestsService {
     };
   }
 
-  async create({ questions, name, description, subject, authorId }: CreateTestDtoAuthorId) {
+  async create({ questions, name, image, description, subject, authorId }: CreateTestDtoAuthorId) {
     return this.prismaService.$transaction(async (prisma) => {
       const test = await prisma.test.create({
-        data: { name, description, authorId, subject },
+        data: { name, image, description, authorId, subject },
       });
 
       const { count } = await prisma.testQuestion.createMany({

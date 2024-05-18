@@ -6,7 +6,7 @@ import Header from '../Header';
 import { center, columnCenter } from '../../styles/flex';
 import { ComponentProps } from '../../types/ComponentProps';
 
-interface Props extends ComponentProps<'div'> {
+export interface Props extends ComponentProps<'div'> {
   header?: boolean;
   backBtn?: boolean;
 }
