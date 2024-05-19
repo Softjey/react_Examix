@@ -23,8 +23,6 @@ interface Answer {
   isCorrect: boolean;
 }
 
-// TODO: make question card smaller
-
 const AnswerItem: React.FC<{ answer: Answer }> = ({ answer }) => {
   const [value, setValue] = useState<string | null>(answer && answer.title);
   const [isCorrect, setIsCorrect] = useState<boolean>(answer && answer.isCorrect);
@@ -43,12 +41,13 @@ const AnswerItem: React.FC<{ answer: Answer }> = ({ answer }) => {
         icon={<CloseIcon color="error" />}
         checkedIcon={<CheckIcon color="success" />}
       />
+      {/* TODO: inputs smaller */}
       <TextField
+        placeholder="Type answer"
         size="small"
         autoComplete="off"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        label="Answer"
       />
     </Box>
   );
@@ -80,8 +79,8 @@ const QuestionCard: React.FC<Props> = () => {
 
   return (
     <Card component={Paper} elevation={2} sx={{ maxWidth: '40vw', borderRadius: '12px' }}>
-      <CardContent sx={{ display: 'flex', gap: 2, flexDirection: 'column' }}>
-        <Box display="flex" gap={2} flexWrap="wrap">
+      <CardContent sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
+        <Box display="flex" gap={1} flexWrap="wrap">
           <TextField
             size="small"
             value={questionType}
@@ -118,17 +117,17 @@ const QuestionCard: React.FC<Props> = () => {
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        <Typography color="text.secondary" variant="body1">
+        <Typography color="text.secondary" variant="body2">
           Answers
         </Typography>
 
-        <Box display="flex" gap={2} flexWrap="wrap" justifyContent="space-between">
+        <Box display="flex" gap={1} flexWrap="wrap" justifyContent="space-between">
           {answers.map((answer) => (
             <AnswerItem answer={answer} />
           ))}
         </Box>
       </CardContent>
-      <CardActions sx={{ padding: '16px' }}>
+      <CardActions sx={{ padding: '16px', display: 'flex', justifyContent: 'end' }}>
         <Button
           size="small"
           onClick={() => {
