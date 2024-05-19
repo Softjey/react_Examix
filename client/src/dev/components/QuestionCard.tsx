@@ -15,13 +15,15 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import { QuestionType } from '../questions';
-import { snakeCaseToNormal } from '../formatter';
+import { formatStringToNumber, snakeCaseToNormal } from '../formatter';
 import Button from '../../components/UI/buttons/Button';
 
 interface Answer {
   title: string;
   isCorrect: boolean;
 }
+
+// TODO: make question card smaller
 
 const AnswerItem: React.FC<{ answer: Answer }> = ({ answer }) => {
   const [value, setValue] = useState<string | null>(answer && answer.title);
@@ -54,7 +56,7 @@ interface Props {}
 
 const QuestionCard: React.FC<Props> = () => {
   const [questionType, setQuestionType] = useState<QuestionType>(QuestionType.SINGLE_CHOICE);
-  const [maxScore, setMaxScore] = useState<number>(1);
+  const [maxScore, setMaxScore] = useState<number>(0);
   const [title, setTitle] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Answer[]>([
     { title: 'test', isCorrect: true },
@@ -63,9 +65,7 @@ const QuestionCard: React.FC<Props> = () => {
   ]);
   const maxLength = 6;
 
-  const points = Array.from({ length: 20 }, (_, i) => i + 1);
-
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleClose = (_: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
@@ -76,7 +76,7 @@ const QuestionCard: React.FC<Props> = () => {
   };
 
   return (
-    <Card component={Paper} elevation={2} sx={{ maxWidth: '50vw' }}>
+    <Card component={Paper} elevation={2} sx={{ maxWidth: '50vw', borderRadius: '12px' }}>
       <CardContent sx={{ display: 'flex', gap: 2, flexDirection: 'column' }}>
         <Box display="flex" gap={2} flexWrap="wrap">
           <TextField
@@ -93,26 +93,12 @@ const QuestionCard: React.FC<Props> = () => {
           </TextField>
           <TextField label="time limit" disabled />
           <TextField
-            select
-            value={maxScore}
-            onChange={(e) => setMaxScore(Number(e.target.value))}
+            type="text"
             label="Max score"
-            SelectProps={{
-              MenuProps: {
-                PaperProps: {
-                  style: {
-                    maxHeight: 200,
-                  },
-                },
-              },
-            }}
-          >
-            {points.map((point) => (
-              <MenuItem key={point} value={point}>
-                {point} {point === 1 ? 'point' : 'points'}
-              </MenuItem>
-            ))}
-          </TextField>
+            inputMode="numeric"
+            value={maxScore}
+            onChange={(e) => setMaxScore(formatStringToNumber(e.target.value))}
+          />
         </Box>
         <TextField
           autoComplete="off"
