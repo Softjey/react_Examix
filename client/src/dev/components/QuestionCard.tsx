@@ -33,16 +33,18 @@ const AnswerItem: React.FC<{ answer: Answer }> = ({ answer }) => {
       sx={{
         display: 'flex',
         alignItems: 'center',
-        gap: 1,
+        gap: 0.5,
       }}
     >
       <Checkbox
+        size="small"
         checked={isCorrect}
         onClick={() => setIsCorrect((prev) => !prev)}
         icon={<CloseIcon color="error" />}
         checkedIcon={<CheckIcon color="success" />}
       />
       <TextField
+        size="small"
         autoComplete="off"
         value={value}
         onChange={(e) => setValue(e.target.value)}
@@ -63,23 +65,25 @@ const QuestionCard: React.FC<Props> = () => {
     { title: 'test2', isCorrect: false },
     { title: 'test3', isCorrect: false },
   ]);
+
   const maxLength = 6;
 
-  const [open, setOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleClose = (_: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
 
-    setOpen(false);
+    setSnackbarOpen(false);
   };
 
   return (
-    <Card component={Paper} elevation={2} sx={{ maxWidth: '50vw', borderRadius: '12px' }}>
+    <Card component={Paper} elevation={2} sx={{ maxWidth: '40vw', borderRadius: '12px' }}>
       <CardContent sx={{ display: 'flex', gap: 2, flexDirection: 'column' }}>
         <Box display="flex" gap={2} flexWrap="wrap">
           <TextField
+            size="small"
             value={questionType}
             onChange={(e) => setQuestionType(e.target.value as QuestionType)}
             select
@@ -91,8 +95,12 @@ const QuestionCard: React.FC<Props> = () => {
               </MenuItem>
             ))}
           </TextField>
-          <TextField label="time limit" disabled />
+
+          <TextField size="small" sx={{ maxWidth: '100px' }} label="time limit" disabled />
+
           <TextField
+            sx={{ maxWidth: '100px' }}
+            size="small"
             type="text"
             label="Max score"
             inputMode="numeric"
@@ -100,36 +108,41 @@ const QuestionCard: React.FC<Props> = () => {
             onChange={(e) => setMaxScore(formatStringToNumber(e.target.value))}
           />
         </Box>
+
         <TextField
+          size="small"
           autoComplete="off"
           type="text"
           label="Question title"
           value={title && title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <Typography color="text.secondary" variant="h6">
+
+        <Typography color="text.secondary" variant="body1">
           Answers
         </Typography>
-        <Box display="flex" gap={2} flexWrap="wrap">
+
+        <Box display="flex" gap={2} flexWrap="wrap" justifyContent="space-between">
           {answers.map((answer) => (
             <AnswerItem answer={answer} />
           ))}
         </Box>
       </CardContent>
-      <CardActions>
+      <CardActions sx={{ padding: '16px' }}>
         <Button
+          size="small"
           onClick={() => {
             if (answers.length < maxLength) {
               setAnswers([...answers, { title: '', isCorrect: false }]);
             } else {
-              setOpen(true);
+              setSnackbarOpen(true);
             }
           }}
         >
           Add answer
         </Button>
         <Snackbar
-          open={open}
+          open={snackbarOpen}
           autoHideDuration={6000}
           onClose={handleClose}
           message="Max answers length reached"
