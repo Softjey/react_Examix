@@ -14,9 +14,9 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
+import AddIcon from '@mui/icons-material/Add';
 import { QuestionType } from '../questions';
 import { formatStringToNumber, snakeCaseToNormal } from '../formatter';
-import Button from '../../components/UI/buttons/Button';
 
 interface Answer {
   title: string;
@@ -86,7 +86,7 @@ const QuestionCard: React.FC<Props> = () => {
             value={questionType}
             onChange={(e) => setQuestionType(e.target.value as QuestionType)}
             select
-            label="Question type"
+            label="Type"
           >
             {(Object.keys(QuestionType) as Array<keyof typeof QuestionType>).map((type) => (
               <MenuItem key={type} value={type}>
@@ -112,7 +112,7 @@ const QuestionCard: React.FC<Props> = () => {
           size="small"
           autoComplete="off"
           type="text"
-          label="Question title"
+          label="Title"
           value={title && title}
           onChange={(e) => setTitle(e.target.value)}
         />
@@ -121,14 +121,14 @@ const QuestionCard: React.FC<Props> = () => {
           Answers
         </Typography>
 
-        <Box display="flex" gap={1} flexWrap="wrap" justifyContent="space-between">
+        <Box display="flex" gap={1} flexWrap="wrap">
           {answers.map((answer) => (
             <AnswerItem answer={answer} />
           ))}
         </Box>
       </CardContent>
       <CardActions sx={{ padding: '16px', display: 'flex', justifyContent: 'end' }}>
-        <Button
+        <IconButton
           size="small"
           onClick={() => {
             if (answers.length < maxLength) {
@@ -138,8 +138,8 @@ const QuestionCard: React.FC<Props> = () => {
             }
           }}
         >
-          Add answer
-        </Button>
+          <AddIcon />
+        </IconButton>
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={6000}
