@@ -1,6 +1,11 @@
 // eslint-disable-next-line import/no-cycle
 import { Question } from './QuizPage';
 
+export enum QuestionType {
+  SINGLE_CHOICE = 'SINGLE_CHOICE',
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+}
+
 export default [
   {
     id: 1,

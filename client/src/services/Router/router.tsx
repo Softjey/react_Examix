@@ -9,6 +9,7 @@ import QuizPage from '../../dev/QuizPage';
 import HomePage from '../../pages/HomePage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
+import CreateTestPage from '../../dev/CreateTestPage';
 
 const router = createRouter([
   {
@@ -75,7 +76,9 @@ const router = createRouter([
     path: Routes.CREATE_TEST,
     element: (
       <Authenticated>
-        <HomeLayout>Create test page</HomeLayout>
+        <HomeLayout>
+          <CreateTestPage />
+        </HomeLayout>
       </Authenticated>
     ),
   },
