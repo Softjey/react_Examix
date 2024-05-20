@@ -6,6 +6,7 @@ import { WithMessage } from './types/utils';
 import { GlobalSearchResponse } from './types/global-search';
 import { ExamsFilters, ExamsResponse } from './types/exams';
 import { TestsFilters, TestsResponse } from './types/tests';
+import { Test } from '../../types/api/test';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
@@ -66,12 +67,15 @@ export default class ApiClient {
 
   static async getTests(filters: TestsFilters = {}) {
     const { data } = await axios.get<TestsResponse>('/tests', {
-      params: {
-        limit: 10,
-        ...filters,
-      },
+      params: filters,
     });
 
     return data;
+  }
+
+  static async getTestName(id: Test['id']) {
+    const { data } = await axios.get<Pick<Test, 'name'>>(`/tests/name/${id}`);
+
+    return data.name;
   }
 }
