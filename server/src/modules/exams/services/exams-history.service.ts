@@ -29,6 +29,7 @@ export class ExamsHistoryService {
     const test = { select: { id: true, name: true, description: true, subject: true } };
     const results = { distinct: ['studentName' as const], select: { studentName: true } };
     const select = { id: true, authorId: true, createdAt: true, test, results };
+    const orderBy = { createdAt: 'desc' as const };
 
     if (search) {
       whereCond.OR = [
@@ -42,7 +43,7 @@ export class ExamsHistoryService {
 
     const where: Prisma.ExamWhereInput = { authorId, testId, createdAt, ...whereCond };
 
-    return this.prismaService.exam.findMany({ select, skip, take: limit, where });
+    return this.prismaService.exam.findMany({ select, skip, take: limit, where, orderBy });
   }
 
   async saveExam({ author, students, test, questions }: Exam): Promise<DetailedExam> {
