@@ -4,7 +4,6 @@ import {
   Card,
   CardActions,
   CardContent,
-  Checkbox,
   IconButton,
   MenuItem,
   Paper,
@@ -13,57 +12,23 @@ import {
   Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import CheckIcon from '@mui/icons-material/Check';
 import AddIcon from '@mui/icons-material/Add';
+import useIds from '../useIds';
 import { QuestionType } from '../questions';
 import { formatStringToNumber, snakeCaseToNormal } from '../formatter';
-
-interface Answer {
-  title: string;
-  isCorrect: boolean;
-}
-
-const AnswerItem: React.FC<{ answer: Answer }> = ({ answer }) => {
-  const [value, setValue] = useState<string | null>(answer && answer.title);
-  const [isCorrect, setIsCorrect] = useState<boolean>(answer && answer.isCorrect);
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 0.5,
-      }}
-    >
-      <Checkbox
-        size="small"
-        checked={isCorrect}
-        onClick={() => setIsCorrect((prev) => !prev)}
-        icon={<CloseIcon color="error" />}
-        checkedIcon={<CheckIcon color="success" />}
-      />
-      {/* TODO: inputs and question type smaller */}
-      {/* TODO: add delete answer button */}
-      <TextField
-        placeholder="Type answer"
-        size="small"
-        autoComplete="off"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-    </Box>
-  );
-};
+import AnswerItem, { AnswerWithId } from './AnswerItem';
 
 interface Props {}
 
 const QuestionCard: React.FC<Props> = () => {
   const [questionType, setQuestionType] = useState<QuestionType>(QuestionType.SINGLE_CHOICE);
   const [maxScore, setMaxScore] = useState<number>(0);
-  const [title, setTitle] = useState<string | null>(null);
-  const [answers, setAnswers] = useState<Answer[]>([
-    { title: 'test', isCorrect: true },
-    { title: 'test2', isCorrect: false },
-    { title: 'test3', isCorrect: false },
+  const [title, setTitle] = useState<string>('');
+  const getId = useIds();
+  const [answers, setAnswers] = useState<AnswerWithId[]>(() => [
+    { title: 'test', isCorrect: true, id: getId() },
+    { title: 'test2', isCorrect: false, id: getId() },
+    { title: 'test3', isCorrect: false, id: getId() },
   ]);
 
   const maxLength = 6;
@@ -115,7 +80,7 @@ const QuestionCard: React.FC<Props> = () => {
           autoComplete="off"
           type="text"
           label="Title"
-          value={title && title}
+          value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
@@ -125,9 +90,13 @@ const QuestionCard: React.FC<Props> = () => {
 
         <Box display="grid" gap={1} gridTemplateColumns="1fr 1fr" width="100%">
           {answers.map((answer) => (
-            <AnswerItem answer={answer} />
-            // TODO: Просто дай грід контейнеру 100% ширини,
-            // і дві колонки і щоб інпути розтягувалися на всю клітинку
+            <AnswerItem
+              key={answer.id}
+              answer={answer}
+              onDelete={(id) => {
+                setAnswers((prev) => prev.filter((item) => item.id !== id));
+              }}
+            />
           ))}
         </Box>
       </CardContent>
@@ -138,7 +107,7 @@ const QuestionCard: React.FC<Props> = () => {
           size="small"
           onClick={() => {
             if (answers.length < maxLength) {
-              setAnswers([...answers, { title: '', isCorrect: false }]);
+              setAnswers([...answers, { title: '', isCorrect: false, id: getId() }]);
             } else {
               setSnackbarOpen(true);
             }
