@@ -1,8 +1,8 @@
 import { Box, BoxProps } from '@mui/material';
 import React from 'react';
 
-import LogoutButton from '../UI/buttons/LogoutButton';
-import LockButton from '../UI/buttons/LockButton';
+import LogoutButton from '../../UI/buttons/LogoutButton';
+import LockButton from '../../UI/buttons/LockButton';
 
 interface Props extends BoxProps {}
 
