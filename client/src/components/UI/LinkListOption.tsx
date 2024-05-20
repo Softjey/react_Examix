@@ -23,7 +23,11 @@ const LinkListOption: React.FC<Props> = ({ title, subtitle, icon, to, linkProps,
       >
         <ListItemButton>
           <ListItemIcon>{icon}</ListItemIcon>
-          <ListItemText primary={title} secondary={subtitle} />
+          <ListItemText
+            primary={title}
+            secondary={subtitle}
+            secondaryTypographyProps={{ variant: 'caption' }}
+          />
         </ListItemButton>
       </Link>
     </ListItem>
