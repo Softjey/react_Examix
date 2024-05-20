@@ -6,6 +6,7 @@ import { CreateTestDto } from './dtos/create-test.dto';
 import { User } from 'src/modules/auth/decorators/user.decorator';
 import { GetTestsDto } from './dtos/get-tests.dto';
 import { ApiParam } from '@nestjs/swagger';
+import { Test } from '@prisma/client';
 
 @Controller('tests')
 @UseSessionGuard()
@@ -29,8 +30,20 @@ export class TestsController {
 
   @Get(':id')
   @ApiParam({ name: 'id', type: 'number' })
-  async getOne(@Param('id', ParseIntPipe) id: number) {
+  async getOne(@Param('id', ParseIntPipe) id: Test['id']) {
     const test = await this.testsService.getOne(id);
+
+    if (!test) {
+      throw new NotFoundException('Test not found. Check the ID and try again');
+    }
+
+    return test;
+  }
+
+  @Get('/name/:id')
+  @ApiParam({ name: 'id', type: 'number' })
+  async getTestName(@Param('id', ParseIntPipe) id: Test['id']) {
+    const test = await this.testsService.getTestName(id);
 
     if (!test) {
       throw new NotFoundException('Test not found. Check the ID and try again');

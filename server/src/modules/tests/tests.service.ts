@@ -82,4 +82,11 @@ export class TestsService {
 
     return [test, questions as TestQuestionIncludeQuestion[]] as const;
   }
+
+  getTestName(testId: Test['id']) {
+    return this.prismaService.test.findUnique({
+      where: { id: testId },
+      select: { name: true },
+    });
+  }
 }

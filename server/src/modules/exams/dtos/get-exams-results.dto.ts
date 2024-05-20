@@ -1,5 +1,5 @@
 import { ApiProperty, IntersectionType } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { IsDateString, IsInt, IsOptional, IsPositive } from 'class-validator';
 import { AuthorIdDto } from 'src/utils/validation/dtos/author-Id.dto';
 import { PaginationDto } from 'src/utils/validation/dtos/pagination.dto';
@@ -21,6 +21,6 @@ export class GetExamsResultsDto extends IntersectionType(
   @IsOptional()
   @IsInt()
   @IsPositive()
-  @Transform(() => Number)
+  @Type(() => Number)
   testId?: number;
 }
