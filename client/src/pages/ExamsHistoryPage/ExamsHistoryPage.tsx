@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Alert, Box } from '@mui/material';
 import HomeLayout, { Props as HomeLayoutProps } from '../../components/layouts/HomeLayout';
 import ExamsFilters from '../../components/UI/ExamsFilters/ExamsFilters';
 import { columnCenter } from '../../styles/flex';
@@ -9,7 +9,7 @@ import ExamsList from '../../components/UI/ExamsList';
 interface Props extends HomeLayoutProps {}
 
 const ExamsHistoryPage: React.FC<Props> = ({ ...rest }) => {
-  const { exams, isPending, dateFormat } = useExamsHistoryPage();
+  const { exams, isPending, isError, dateFormat } = useExamsHistoryPage();
 
   return (
     <HomeLayout contentSx={{ ...columnCenter }} {...rest}>
@@ -19,7 +19,10 @@ const ExamsHistoryPage: React.FC<Props> = ({ ...rest }) => {
           dateFormat={dateFormat}
         />
 
-        <ExamsList exams={exams} isLoading={isPending} />
+        {isError && <Alert severity="error">An error occurred while loading exams</Alert>}
+        {!isError && (
+          <ExamsList loadingProps={{ sx: { pt: '60px' } }} exams={exams} isLoading={isPending} />
+        )}
 
         {/* <Grid xs={6} sx={center}>
           <Pagination

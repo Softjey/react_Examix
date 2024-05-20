@@ -28,11 +28,12 @@ export default function useExamsHistoryPage() {
   const [searchParams] = useSearchParams();
   const dateFormat = 'YYYY-MM-DD';
   const filters = getExamsFilters(searchParams, 'YYYY-MM-DD');
-  const { data: exams, isPending } = useExams(filters);
+  const { data: exams, isError, isPending } = useExams(filters);
 
   return {
     dateFormat,
     exams,
     isPending,
+    isError,
   };
 }
