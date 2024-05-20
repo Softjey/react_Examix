@@ -1,4 +1,4 @@
-import { Box, Checkbox, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Box, Checkbox, IconButton, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -46,27 +46,25 @@ const AnswerItem: React.FC<Props> = ({ answer, onDelete }) => {
         }}
         InputProps={{
           endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
+            <IconButton
+              sx={{
+                visibility: 'hidden',
+                opacity: 0,
+                left: 5,
+              }}
+              className="icon-button"
+              size="small"
+              aria-label="delete answer"
+              onClick={() => onDelete(answer.id)}
+              edge="end"
+            >
+              <DeleteIcon
                 sx={{
-                  visibility: 'hidden',
-                  opacity: 0,
-                  left: 5,
+                  width: '16px',
+                  height: '16px',
                 }}
-                className="icon-button"
-                size="small"
-                aria-label="delete answer"
-                onClick={() => onDelete(answer.id)}
-                edge="end"
-              >
-                <DeleteIcon
-                  sx={{
-                    width: '16px',
-                    height: '16px',
-                  }}
-                />
-              </IconButton>
-            </InputAdornment>
+              />
+            </IconButton>
           ),
         }}
         onChange={(e) => setValue(e.target.value)}
