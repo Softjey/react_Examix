@@ -41,7 +41,8 @@ const AnswerItem: React.FC<{ answer: Answer }> = ({ answer }) => {
         icon={<CloseIcon color="error" />}
         checkedIcon={<CheckIcon color="success" />}
       />
-      {/* TODO: inputs smaller */}
+      {/* TODO: inputs and question type smaller */}
+      {/* TODO: add delete answer button */}
       <TextField
         placeholder="Type answer"
         size="small"
@@ -78,15 +79,15 @@ const QuestionCard: React.FC<Props> = () => {
   };
 
   return (
-    <Card component={Paper} elevation={2} sx={{ maxWidth: '40vw', borderRadius: '12px' }}>
-      <CardContent sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
+    <Card component={Paper} elevation={2} sx={{ maxWidth: '460px', borderRadius: '12px' }}>
+      <CardContent sx={{ display: 'flex', gap: 1, flexDirection: 'column', paddingBottom: 0 }}>
         <Box display="flex" gap={1} flexWrap="wrap">
           <TextField
             size="small"
             value={questionType}
             onChange={(e) => setQuestionType(e.target.value as QuestionType)}
             select
-            label="Type"
+            sx={{ width: '158px' }}
           >
             {(Object.keys(QuestionType) as Array<keyof typeof QuestionType>).map((type) => (
               <MenuItem key={type} value={type}>
@@ -104,6 +105,7 @@ const QuestionCard: React.FC<Props> = () => {
             label="Max score"
             inputMode="numeric"
             value={maxScore}
+            autoComplete="off"
             onChange={(e) => setMaxScore(formatStringToNumber(e.target.value))}
           />
         </Box>
@@ -121,13 +123,17 @@ const QuestionCard: React.FC<Props> = () => {
           Answers
         </Typography>
 
-        <Box display="flex" gap={1} flexWrap="wrap">
+        <Box display="grid" gap={1} gridTemplateColumns="1fr 1fr" width="100%">
           {answers.map((answer) => (
             <AnswerItem answer={answer} />
+            // TODO: Просто дай грід контейнеру 100% ширини,
+            // і дві колонки і щоб інпути розтягувалися на всю клітинку
           ))}
         </Box>
       </CardContent>
-      <CardActions sx={{ padding: '16px', display: 'flex', justifyContent: 'end' }}>
+      <CardActions
+        sx={{ padding: '16px', paddingTop: '10px', display: 'flex', justifyContent: 'end' }}
+      >
         <IconButton
           size="small"
           onClick={() => {
