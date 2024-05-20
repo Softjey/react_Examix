@@ -4,6 +4,8 @@ import { AuthResponse } from './types/auth';
 import { CreateUserDto, CreateUserResponse } from './types/create-user';
 import { WithMessage } from './types/utils';
 import { GlobalSearchResponse } from './types/global-search';
+import { ExamsFilters, ExamsResponse } from './types/exams';
+import { TestsFilters, TestsResponse } from './types/tests';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
@@ -49,5 +51,27 @@ export default class ApiClient {
     });
 
     return data.results;
+  }
+
+  static async getExams(filters: ExamsFilters = {}) {
+    const { data } = await axios.get<ExamsResponse>('/exams', {
+      params: {
+        limit: 40,
+        ...filters,
+      },
+    });
+
+    return data;
+  }
+
+  static async getTests(filters: TestsFilters = {}) {
+    const { data } = await axios.get<TestsResponse>('/tests', {
+      params: {
+        limit: 10,
+        ...filters,
+      },
+    });
+
+    return data;
   }
 }
