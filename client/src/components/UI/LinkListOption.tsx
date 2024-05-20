@@ -1,13 +1,13 @@
 import { ListItem, ListItemButton } from '@mui/material';
 import { ListItemIcon, ListItemProps, ListItemText } from '@mui/material';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import Link, { Props as LinkProps } from './Link';
 
 interface Props extends ListItemProps {
   to: LinkProps['to'];
   icon: React.ReactNode;
   title: string;
-  subtitle?: string;
+  subtitle?: string | ReactNode;
   linkProps?: Omit<LinkProps, 'to'>;
 }
 
