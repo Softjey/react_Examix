@@ -23,6 +23,7 @@ module.exports = {
     '@typescript-eslint/lines-between-class-members': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/jsx-wrap-multilines': 'off',
+    '@typescript-eslint/indent': 'off',
     'class-methods-use-this': 'off',
     'object-curly-newline': 'off',
     'react/react-in-jsx-scope': 'off',
