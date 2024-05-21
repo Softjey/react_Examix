@@ -1,36 +1,59 @@
-import { Autocomplete, TextField } from '@mui/material';
-import React from 'react';
-import { Test } from '../../../types/api/test';
-import { AutocompletePropsType } from './AutocompletePropsType';
-import useTestsAutocomplete from './useTestsAutocomplete';
+import { Autocomplete, TextField, TextFieldProps } from '@mui/material';
+import { Controller, FieldValues } from 'react-hook-form';
 import renderOption from './renderOption';
+import useTests from '../../../hooks/queries/useTests';
+import { AutocompleteProps } from '../../../types/utils/AutocompleteProps';
+import { Test } from '../../../types/api/test';
+import { ControlledProps } from '../../../types/utils/ControlledProps';
 
-interface Props extends Omit<AutocompletePropsType, 'options' | 'renderInput'> {
-  initialTestId?: Test['id'];
-  name?: string;
+type OmittedProps =
+  | 'ref'
+  | 'value'
+  | 'onBlur'
+  | 'loading'
+  | 'disabled'
+  | 'options'
+  | 'renderOption'
+  | 'onChange'
+  | 'renderInput'
+  | 'isOptionEqualToValue'
+  | 'getOptionLabel';
+
+interface Props<T extends FieldValues>
+  extends ControlledProps<T>,
+    Omit<AutocompleteProps<Test>, OmittedProps> {
+  label?: TextFieldProps['label'];
 }
 
-const TestsAutocomplete: React.FC<Props> = ({ initialTestId, name, ...rest }) => {
-  // eslint-disable-next-line operator-linebreak
-  const { query, testId, tests, isPending, onChange, updateInput } =
-    useTestsAutocomplete(initialTestId);
+const TestsAutocomplete = <T extends FieldValues>(props: Props<T>) => {
+  const { name, control, label, controllerProps, ...restProps } = props;
+  const { tests, isPending } = useTests();
 
   return (
-    <>
-      <input type="hidden" name={name} value={testId} />
-      <Autocomplete
-        loading={isPending}
-        onChange={onChange}
-        renderOption={renderOption}
-        onInputChange={updateInput}
-        value={query}
-        options={tests ?? []}
-        renderInput={(params) => <TextField label="Test" {...params} />}
-        getOptionLabel={(option) => (typeof option === 'string' ? option : option.name)}
-        filterOptions={(x) => x}
-        {...rest}
-      />
-    </>
+    <Controller
+      {...controllerProps}
+      name={name}
+      control={control}
+      render={({ field }) => {
+        const { onBlur, onChange, ref, value, disabled } = field;
+        return (
+          <Autocomplete
+            ref={ref}
+            value={value}
+            onBlur={onBlur}
+            loading={isPending}
+            disabled={disabled}
+            options={tests ?? []}
+            renderOption={renderOption}
+            onChange={(_, newValue) => onChange(newValue)}
+            renderInput={(params) => <TextField name={name} label={label} {...params} />}
+            isOptionEqualToValue={(option, query) => option.id === query?.id}
+            getOptionLabel={(option) => (typeof option === 'string' ? option : option.name)}
+            {...restProps}
+          />
+        );
+      }}
+    />
   );
 };
 

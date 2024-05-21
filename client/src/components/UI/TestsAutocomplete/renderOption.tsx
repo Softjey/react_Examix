@@ -1,11 +1,11 @@
 import { ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
-import { AutocompletePropsType } from './AutocompletePropsType';
 import { Test } from '../../../types/api/test';
 import TestAvatar from '../TestAvatar';
 import SubjectItem from '../SubjectItem';
 import { textEllipsis } from '../../../styles/text';
+import { AutocompleteProps } from '../../../types/utils/AutocompleteProps';
 
-const renderOption: AutocompletePropsType['renderOption'] = ({ ...rest }, test: Test) => {
+const renderOption: AutocompleteProps<Test>['renderOption'] = ({ ...rest }, test: Test) => {
   return (
     <ListItem {...rest}>
       <ListItemAvatar>
