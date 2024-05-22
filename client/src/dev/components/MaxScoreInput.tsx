@@ -4,11 +4,11 @@ interface Props extends TextFieldProps<'standard'> {
   maxScore: number;
 }
 
-const MaxScoreInput: React.FC<Props> = (props) => {
+const MaxScoreInput: React.FC<Props> = ({ maxScore, ...rest }) => {
   return (
     <TextField
-      value={props.maxScore}
-      onChange={props.onChange}
+      value={maxScore}
+      onChange={rest.onChange}
       type="text"
       size="small"
       sx={{ maxWidth: '80px' }}
@@ -24,7 +24,7 @@ const MaxScoreInput: React.FC<Props> = (props) => {
           maxLength: 3,
         },
       }}
-      {...props}
+      {...rest}
     />
   );
 };

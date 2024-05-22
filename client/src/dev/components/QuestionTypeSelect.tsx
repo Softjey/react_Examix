@@ -6,15 +6,15 @@ interface Props extends TextFieldProps<'standard'> {
   questionType: QuestionType;
 }
 
-const QuestionTypeSelect: React.FC<Props> = (props) => {
+const QuestionTypeSelect: React.FC<Props> = ({ questionType, ...rest }) => {
   return (
     <TextField
       size="small"
-      value={props.questionType}
-      onChange={props.onChange}
+      value={questionType}
+      onChange={rest.onChange}
       select
       sx={{ width: '158px' }}
-      {...props}
+      {...rest}
     >
       {(Object.keys(QuestionType) as Array<keyof typeof QuestionType>).map((type) => (
         <MenuItem key={type} value={type}>

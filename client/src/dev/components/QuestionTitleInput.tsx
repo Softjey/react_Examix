@@ -4,16 +4,16 @@ interface Props extends TextFieldProps<'standard'> {
   title: string;
 }
 
-const QuestionTitleInput: React.FC<Props> = (props) => {
+const QuestionTitleInput: React.FC<Props> = ({ title, ...rest }) => {
   return (
     <TextField
       size="small"
       autoComplete="off"
       type="text"
       label="Title"
-      value={props.title}
-      onChange={props.onChange}
-      {...props}
+      value={title}
+      onChange={rest.onChange}
+      {...rest}
     />
   );
 };

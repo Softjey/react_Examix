@@ -1,5 +1,14 @@
 import { useState } from 'react';
-import { Box, Card, CardActions, CardContent, Paper, Snackbar, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Paper,
+  Snackbar,
+  Typography,
+} from '@mui/material';
 import useIds from '../useIds';
 import { QuestionType } from '../questions';
 import { formatStringToNumber } from '../formatter';
@@ -10,23 +19,24 @@ import TimeLimitInput from './TimeLimitInput';
 import QuestionTitleInput from './QuestionTitleInput';
 import AddButton from './buttons/AddButton';
 import CloseButton from './buttons/CloseButton';
+import DragButton from './buttons/DragButton';
+
+const maxAnswersLength = 6;
 
 interface Props {}
 
 const QuestionCard: React.FC<Props> = () => {
+  const getId = useIds();
   const [questionType, setQuestionType] = useState<QuestionType>(QuestionType.SINGLE_CHOICE);
   const [maxScore, setMaxScore] = useState<number>(0);
   const [title, setTitle] = useState<string>('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const getId = useIds();
   const [answers, setAnswers] = useState<AnswerWithId[]>(() => [
     { title: 'test', isCorrect: true, id: getId() },
     { title: 'test2', isCorrect: false, id: getId() },
     { title: 'test3', isCorrect: false, id: getId() },
   ]);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
-
-  const maxAnswersLength = 6;
 
   const addAnwer = () => {
     if (answers.length < maxAnswersLength) {
@@ -41,7 +51,7 @@ const QuestionCard: React.FC<Props> = () => {
     setAnswers((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const handleClose = (_: React.SyntheticEvent | Event, reason?: string) => {
+  const handleAlertClose = (_: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -51,6 +61,9 @@ const QuestionCard: React.FC<Props> = () => {
 
   return (
     <Card component={Paper} elevation={2} sx={{ maxWidth: '460px', borderRadius: '12px' }}>
+      <CardHeader sx={{ color: '#000' }}>
+        <DragButton />
+      </CardHeader>
       <CardContent sx={{ display: 'flex', gap: 1, flexDirection: 'column', paddingBottom: 0 }}>
         <Box display="flex" gap={1} flexWrap="wrap">
           <QuestionTypeSelect
@@ -85,9 +98,9 @@ const QuestionCard: React.FC<Props> = () => {
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={6000}
-          onClose={handleClose}
+          onClose={handleAlertClose}
           message={alertMessage}
-          action={<CloseButton onClick={handleClose} />}
+          action={<CloseButton onClick={handleAlertClose} />}
         />
       </CardActions>
     </Card>
