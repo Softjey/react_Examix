@@ -7,6 +7,7 @@ import Authenticated from '../../components/hocs/Authenticated';
 import TestPage from '../../dev/TestPage';
 import QuizPage from '../../dev/QuizPage';
 import HomePage from '../../pages/HomePage';
+import TestsLibraryPage from '../../pages/SearchTestPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 
@@ -83,7 +84,9 @@ const router = createRouter([
     path: Routes.TESTS_LIBRARY,
     element: (
       <Authenticated>
-        <HomeLayout>Tests library page</HomeLayout>
+        <HomeLayout>
+          <TestsLibraryPage />
+        </HomeLayout>
       </Authenticated>
     ),
   },
