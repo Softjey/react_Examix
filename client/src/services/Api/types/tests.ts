@@ -1,6 +1,7 @@
 import Subject from '../../../types/api/Subject';
 import { Test } from '../../../types/api/test';
 import { User } from '../../../types/api/user';
+import { WithPagination } from './utils';
 
 export type TestsFilters = {
   authorId?: User['id'];
@@ -10,4 +11,4 @@ export type TestsFilters = {
   page?: number;
 };
 
-export type TestsResponse = Test[];
+export type TestsResponse = WithPagination<{ tests: Test[] }>;
