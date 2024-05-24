@@ -43,7 +43,12 @@ export class ExamsHistoryService {
 
     const where: Prisma.ExamWhereInput = { authorId, testId, createdAt, ...whereCond };
 
-    return this.prismaService.exam.findMany({ select, skip, take: limit, where, orderBy });
+    const [exams, amount] = await this.prismaService.$transaction([
+      this.prismaService.exam.findMany({ select, skip, take: limit, where, orderBy }),
+      this.prismaService.exam.count({ where }),
+    ]);
+
+    return { exams, amount, pagesAmount: Math.ceil(amount / limit ?? 1) };
   }
 
   async saveExam({ author, students, test, questions }: Exam): Promise<DetailedExam> {

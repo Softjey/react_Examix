@@ -54,11 +54,24 @@ export class TestsService {
       };
     }
 
-    return this.prismaService.test.findMany({
-      where: { ...where, authorId },
-      skip,
-      take: limit,
-    });
+    const [tests, testsAmount] = await this.prismaService.$transaction([
+      this.prismaService.test.findMany({
+        where: { ...where, authorId },
+        skip,
+        take: limit,
+      }),
+      this.prismaService.test.count({
+        where: { ...where, authorId },
+      }),
+    ]);
+
+    const pagesAmount = limit ? Math.ceil(testsAmount / limit) : 1;
+
+    return {
+      tests,
+      pagesAmount,
+      amount: testsAmount,
+    };
   }
 
   async getOne(testId: Test['id']) {
