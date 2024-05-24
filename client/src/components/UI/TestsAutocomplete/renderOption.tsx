@@ -9,7 +9,7 @@ const renderOption: AutocompleteProps<Test>['renderOption'] = ({ ...rest }, test
   return (
     <ListItem {...rest}>
       <ListItemAvatar>
-        <TestAvatar image={test.image} name={test.name} width={40} />
+        <TestAvatar test={test} width={40} />
       </ListItemAvatar>
       <ListItemText
         sx={{ marginBlock: '0' }}

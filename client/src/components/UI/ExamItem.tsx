@@ -15,7 +15,7 @@ interface Props extends ListItemProps {
 
 const ExamItem: React.FC<Props> = ({ exam, ...rest }) => {
   const { id, createdAt, test, results } = exam;
-  const { name, image, subject } = test;
+  const { name, subject } = test;
   const studentsStr = trim(results.map((student) => student.studentName).join(', '), 100);
 
   return (
@@ -33,7 +33,7 @@ const ExamItem: React.FC<Props> = ({ exam, ...rest }) => {
       >
         <Box display="flex" alignItems="center" width="40%">
           <ListItemAvatar>
-            <TestAvatar image={image} name={name} sx={{ mr: '20px' }} />
+            <TestAvatar test={test} sx={{ mr: '20px' }} />
           </ListItemAvatar>
 
           <ListItemText
