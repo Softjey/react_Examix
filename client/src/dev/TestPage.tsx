@@ -10,7 +10,7 @@ import { getRandomName } from './randomNames';
 import { Response, createExam } from './createExam';
 import ApiClient from '../services/Api/ApiClient';
 import HomeLayout from '../components/layouts/HomeLayout';
-import Role from '../types/api/Role';
+import Role from '../types/api/enums/Role';
 
 const TestPage: React.FC = () => {
   const [studentIds, setStudentIds] = useState<string[]>([]);

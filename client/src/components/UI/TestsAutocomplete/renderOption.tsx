@@ -1,5 +1,5 @@
 import { ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
-import { Test } from '../../../types/api/test';
+import { Test } from '../../../types/api/entities/test';
 import TestAvatar from '../TestAvatar';
 import SubjectItem from '../SubjectItem';
 import { textEllipsis } from '../../../styles/text';

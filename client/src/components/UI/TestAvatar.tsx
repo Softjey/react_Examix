@@ -1,7 +1,7 @@
 import { Avatar, AvatarProps, Typography } from '@mui/material';
 import React from 'react';
 import generateColorsPair from '../../utils/generateColorsPair';
-import { Test } from '../../types/api/test';
+import { Test } from '../../types/api/entities/test';
 import { center } from '../../styles/flex';
 import getSubjectImgPath from '../../utils/getSubjectImgPath';
 

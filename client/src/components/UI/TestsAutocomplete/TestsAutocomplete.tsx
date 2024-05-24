@@ -3,7 +3,7 @@ import { Controller, FieldValues } from 'react-hook-form';
 import renderOption from './renderOption';
 import useTests from '../../../hooks/queries/useTests';
 import { AutocompleteProps } from '../../../types/utils/AutocompleteProps';
-import { Test } from '../../../types/api/test';
+import { Test } from '../../../types/api/entities/test';
 import { ControlledProps } from '../../../types/utils/ControlledProps';
 
 type OmittedProps =

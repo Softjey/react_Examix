@@ -1,6 +1,6 @@
-import { Exam } from '../../../types/api/exam';
-import { Question } from '../../../types/api/question';
-import { Test } from '../../../types/api/test';
+import { Exam } from '../../../types/api/entities/exam';
+import { Question } from '../../../types/api/entities/question';
+import { Test } from '../../../types/api/entities/test';
 import { WithMessage } from './utils';
 
 export type GlobalSearchResponse = WithMessage<{

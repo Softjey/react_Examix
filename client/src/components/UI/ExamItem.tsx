@@ -3,7 +3,7 @@ import { ListItemText, ListItemProps, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import React from 'react';
 import prettifyDate from '../../utils/prettifyDate';
-import { Exam } from '../../types/api/exam';
+import { Exam } from '../../types/api/entities/exam';
 import Routes from '../../services/Router/Routes';
 import { trim } from '../../utils/trim';
 import TestAvatar from './TestAvatar';

@@ -1,6 +1,6 @@
 import { Box, BoxProps, Typography } from '@mui/material';
 import React from 'react';
-import Subject from '../../types/api/Subject';
+import Subject from '../../types/api/enums/Subject';
 import underscoreToUpperToSentence from '../../utils/underscoreToUpperToSentence';
 import { textEllipsis } from '../../styles/text';
 import getSubjectImgPath from '../../utils/getSubjectImgPath';
