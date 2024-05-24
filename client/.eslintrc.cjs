@@ -19,6 +19,7 @@ module.exports = {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'import/no-absolute-path': 'off',
     'arrow-body-style': 'off',
+    'no-plusplus': 'off',
     'import/no-duplicates': 'off',
     '@typescript-eslint/lines-between-class-members': 'off',
     'react/jsx-props-no-spreading': 'off',
