@@ -21,7 +21,7 @@ const SubjectItem: React.FC<Props> = ({ subject, endText, sx, ...rest }) => {
       {subject && <img src={getSubjectImgPath(subject)} alt={subject} width={14} height={14} />}
 
       <Typography component="span" variant="caption" sx={{ maxWidth: '100%', ...textEllipsis }}>
-        {subject ? underscoreToUpperToSentence(subject) : 'No subject'}. {endText ?? ''}
+        {subject ? underscoreToUpperToSentence(subject) : 'No subject'} {endText ? '. ' : ''}
       </Typography>
     </Box>
   );
