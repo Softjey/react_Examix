@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Alert, Box } from '@mui/material';
 import QuestionCard from './components/QuestionCard';
-import stringToColor from './helper';
+import stringToColor from '../utils/stringToColor';
 
 interface Props {}
 
