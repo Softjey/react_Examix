@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Box } from '@mui/material';
+import { Alert, Pagination, Stack } from '@mui/material';
 import HomeLayout, { Props as HomeLayoutProps } from '../../components/layouts/HomeLayout';
 import { columnCenter } from '../../styles/flex';
 import useExamsHistoryPage from './useExamsHistoryPage';
@@ -8,12 +8,13 @@ import ExamsFilters from '../../components/forms/ExamsFilters';
 
 interface Props extends HomeLayoutProps {}
 
-const ExamsHistoryPage: React.FC<Props> = ({ ...rest }) => {
-  const { exams, handleFiltersUpdate, isPending, isError } = useExamsHistoryPage();
+const ExamsHistoryPage: React.FC<Props> = ({ contentSx, ...rest }) => {
+  const { exams, pagesAmount, isPending, isError, ...restParams } = useExamsHistoryPage();
+  const { params, handleFiltersUpdate, handlePageChange } = restParams;
 
   return (
-    <HomeLayout contentSx={{ ...columnCenter }} {...rest}>
-      <Box width="clamp(400px, 70vw, 1000px)" display="flex" flexDirection="column" gap="20px">
+    <HomeLayout contentSx={{ ...columnCenter, ...contentSx }} {...rest}>
+      <Stack width="clamp(400px, 70vw, 1000px)" direction="column" gap="20px" pb="50px">
         <ExamsFilters
           sx={{ borderTopLeftRadius: '0', borderTopRightRadius: '0' }}
           onFiltersUpdate={handleFiltersUpdate}
@@ -23,7 +24,19 @@ const ExamsHistoryPage: React.FC<Props> = ({ ...rest }) => {
         {!isError && (
           <ExamsList loadingProps={{ sx: { pt: '60px' } }} exams={exams} isLoading={isPending} />
         )}
-      </Box>
+
+        {(pagesAmount ?? 0) > 1 && (
+          <Stack direction="row" justifyContent="center">
+            <Pagination
+              shape="rounded"
+              variant="outlined"
+              page={params.page ?? 1}
+              count={pagesAmount}
+              onChange={handlePageChange}
+            />
+          </Stack>
+        )}
+      </Stack>
     </HomeLayout>
   );
 };

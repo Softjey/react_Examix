@@ -5,10 +5,11 @@ import { QueryKey } from '../../services/Query/types';
 
 export default function useTests(filters: TestsFilters = {}) {
   const { search, ...restFilters } = filters;
-  const { data: tests, ...rest } = useQuery({
+  const { data, ...rest } = useQuery({
     queryKey: [QueryKey.TESTS, filters],
     queryFn: () => ApiClient.getTests({ search: search || undefined, ...restFilters }),
   });
+  const { tests, amount, pagesAmount } = data ?? {};
 
-  return { tests, ...rest };
+  return { tests, amount, pagesAmount, ...rest };
 }

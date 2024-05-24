@@ -4,7 +4,7 @@ import { AuthResponse } from './types/auth';
 import { CreateUserDto, CreateUserResponse } from './types/create-user';
 import { WithMessage } from './types/utils';
 import { GlobalSearchResponse } from './types/global-search';
-import { ExamsFilters, ExamsResponse } from './types/exams';
+import { ExamsParams, ExamsResponse } from './types/exams';
 import { TestsFilters, TestsResponse } from './types/tests';
 import { Test } from '../../types/api/test';
 
@@ -54,12 +54,9 @@ export default class ApiClient {
     return data.results;
   }
 
-  static async getExams(filters: ExamsFilters = {}) {
+  static async getExams(filters: ExamsParams = {}) {
     const { data } = await axios.get<ExamsResponse>('/exams', {
-      params: {
-        limit: 40,
-        ...filters,
-      },
+      params: filters,
     });
 
     return data;
