@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { $Enums, User } from '@prisma/client';
 // eslint-disable-next-line max-len
-import { IsEmail, IsEnum, IsNotEmpty, IsString, IsStrongPassword, IsUrl, MinLength } from 'class-validator'; // prettier-ignore
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, IsStrongPassword, IsUrl, MinLength } from 'class-validator'; // prettier-ignore
 
 export class CreateUserDto
   implements Pick<User, 'email' | 'password' | 'name'>, Partial<Pick<User, 'role' | 'photo'>>
@@ -21,6 +21,7 @@ export class CreateUserDto
   )
   password: string;
 
+  @IsOptional()
   @IsUrl()
   photo?: string;
 
