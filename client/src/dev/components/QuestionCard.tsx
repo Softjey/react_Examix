@@ -4,7 +4,7 @@ import {
   Card,
   CardActions,
   CardContent,
-  CardHeader,
+  CardProps,
   Paper,
   Snackbar,
   Typography,
@@ -19,13 +19,13 @@ import TimeLimitInput from './TimeLimitInput';
 import QuestionTitleInput from './QuestionTitleInput';
 import AddButton from './buttons/AddButton';
 import CloseButton from './buttons/CloseButton';
-import DragButton from './buttons/DragButton';
+import DragBar from './DragBar';
 
 const maxAnswersLength = 6;
 
-interface Props {}
+interface Props extends CardProps {}
 
-const QuestionCard: React.FC<Props> = () => {
+const QuestionCard: React.FC<Props> = ({ ...props }) => {
   const getId = useIds();
   const [questionType, setQuestionType] = useState<QuestionType>(QuestionType.SINGLE_CHOICE);
   const [maxScore, setMaxScore] = useState<number>(0);
@@ -37,6 +37,8 @@ const QuestionCard: React.FC<Props> = () => {
     { title: 'test3', isCorrect: false, id: getId() },
   ]);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [draggable, setDraggable] = useState(false);
+  // TODO: add drag logic
 
   const addAnwer = () => {
     if (answers.length < maxAnswersLength) {
@@ -60,11 +62,25 @@ const QuestionCard: React.FC<Props> = () => {
   };
 
   return (
-    <Card component={Paper} elevation={2} sx={{ maxWidth: '460px', borderRadius: '12px' }}>
-      <CardHeader sx={{ color: '#000' }}>
-        <DragButton />
-      </CardHeader>
-      <CardContent sx={{ display: 'flex', gap: 1, flexDirection: 'column', paddingBottom: 0 }}>
+    <Card
+      {...props}
+      draggable={draggable}
+      component={Paper}
+      elevation={2}
+      sx={{
+        pointerEvents: 'auto',
+        maxWidth: '460px',
+        borderRadius: '12px',
+        '&:hover .drag-bar': {
+          opacity: 0.7,
+          visibility: 'visible',
+        },
+      }}
+    >
+      <DragBar onMouseEnter={() => setDraggable(true)} onMouseLeave={() => setDraggable(false)} />
+      <CardContent
+        sx={{ display: 'flex', gap: 1, flexDirection: 'column', paddingBottom: 0, paddingTop: 0 }}
+      >
         <Box display="flex" gap={1} flexWrap="wrap">
           <QuestionTypeSelect
             questionType={questionType}
