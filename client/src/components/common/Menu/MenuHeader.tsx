@@ -4,8 +4,9 @@ import ImageIcon from '@mui/icons-material/Image';
 import { Link, LinkProps } from 'react-router-dom';
 import { trim } from '../../../utils/trim';
 import Routes from '../../../services/Router/Routes';
-import { generateAvatar } from '../../../utils/generateAvatar';
 import useAuth from '../../../hooks/queries/useAuth';
+import getInitials from '../../../utils/getInitials';
+import generateColorsPair from '../../../utils/generateColorsPair';
 
 interface Props extends Omit<LinkProps, 'to'> {}
 
@@ -14,7 +15,9 @@ const MenuHeader: React.FC<Props> = ({ ...rest }) => {
   const isLoading = isPending || !user;
   const name = isLoading ? 'Loading...' : trim(user.name, 16);
   const email = isLoading ? 'Loading...' : trim(user.email, 20);
-  const generatedPhoto = generateAvatar(name);
+  const notSuccess = isLoading || isError;
+  const [bgcolor, textColor] = generateColorsPair(`${user?.name}--${user?.createdAt}`);
+  const initials = getInitials(name);
 
   return (
     <Link
@@ -30,16 +33,12 @@ const MenuHeader: React.FC<Props> = ({ ...rest }) => {
       }}
       {...rest}
     >
-      <Avatar>
-        {isLoading || isError ? (
-          <ImageIcon fontSize="small" />
-        ) : (
-          <img
-            src={user.photo ?? generatedPhoto}
-            alt={`${user.name} avatar`}
-            css={{ maxWidth: '100%' }}
-          />
+      <Avatar sx={{ bgcolor, color: textColor }}>
+        {notSuccess && <ImageIcon fontSize="small" />}
+        {!notSuccess && user.photo && (
+          <img src={user.photo} alt={`${user.name} avatar`} css={{ maxWidth: '100%' }} />
         )}
+        {!notSuccess && !user.photo && <Typography>{initials}</Typography>}
       </Avatar>
 
       <Box>
