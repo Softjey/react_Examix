@@ -5,6 +5,8 @@ import HelpIcon from '@mui/icons-material/Help';
 import { GlobalSearchResult } from '../../../services/Api/types/global-search';
 import LinkListOption from '../LinkListOption';
 import { trim } from '../../../utils/trim';
+import prettifyDate from '../../../utils/prettifyDate';
+import SubjectItem from '../SubjectItem';
 
 export const getOptionLabel = (result: GlobalSearchResult | string) => {
   if (typeof result === 'string') {
@@ -30,20 +32,21 @@ export const getTitle = (result: GlobalSearchResult) => {
 export const getSubtitle = (result: GlobalSearchResult) => {
   switch (result.type) {
     case 'exam': {
-      const dateStr = new Date(result.item.createdAt).toLocaleTimeString();
+      const dateStr = prettifyDate(result.item.createdAt);
       const students = result.item.results.map((student) => student.studentName).join(', ');
 
       return `Created at ${dateStr}. Students: ${students}`;
     }
     case 'question': {
-      const subjectStr = result.item.subject ? `Subject: ${result.item.subject}.` : '';
-
-      return `${subjectStr} Type: ${result.item.type}.`;
+      return <SubjectItem subject={result.item.subject} endText={`Type: ${result.item.type}.`} />;
     }
     case 'test': {
-      const subjectStr = result.item.subject ? `Subject: ${result.item.subject}.` : '';
-
-      return `${subjectStr} Description: ${result.item.description}.`;
+      return (
+        <SubjectItem
+          subject={result.item.subject}
+          endText={`Description: ${result.item.description}.`}
+        />
+      );
     }
     default:
       throw new Error('Unknown option label type');
@@ -67,13 +70,19 @@ export const getHref = (result: GlobalSearchResult) => {
   return `/have_to_implement_${result.type}_link`;
 };
 
-export const renderOption = (props: HTMLAttributes<HTMLLIElement>, result: GlobalSearchResult) => (
-  <LinkListOption
-    title={trim(getTitle(result), 60)}
-    subtitle={trim(getSubtitle(result), 66)}
-    icon={getIcon(result)}
-    to={getHref(result)}
-    style={{ padding: '0' }}
-    {...props}
-  />
-);
+export const renderOption = (props: HTMLAttributes<HTMLLIElement>, result: GlobalSearchResult) => {
+  const subtitleElement = getSubtitle(result);
+  const subtitleIsString = typeof subtitleElement === 'string';
+  const subtitle = subtitleIsString ? trim(subtitleElement, 66) : subtitleElement;
+
+  return (
+    <LinkListOption
+      title={trim(getTitle(result), 60)}
+      subtitle={subtitle}
+      icon={getIcon(result)}
+      to={getHref(result)}
+      style={{ padding: '0' }}
+      {...props}
+    />
+  );
+};

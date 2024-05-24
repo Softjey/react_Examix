@@ -9,6 +9,7 @@ import QuizPage from '../../dev/QuizPage';
 import HomePage from '../../pages/HomePage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
+import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
 
 const router = createRouter([
   {
@@ -67,7 +68,7 @@ const router = createRouter([
     path: Routes.EXAMS_HISTORY,
     element: (
       <Authenticated>
-        <HomeLayout>Exams history page</HomeLayout>
+        <ExamsHistoryPage />
       </Authenticated>
     ),
   },

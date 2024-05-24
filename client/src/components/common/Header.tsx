@@ -1,6 +1,6 @@
 import { CSSObject } from '@emotion/react';
-import BackButton from './UI/buttons/BackButton';
-import Logo from './UI/Logo';
+import BackButton from '../UI/buttons/BackButton';
+import Logo from '../UI/Logo';
 
 interface Props {
   disableBackBtn?: boolean;

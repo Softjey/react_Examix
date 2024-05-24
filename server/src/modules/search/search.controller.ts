@@ -15,8 +15,8 @@ export class SearchController {
       limit,
     });
     const results = this.getResults(limit, {
-      exam: exams,
-      test: tests,
+      exam: exams.exams,
+      test: tests.tests,
       question: questions,
     });
 
