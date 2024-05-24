@@ -12,8 +12,8 @@ const colors = Object.fromEntries(ids.map((id) => [id, stringToColor(Math.random
 const CreateTestPage: React.FC<Props> = () => {
   const [questions, setQuestions] = useState<number[]>(ids);
 
-  const draggingItem = useRef<number | null>(null);
-  const dragOverItem = useRef<number | null>(null);
+  const draggingItem = useRef<number>(-1);
+  const dragOverItem = useRef<number | null>(-1);
 
   const handleDragStart = (position: number) => {
     draggingItem.current = position;
@@ -22,7 +22,7 @@ const CreateTestPage: React.FC<Props> = () => {
   const handleDragEnter = (position: number) => {
     dragOverItem.current = position;
     const questionsCopy = [...questions];
-    const draggingItemContent = draggingItem.current ? questionsCopy[draggingItem.current] : -1;
+    const draggingItemContent = questionsCopy[draggingItem.current];
 
     if (draggingItem.current) {
       questionsCopy.splice(draggingItem.current, 1);
