@@ -2,7 +2,7 @@ import React from 'react';
 import { List, ListProps } from '@mui/material';
 import { ClassNames } from '@emotion/react';
 import { items } from './items';
-import LinkListOption from '../UI/LinkListOption';
+import LinkListOption from '../../UI/LinkListOption';
 
 interface Props extends ListProps {}
 

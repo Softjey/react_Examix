@@ -2,7 +2,7 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import SettingsIcon from '@mui/icons-material/Settings';
-import Routes from '../../services/Router/Routes';
+import Routes from '../../../services/Router/Routes';
 
 export type MenuItemType = {
   text: string;

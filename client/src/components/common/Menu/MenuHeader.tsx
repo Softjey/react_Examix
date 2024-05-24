@@ -2,10 +2,10 @@ import React from 'react';
 import { Avatar, Typography, Box } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import { Link, LinkProps } from 'react-router-dom';
-import { trim } from '../../utils/trim';
-import Routes from '../../services/Router/Routes';
-import { generateAvatar } from '../../utils/generateAvatar';
-import useAuth from '../../hooks/queries/useAuth';
+import { trim } from '../../../utils/trim';
+import Routes from '../../../services/Router/Routes';
+import { generateAvatar } from '../../../utils/generateAvatar';
+import useAuth from '../../../hooks/queries/useAuth';
 
 interface Props extends Omit<LinkProps, 'to'> {}
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, BoxProps } from '@mui/material';
-import { Menu } from '../menu/Menu';
+import { Menu } from '../common/Menu/Menu';
 
 export interface Props extends BoxProps {
   contentSx?: BoxProps['sx'];

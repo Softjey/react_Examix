@@ -2,9 +2,9 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import React from 'react';
-import Header from '../Header';
+import Header from '../common/Header';
 import { center, columnCenter } from '../../styles/flex';
-import { ComponentProps } from '../../types/ComponentProps';
+import { ComponentProps } from '../../types/utils/ComponentProps';
 
 export interface Props extends ComponentProps<'div'> {
   header?: boolean;
