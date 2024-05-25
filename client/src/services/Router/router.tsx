@@ -10,6 +10,7 @@ import HomePage from '../../pages/HomePage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
+import ExamPage from '../../pages/ExamPage';
 
 const router = createRouter([
   {
@@ -93,6 +94,14 @@ const router = createRouter([
     element: (
       <Authenticated>
         <HomeLayout>Settings page</HomeLayout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: `${Routes.EXAM}/:id`,
+    element: (
+      <Authenticated>
+        <ExamPage />
       </Authenticated>
     ),
   },

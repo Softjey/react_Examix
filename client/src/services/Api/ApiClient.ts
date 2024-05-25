@@ -1,12 +1,14 @@
 import axiosCLient from 'axios';
-import { User } from '../../types/api/user';
+import { User } from '../../types/api/entities/user';
 import { AuthResponse } from './types/auth';
 import { CreateUserDto, CreateUserResponse } from './types/create-user';
 import { WithMessage } from './types/utils';
 import { GlobalSearchResponse } from './types/global-search';
 import { ExamsParams, ExamsResponse } from './types/exams';
 import { TestsFilters, TestsResponse } from './types/tests';
-import { Test } from '../../types/api/test';
+import { Test } from '../../types/api/entities/test';
+import { Exam } from '../../types/api/entities/exam';
+import { DetailedExam } from '../../types/api/entities/detailedExam';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
@@ -74,5 +76,11 @@ export default class ApiClient {
     const { data } = await axios.get<Pick<Test, 'name'>>(`/tests/name/${id}`);
 
     return data.name;
+  }
+
+  static async getExamById(id: Exam['id']) {
+    const { data } = await axios.get<DetailedExam>(`/exams/${id}`);
+
+    return data;
   }
 }
