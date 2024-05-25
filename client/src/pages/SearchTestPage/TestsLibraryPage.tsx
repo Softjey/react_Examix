@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { CSSObject } from '@emotion/react';
-
-import SearchCategory from './SearchCategory';
 import AllQuizzes from './Quizzes/AllQuizzes';
 
 const styles: Record<string, CSSObject> = {
@@ -14,7 +12,6 @@ const styles: Record<string, CSSObject> = {
 
 const TestsLibraryPage: React.FC = () => (
   <div css={styles.container}>
-    <SearchCategory />
     <AllQuizzes />
   </div>
 );
