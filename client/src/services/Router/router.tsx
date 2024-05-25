@@ -10,6 +10,7 @@ import HomePage from '../../pages/HomePage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
+import TestPage from '../../pages/TestPage';
 
 const router = createRouter([
   {
@@ -100,7 +101,7 @@ const router = createRouter([
     path: `${Routes.TEST}/:id`,
     element: (
       <Authenticated>
-        <DebugPage />
+        <TestPage />
       </Authenticated>
     ),
   },
