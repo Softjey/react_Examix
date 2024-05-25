@@ -26,7 +26,7 @@ const mockTests: Test[] = [
     name: 'Top 10 poses for yoga for date with your beloved and beautiful person',
     image: test2Image,
     description: "an interesting idea for a date, it's relaxing yoga ",
-    subject: Subject.PHYSICAL_EDUCATION,
+    subject: Subject.SPORT,
     authorId: 2,
     createdAt: '2024-05-21T00:00:00Z',
   },

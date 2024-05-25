@@ -8,13 +8,15 @@ module.exports = {
     'airbnb/hooks',
     'airbnb-typescript',
     'plugin:react-hooks/recommended',
+    'prettier', 
+    'plugin:prettier/recommended', 
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs', 'vite.config.ts'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: '**/tsconfig.json',
   },
-  plugins: ['react-refresh', '@emotion', '@tanstack/eslint-plugin-query'],
+  plugins: ['react-refresh', '@emotion', '@tanstack/eslint-plugin-query', 'prettier'], 
   rules: {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'import/no-absolute-path': 'off',
@@ -44,6 +46,7 @@ module.exports = {
     'react/no-unescaped-entities': 'off',
     'react/require-default-props': 'off',
     '@emotion/pkg-renaming': 'error',
+    'prettier/prettier': 'error', 
   },
   settings: {
     'import/resolver': {
