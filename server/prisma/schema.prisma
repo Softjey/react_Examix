@@ -59,7 +59,7 @@ model User {
   updatedAt DateTime   @updatedAt
   questions Question[]
   tests     Test[]
-  Exam      Exam[]
+  exam      Exam[]
 }
 
 model Question {
@@ -81,10 +81,10 @@ model Test {
   description   String
   subject       Subject?
   authorId      Int?
-  Author        User?          @relation(fields: [authorId], references: [id])
+  author        User?          @relation(fields: [authorId], references: [id])
   createdAt     DateTime       @default(now())
   testQuestions TestQuestion[]
-  Exam          Exam[]
+  exam          Exam[]
 }
 
 model TestQuestion {
