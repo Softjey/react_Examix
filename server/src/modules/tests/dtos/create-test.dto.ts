@@ -4,6 +4,7 @@ import { IsOptional, IsString, IsUrl, ValidateNested } from 'class-validator';
 import { CreateTestQuestionDto } from './create-test-question.dto';
 import { User, $Enums } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import IsUniqueQuestions from '../utils/is-unique-questions.decorator';
 
 export type CreateTestDtoAuthorId = CreateTestDto & { authorId: User['id'] };
 export class CreateTestDto {
@@ -27,5 +28,6 @@ export class CreateTestDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateTestQuestionDto)
+  @IsUniqueQuestions()
   questions: CreateTestQuestionDto[];
 }
