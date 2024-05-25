@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
@@ -15,13 +14,15 @@ const TestCard: React.FC<TestCardProps> = ({ test }) => (
   <Card
     sx={{ minWidth: '200px', width: '100%', minHeight: '100px', height: '100%', maxWidth: '300px' }}
   >
-    <Box sx={{ position: 'relative' }}>
-      <CardMedia
-        component="img"
-        height="140"
-        image={test.image || './img/test1.jpg'}
-        alt="obraz testu"
-      />
+    <Box
+      sx={{
+        width: '100%',
+        height: '140px',
+        backgroundImage: `url(${test.image || './img/test1.jpg'})`,
+        backgroundSize: 'cover',
+        position: 'relative',
+      }}
+    >
       <Chip
         label={test.subject}
         size="small"

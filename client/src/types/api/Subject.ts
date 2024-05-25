@@ -1,4 +1,4 @@
-const enum Subject {
+enum Subject {
   MATH = 'MATH',
   ENGLISH = 'ENGLISH',
   SCIENCE = 'SCIENCE',

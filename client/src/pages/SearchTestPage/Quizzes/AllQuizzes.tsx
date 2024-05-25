@@ -16,10 +16,10 @@ const theme = createTheme();
 
 const AllQuizzes: React.FC = () => {
   const { tests, isLoading, isError } = useTests({ limit: 2 });
-  const [selectedSubject, setSelectedSubject] = useState<string>(''); // Set default value to empty string
+  const [selectedAge, setSelectedAge] = useState('');
 
-  const handleSubjectChange = (event: SelectChangeEvent<string>) => {
-    setSelectedSubject(event.target.value);
+  const handleAgeChange = (event: SelectChangeEvent<string>) => {
+    setSelectedAge(event.target.value);
   };
 
   if (isLoading || !tests) {
@@ -28,7 +28,6 @@ const AllQuizzes: React.FC = () => {
   if (isError || !tests) {
     return <h1>error</h1>;
   }
-
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ width: '100%' }}>
@@ -48,17 +47,14 @@ const AllQuizzes: React.FC = () => {
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={selectedSubject}
+                  value={selectedAge}
                   label="Subject"
-                  onChange={handleSubjectChange}
+                  onChange={handleAgeChange}
                 >
-                  <MenuItem value="">All</MenuItem>
-                  {Object.keys(Subject).map((key) => (
-                    <MenuItem
-                      key={Subject[key as keyof typeof Subject]}
-                      value={Subject[key as keyof typeof Subject]}
-                    >
-                      {Subject[key as keyof typeof Subject]}
+                  <MenuItem value="all">All</MenuItem>
+                  {Object.values(Subject).map((subject) => (
+                    <MenuItem key={subject} value={subject}>
+                      {subject}
                     </MenuItem>
                   ))}
                 </Select>
