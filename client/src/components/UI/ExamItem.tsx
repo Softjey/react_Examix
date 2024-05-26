@@ -7,7 +7,7 @@ import { Exam } from '../../types/api/entities/exam';
 import Routes from '../../services/Router/Routes';
 import { trim } from '../../utils/trim';
 import TestAvatar from './TestAvatar';
-import SubjectItem from './SubjectItem';
+import SubjectItem from './SubjectItem/SubjectItem';
 
 interface Props extends ListItemProps {
   exam: Exam;

@@ -12,7 +12,7 @@ import ApiClient from '../services/Api/ApiClient';
 import HomeLayout from '../components/layouts/HomeLayout';
 import Role from '../types/api/enums/Role';
 
-const TestPage: React.FC = () => {
+const DebugPage: React.FC = () => {
   const [studentIds, setStudentIds] = useState<string[]>([]);
   const [response, setResponse] = useState<Response | null>(null);
   const [students, setStudents] = useState<string[]>([]);
@@ -132,4 +132,4 @@ const TestPage: React.FC = () => {
   );
 };
 
-export default TestPage;
+export default DebugPage;

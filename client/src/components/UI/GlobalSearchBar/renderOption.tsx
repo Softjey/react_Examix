@@ -6,7 +6,8 @@ import { GlobalSearchResult } from '../../../services/Api/types/global-search';
 import LinkListOption from '../LinkListOption';
 import { trim } from '../../../utils/trim';
 import prettifyDate from '../../../utils/prettifyDate';
-import SubjectItem from '../SubjectItem';
+import SubjectItem from '../SubjectItem/SubjectItem';
+import Routes from '../../../services/Router/Routes';
 
 export const getOptionLabel = (result: GlobalSearchResult | string) => {
   if (typeof result === 'string') {
@@ -67,7 +68,16 @@ export const getIcon = (result: GlobalSearchResult) => {
 };
 
 export const getHref = (result: GlobalSearchResult) => {
-  return `/have_to_implement_${result.type}_link`;
+  switch (result.type) {
+    case 'exam':
+      return `${Routes.EXAM}/${result.item.id}`;
+    case 'question':
+      return 'have_to_open_modal_with_question';
+    case 'test':
+      return `${Routes.TEST}/${result.item.id}`;
+    default:
+      throw new Error('Unknown option label type');
+  }
 };
 
 export const renderOption = (props: HTMLAttributes<HTMLLIElement>, result: GlobalSearchResult) => {

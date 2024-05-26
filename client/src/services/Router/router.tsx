@@ -4,12 +4,13 @@ import StartPage from '../../pages/StartPage';
 import LoginPage from '../../pages/LoginPage/LoginPage';
 import NotFoundPage from '../../pages/NotFoundPage';
 import Authenticated from '../../components/hocs/Authenticated';
-import TestPage from '../../dev/TestPage';
+import DebugPage from '../../dev/DebugPage';
 import QuizPage from '../../dev/QuizPage';
 import HomePage from '../../pages/HomePage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
+import TestPage from '../../pages/TestPage';
 import ExamPage from '../../pages/ExamPage';
 
 const router = createRouter([
@@ -50,10 +51,10 @@ const router = createRouter([
     ),
   },
   {
-    path: 'test',
+    path: 'debug',
     element: (
       <Authenticated>
-        <TestPage />
+        <DebugPage />
       </Authenticated>
     ),
   },
@@ -94,6 +95,14 @@ const router = createRouter([
     element: (
       <Authenticated>
         <HomeLayout>Settings page</HomeLayout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: `${Routes.TEST}/:id`,
+    element: (
+      <Authenticated>
+        <TestPage />
       </Authenticated>
     ),
   },

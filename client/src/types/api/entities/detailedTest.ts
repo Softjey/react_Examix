@@ -1,6 +1,8 @@
 import { Test } from './test';
-import { TestQuestionWithResults } from './testQuestion';
+import { TestQuestion } from './testQuestion';
+import { User } from './user';
 
 export interface DetailedTest extends Test {
-  testQuestions: TestQuestionWithResults[];
+  author: Pick<User, 'name' | 'photo' | 'createdAt'>;
+  testQuestions: TestQuestion[];
 }
