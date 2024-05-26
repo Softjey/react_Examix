@@ -12,7 +12,7 @@ import QuestionsList from '../components/common/QuestionsList';
 
 interface Props extends HomeLayoutProps {}
 
-const TestPage: React.FC<Props> = ({ ...rest }) => {
+const TestPage: React.FC<Props> = ({ contentSx, ...rest }) => {
   const { id } = useParams<{ id: string }>();
   const normalizedId = parseNumFromString(id);
   const { test, isLoading, isError } = useTest(normalizedId);
@@ -26,8 +26,8 @@ const TestPage: React.FC<Props> = ({ ...rest }) => {
   }
 
   return (
-    <HomeLayout contentSx={columnCenter} {...rest} position="relative" overflow="visible">
-      <Box sx={{ p: 2, maxWidth: 1000, width: '95%', overflow: 'visible' }}>
+    <HomeLayout contentSx={{ ...columnCenter, ...contentSx }} {...rest}>
+      <Box sx={{ p: 2, maxWidth: 1000, width: '95%' }}>
         <BaseTestInfo test={test} />
 
         <QuestionsList questions={test.testQuestions} />
