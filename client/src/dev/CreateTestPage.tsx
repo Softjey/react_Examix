@@ -3,7 +3,7 @@ import { Box, Button } from '@mui/material';
 import { useForm } from 'react-hook-form';
 // eslint-disable-next-line import/no-cycle
 import TestInfo from './components/TestInfo';
-import Subject from '../types/api/Subject';
+import Subject from '../types/api/enums/Subject';
 
 interface Props {}
 

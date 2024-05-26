@@ -1,5 +1,5 @@
-import { Nullable } from '../utils/Nullable';
-import Subject from './Subject';
+import { Nullable } from '../../utils/Nullable';
+import Subject from '../enums/Subject';
 import { User } from './user';
 
 export interface Test {

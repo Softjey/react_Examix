@@ -1,4 +1,4 @@
-import { Exam } from '../../../types/api/exam';
+import { Exam } from '../../../types/api/entities/exam';
 import { WithPagination } from './utils';
 
 export type ExamsParams = {
