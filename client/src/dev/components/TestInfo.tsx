@@ -1,39 +1,49 @@
-import { useState } from 'react';
-import { Box } from '@mui/material';
-import Subject from '../../types/api/Subject';
-import { Nullable } from '../../types/utils/Nullable';
+import { Box, BoxProps, TextField } from '@mui/material';
+import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import SubjectSelect from './SubjectSelect';
-import TestNameInput from './TestNameInput';
-import TestDescriptionInput from './TestDescriptionInput';
+import ImageUploader from './ImageUploader';
+// eslint-disable-next-line import/no-cycle
+import { CreateTestForm } from '../CreateTestPage';
 
-interface Props {}
+interface Props extends BoxProps {
+  register: UseFormRegister<CreateTestForm>;
+  errors: FieldErrors<CreateTestForm>;
+}
 
-const TestInfo: React.FC<Props> = () => {
-  const [selectedSubject, setSelectedSubject] = useState<Nullable<Subject>>(null);
-  const [testName, setTestName] = useState('');
-  const [testDescription, setTestDescription] = useState('');
-
-  const onSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setSelectedSubject(value !== '' ? (value as Subject) : null);
-  };
-
+const TestInfo: React.FC<Props> = ({ register, errors, sx, ...rest }) => {
   return (
-    <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap="12px" sx={{ width: '100%' }}>
-      <TestNameInput
-        testName={testName}
-        onChange={(e) => setTestName(e.target.value)}
-        sx={{ gridColumn: 'span 8' }}
+    <Box {...rest} display="flex" flexDirection="column" gap="24px" sx={{ width: '100%', ...sx }}>
+      <ImageUploader
+        // {...register('testImage')}
+        sx={{
+          alignSelf: 'start',
+          maxHeight: '150px',
+          maxWidth: '200px',
+        }}
+      />
+      <TextField
+        {...register('testName', { required: true })}
+        error={!!errors.testName}
+        helperText={errors.testName?.type === 'required' ? 'Test name is required' : ''}
+        autoComplete="off"
+        type="text"
+        label="Test name"
       />
       <SubjectSelect
-        selectedSubject={selectedSubject}
-        onChange={onSubjectChange}
-        sx={{ gridColumn: 'span 4' }}
+        {...register('subject', { required: true })}
+        error={!!errors.subject}
+        helperText={errors.subject?.type === 'required' ? 'Subject is required' : ''}
+        ref={null}
       />
-      <TestDescriptionInput
-        testDescription={testDescription}
-        onChange={(e) => setTestDescription(e.target.value)}
-        sx={{ gridColumn: 'span 9' }}
+      <TextField
+        {...register('testDescription', { required: true })}
+        error={!!errors.testDescription}
+        helperText={errors.testDescription?.type === 'required' ? 'Description is required' : ''}
+        multiline
+        type="text"
+        label="Test description"
+        minRows={4}
+        maxRows={4}
       />
     </Box>
   );

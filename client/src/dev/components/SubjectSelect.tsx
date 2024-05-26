@@ -1,19 +1,15 @@
 import { TextField, MenuItem, TextFieldProps } from '@mui/material';
 import SubjectItem from '../../components/UI/SubjectItem';
 import Subject from '../../types/api/Subject';
-import { Nullable } from '../../types/utils/Nullable';
 
-interface Props extends TextFieldProps<'standard'> {
-  selectedSubject: Nullable<Subject>;
-}
+interface Props extends TextFieldProps<'standard'> {}
 
-const SubjectSelect: React.FC<Props> = ({ selectedSubject, onChange, ...rest }) => {
+const SubjectSelect: React.FC<Props> = ({ ...props }) => {
   return (
     <TextField
-      {...rest}
-      value={selectedSubject || ''}
-      onChange={onChange}
+      {...props}
       select
+      defaultValue=""
       label="Subject"
       SelectProps={{
         sx: {
