@@ -9,6 +9,7 @@ import { DetailedTest } from '../../types/api/entities/detailedTest';
 import { User } from '../../types/api/entities/user';
 import { Exam } from '../../types/api/entities/exam';
 import { Test } from '../../types/api/entities/test';
+import { DetailedExam } from '../../types/api/entities/detailedExam';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
