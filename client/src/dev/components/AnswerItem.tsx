@@ -3,7 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState } from 'react';
-import { Answer } from '../../types/api/question';
+import { Answer } from '../../types/api/entities/question';
 
 export interface AnswerWithId extends Answer {
   id: number;
