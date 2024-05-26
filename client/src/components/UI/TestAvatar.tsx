@@ -1,9 +1,10 @@
-import { Avatar, AvatarProps, Typography } from '@mui/material';
+import { Avatar, AvatarProps } from '@mui/material';
 import React from 'react';
 import generateColorsPair from '../../utils/generateColorsPair';
 import { Test } from '../../types/api/entities/test';
 import { center } from '../../styles/flex';
 import getSubjectImgPath from '../../utils/getSubjectImgPath';
+import Logo from './Logo';
 
 interface Props extends AvatarProps {
   test: Pick<Test, 'image' | 'name' | 'subject' | 'createdAt'>;
@@ -23,16 +24,14 @@ const TestAvatar: React.FC<Props> = ({ test, width = 60, sx, ...rest }) => {
         <img src={getSubjectImgPath(subject)} alt={name} width={width / 2} height={height / 2} />
       )}
       {!image && !subject && (
-        <Typography
+        <Logo
           sx={{
             ...center,
             height: '100%',
             width: '100%',
-            fontSize: `${width / 5}px`,
+            fontSize: `${width / 4.5}px`,
           }}
-        >
-          Examix
-        </Typography>
+        />
       )}
     </Avatar>
   );
