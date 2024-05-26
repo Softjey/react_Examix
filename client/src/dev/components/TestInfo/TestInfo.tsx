@@ -2,8 +2,7 @@ import { Box, BoxProps, TextField } from '@mui/material';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import SubjectSelect from './SubjectSelect';
 import ImageUploader from './ImageUploader';
-// eslint-disable-next-line import/no-cycle
-import { CreateTestForm } from '../CreateTestPage';
+import { CreateTestForm } from '../test/interfaces';
 
 interface Props extends BoxProps {
   register: UseFormRegister<CreateTestForm>;
@@ -22,23 +21,25 @@ const TestInfo: React.FC<Props> = ({ register, errors, sx, ...rest }) => {
         }}
       />
       <TextField
-        {...register('testName', { required: true })}
+        {...register('testName', { required: { value: true, message: 'Test name is required' } })}
         error={!!errors.testName}
-        helperText={errors.testName?.type === 'required' ? 'Test name is required' : ''}
+        helperText={errors.testName?.message?.toString()}
         autoComplete="off"
         type="text"
         label="Test name"
       />
       <SubjectSelect
-        {...register('subject', { required: true })}
+        {...register('subject', { required: { value: true, message: 'Subject is required' } })}
         error={!!errors.subject}
-        helperText={errors.subject?.type === 'required' ? 'Subject is required' : ''}
+        helperText={errors.subject?.message?.toString()}
         ref={null}
       />
       <TextField
-        {...register('testDescription', { required: true })}
+        {...register('testDescription', {
+          required: { value: true, message: 'Test description is required' },
+        })}
         error={!!errors.testDescription}
-        helperText={errors.testDescription?.type === 'required' ? 'Description is required' : ''}
+        helperText={errors.testDescription?.message}
         multiline
         type="text"
         label="Test description"

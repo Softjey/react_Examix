@@ -1,6 +1,6 @@
 import { TextField, MenuItem, TextFieldProps } from '@mui/material';
-import SubjectItem from '../../components/UI/SubjectItem/SubjectItem';
-import Subject from '../../types/api/enums/Subject';
+import SubjectItem from '../../../components/UI/SubjectItem/SubjectItem';
+import Subject from '../../../types/api/enums/Subject';
 
 interface Props extends TextFieldProps<'standard'> {}
 
