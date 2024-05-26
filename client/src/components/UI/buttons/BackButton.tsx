@@ -5,11 +5,17 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 interface Props extends FabProps {}
 
-const BackButton: React.FC<Props> = memo(({ ...rest }) => {
+const BackButton: React.FC<Props> = memo(({ sx, ...rest }) => {
   const navigate = useNavigate();
 
   return (
-    <Fab onClick={() => navigate(-1)} color="primary" size="large" {...rest}>
+    <Fab
+      sx={{ boxShadow: 'none', ...sx }}
+      onClick={() => navigate(-1)}
+      color="primary"
+      size="large"
+      {...rest}
+    >
       <ArrowBackIcon />
     </Fab>
   );
