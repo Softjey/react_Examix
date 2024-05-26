@@ -9,9 +9,9 @@ import { TextField } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import TestCard from './Quizzes/TestCard';
 import useTests from '../../hooks/queries/useTests';
 import Subject from '../../types/api/Subject';
+import TestsList from './Quizzes/TestsList';
 
 const styles: Record<string, CSSObject> = {
   container: {
@@ -69,13 +69,7 @@ const TestsLibraryPage: React.FC = () => {
             </Grid>
           </Grid>
         </Box>
-        <Grid container spacing={2} sx={{ p: '16px' }}>
-          {tests.map((test) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={test.id}>
-              <TestCard test={test} />
-            </Grid>
-          ))}
-        </Grid>
+        <TestsList tests={tests} />
       </Box>
     </div>
   );
