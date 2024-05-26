@@ -1,6 +1,6 @@
-import Subject from '../../../types/api/Subject';
-import { Test } from '../../../types/api/test';
-import { User } from '../../../types/api/user';
+import Subject from '../../../types/api/enums/Subject';
+import { Test } from '../../../types/api/entities/test';
+import { User } from '../../../types/api/entities/user';
 import { WithPagination } from './utils';
 
 export type TestsFilters = {
