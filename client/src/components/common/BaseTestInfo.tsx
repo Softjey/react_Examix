@@ -15,7 +15,13 @@ const BaseTestInfo: React.FC<Props> = ({ sx, test, ...rest }) => {
   const date = dayjs(createdAt).format('DD/MM/YYYY');
 
   return (
-    <Stack direction="row" sx={{ gap: 6, p: 2, ...sx }} component="section" {...rest}>
+    <Stack
+      direction="row"
+      justifyContent="space-between"
+      sx={{ gap: 6, p: 2, ...sx }}
+      component="section"
+      {...rest}
+    >
       <Stack justifyContent="space-between" spacing={2}>
         <Stack spacing={2}>
           <Stack direction="row" alignItems="center" gap={1}>
