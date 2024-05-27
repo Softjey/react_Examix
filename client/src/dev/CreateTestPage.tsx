@@ -1,3 +1,5 @@
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable no-console */
 import { Box, Button, Typography } from '@mui/material';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -49,6 +51,8 @@ const CreateTestPage: React.FC<Props> = () => {
 
   const watchedValues = watch();
 
+  console.log(watchedValues);
+
   return (
     <Box
       component="form"
@@ -85,21 +89,18 @@ const CreateTestPage: React.FC<Props> = () => {
       </Box>
       <Button
         type="button"
-        onClick={
-          () =>
-            // eslint-disable-next-line implicit-arrow-linebreak
-            append({
-              title: '',
-              type: QuestionType.SINGLE_CHOICE,
-              answers: [
-                { title: '', isCorrect: true },
-                { title: '', isCorrect: false },
-                { title: '', isCorrect: false },
-              ],
-              maxScore: 0,
-              timeLimit: 0,
-            })
-
+        onClick={() =>
+          append({
+            title: '',
+            type: QuestionType.SINGLE_CHOICE,
+            answers: [
+              { title: '', isCorrect: true },
+              { title: '', isCorrect: false },
+              { title: '', isCorrect: false },
+            ],
+            maxScore: 0,
+            timeLimit: 0,
+          })
         }
       >
         Add

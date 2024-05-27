@@ -8,17 +8,15 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Control, FieldErrors, UseFormRegister, useFieldArray } from 'react-hook-form';
+import { Control, FieldErrors, UseFormRegister } from 'react-hook-form';
 import QuestionTypeSelect from './QuestionTypeSelect';
 import TimeLimitInput from './TimeLimitInput';
-import AddButton from '../buttons/AddButton';
+// import AddButton from '../buttons/AddButton';
 import DragBar from './DragBar';
 import { CreateTestForm } from '../interfaces';
-import AnswerItem from './AnswerItem';
 import QuestionType from '../../../types/api/enums/Type';
 import DeleteButton from '../buttons/DeleteButton';
-
-// import RadioCheckBoxGroup from './RadioCheckBoxGroup';
+// import AnswersGroup from './AnswersGroup';
 
 interface Props extends CardProps {
   errors: FieldErrors<CreateTestForm>;
@@ -38,10 +36,11 @@ const QuestionCard: React.FC<Props> = ({
   questionIndex,
   ...props
 }) => {
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: `questions.${questionIndex}.answers` as const,
-  });
+  // const { fields, append, remove } = useFieldArray({
+  //   control,
+  //   name: `questions.${questionIndex}.answers`,
+  // });
+
   return (
     <Card
       component={Paper}
@@ -58,6 +57,7 @@ const QuestionCard: React.FC<Props> = ({
       {...props}
     >
       <DragBar />
+
       <CardContent
         sx={{ display: 'flex', gap: 1, flexDirection: 'column', paddingBottom: 0, paddingTop: 0 }}
       >
@@ -106,44 +106,17 @@ const QuestionCard: React.FC<Props> = ({
           Answers
         </Typography>
 
-        {/* FIXME: fix problem with radio and checkbox group */}
-
-        {/* <RadioCheckBoxGroup
-          type={type as QuestionType.MULTIPLE_CHOICE | QuestionType.SINGLE_CHOICE}
-        >
-          {fields.map((field, index) => (
-            <AnswerItem
-              questionIndex={questionIndex}
-              key={field.id}
-              type={type}
-              register={register}
-              remove={remove}
-              answerIndex={index}
-            />
-          ))}
-        </RadioCheckBoxGroup> */}
-
-        <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
-          {fields.map((field, index) => (
-            <AnswerItem
-              /* error={!!errors.questions?.[questionIndex]?.answers?.[index]?.title} */
-              /* helperText={errors.questions?.[questionIndex]?.answers?.[
-                index
-              ]?.title.message?.toString()} */
-              questionIndex={questionIndex}
-              key={field.id}
-              type={type}
-              register={register}
-              remove={remove}
-              answerIndex={index}
-            />
-          ))}
-        </Box>
+        {/* FIXME: add answers logic */}
+        {/*  <AnswersGroup
+          {...register(`questions.${questionIndex}.answers`)}
+          questionIndex={questionIndex}
+        /> */}
       </CardContent>
+
       <CardActions
         sx={{ padding: '16px', paddingTop: '10px', display: 'flex', justifyContent: 'end' }}
       >
-        <AddButton onClick={() => append({ title: '', isCorrect: false })} />
+        {/* <AddButton disabled onClick={() => append({ title: '', isCorrect: false })} /> */}
         <DeleteButton onClick={onDelete} />
       </CardActions>
     </Card>
