@@ -2,9 +2,10 @@ import * as React from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
-import Box from '@mui/material/Box';
+import { Box } from '@mui/material';
 import { Test } from '../../../types/api/entities/test';
+import SubjectItem from '../../../components/UI/SubjectItem/SubjectItem';
+import TestAvatar from '../../../components/UI/TestAvatar';
 
 interface TestCardProps {
   test: Test;
@@ -14,34 +15,14 @@ const TestCard: React.FC<TestCardProps> = ({ test }) => (
   <Card
     sx={{ minWidth: '200px', width: '100%', minHeight: '100px', height: '100%', maxWidth: '300px' }}
   >
-    <Box
-      sx={{
-        width: '100%',
-        height: '140px',
-        backgroundImage: `url(${test.image || './img/test1.jpg'})`,
-        backgroundSize: 'cover',
-        position: 'relative',
-      }}
-    >
-      <Chip
-        label={test.subject}
-        size="small"
-        sx={{
-          position: 'absolute',
-          bottom: 8,
-          left: 8,
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        }}
-      />
-      <Chip
-        label="12p"
-        size="small"
-        sx={{
-          position: 'absolute',
-          bottom: 8,
-          right: 8,
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        }}
+    <Box sx={{ position: 'relative' }}>
+      <TestAvatar width={300} test={test} />
+      <SubjectItem
+        variant="chip"
+        textVariant="caption"
+        chipVariant="outlined"
+        subject={test.subject}
+        sx={{ position: 'absolute', bottom: 10, left: 10, userSelect: 'none' }}
       />
     </Box>
     <CardContent>
