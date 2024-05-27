@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -11,7 +11,7 @@ interface TestCardProps {
   test: Test;
 }
 
-const TestCard: React.FC<TestCardProps> = ({ test }) => (
+const TestCard: React.FC<TestCardProps> = ({ test, test: { name, description, subject } }) => (
   <Card
     sx={{ minWidth: '200px', width: '100%', minHeight: '100px', height: '100%', maxWidth: '300px' }}
   >
@@ -21,7 +21,7 @@ const TestCard: React.FC<TestCardProps> = ({ test }) => (
         variant="chip"
         textVariant="caption"
         chipVariant="outlined"
-        subject={test.subject}
+        subject={subject}
         sx={{ position: 'absolute', bottom: 10, left: 10, userSelect: 'none' }}
       />
     </Box>
@@ -38,7 +38,7 @@ const TestCard: React.FC<TestCardProps> = ({ test }) => (
           lineClamp: 2,
         }}
       >
-        {test.name}
+        {name}
       </Typography>
       <Typography
         variant="caption"
@@ -52,7 +52,7 @@ const TestCard: React.FC<TestCardProps> = ({ test }) => (
           lineClamp: 3,
         }}
       >
-        {test.description}
+        {description}
       </Typography>
     </CardContent>
   </Card>
