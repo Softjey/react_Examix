@@ -1,10 +1,14 @@
 import { IconButton, IconButtonProps } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-const AddButton: React.FC<IconButtonProps> = (props) => {
+interface Props extends IconButtonProps {
+  iconProps?: React.ComponentProps<typeof AddIcon>;
+}
+
+const AddButton: React.FC<Props> = ({ iconProps, ...props }) => {
   return (
-    <IconButton size="small" onClick={props.onClick} {...props}>
-      <AddIcon />
+    <IconButton aria-label="add" {...props}>
+      <AddIcon component="svg" {...iconProps} />
     </IconButton>
   );
 };

@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import TestInfo from './components/TestInfo/TestInfo';
 import QuestionType from '../types/api/enums/Type';
 import QuestionCard from './components/QuestionCard/QuestionCard';
-import { CreateTestForm } from './components/test/interfaces';
+import { CreateTestForm, CreateTestSchema } from './components/interfaces';
 
 interface Props {}
 
@@ -12,7 +13,7 @@ const defaultValues: CreateTestForm = {
   testImage: null,
   testName: '',
   testDescription: '',
-  subject: null,
+  subject: '',
   questions: [
     {
       title: '',
@@ -35,9 +36,13 @@ const CreateTestPage: React.FC<Props> = () => {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<CreateTestForm>({ defaultValues });
+  } = useForm<CreateTestForm>({
+    resolver: zodResolver(CreateTestSchema),
+    defaultValues,
+    mode: 'onBlur',
+  });
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: 'questions',
   });
@@ -58,14 +63,23 @@ const CreateTestPage: React.FC<Props> = () => {
       gap="32px"
     >
       <TestInfo errors={errors} register={register} />
+
+      {errors.questions && (
+        <Typography color="error" variant="body1">
+          {errors.questions.message || errors.questions.root?.message}
+        </Typography>
+      )}
+
       <Box display="flex" flexDirection="column" alignItems="center" gap="24px">
         {fields.map((field, index) => (
           <QuestionCard
-            type={watchedValues.questions[index].type}
             key={field.id}
-            control={control}
-            register={register}
             questionIndex={index}
+            type={watchedValues.questions[index].type}
+            register={register}
+            control={control}
+            errors={errors}
+            onDelete={() => remove(index)}
           />
         ))}
       </Box>

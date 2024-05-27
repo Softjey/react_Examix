@@ -2,7 +2,7 @@ import { Box, BoxProps, TextField } from '@mui/material';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import SubjectSelect from './SubjectSelect';
 import ImageUploader from './ImageUploader';
-import { CreateTestForm } from '../test/interfaces';
+import { CreateTestForm } from '../interfaces';
 
 interface Props extends BoxProps {
   register: UseFormRegister<CreateTestForm>;
@@ -21,7 +21,7 @@ const TestInfo: React.FC<Props> = ({ register, errors, sx, ...rest }) => {
         }}
       />
       <TextField
-        {...register('testName', { required: { value: true, message: 'Test name is required' } })}
+        {...register('testName')}
         error={!!errors.testName}
         helperText={errors.testName?.message?.toString()}
         autoComplete="off"
@@ -29,15 +29,13 @@ const TestInfo: React.FC<Props> = ({ register, errors, sx, ...rest }) => {
         label="Test name"
       />
       <SubjectSelect
-        {...register('subject', { required: { value: true, message: 'Subject is required' } })}
+        {...register('subject')}
         error={!!errors.subject}
         helperText={errors.subject?.message?.toString()}
         ref={null}
       />
       <TextField
-        {...register('testDescription', {
-          required: { value: true, message: 'Test description is required' },
-        })}
+        {...register('testDescription')}
         error={!!errors.testDescription}
         helperText={errors.testDescription?.message}
         multiline

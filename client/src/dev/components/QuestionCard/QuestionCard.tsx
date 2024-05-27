@@ -8,24 +8,36 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Control, UseFormRegister, useFieldArray } from 'react-hook-form';
+import { Control, FieldErrors, UseFormRegister, useFieldArray } from 'react-hook-form';
 import QuestionTypeSelect from './QuestionTypeSelect';
 import TimeLimitInput from './TimeLimitInput';
 import AddButton from '../buttons/AddButton';
 import DragBar from './DragBar';
-import { CreateTestForm } from '../test/interfaces';
+import { CreateTestForm } from '../interfaces';
 import AnswerItem from './AnswerItem';
 import QuestionType from '../../../types/api/enums/Type';
+import DeleteButton from '../buttons/DeleteButton';
+
 // import RadioCheckBoxGroup from './RadioCheckBoxGroup';
 
 interface Props extends CardProps {
+  errors: FieldErrors<CreateTestForm>;
   type: QuestionType;
   control: Control<CreateTestForm> | undefined;
   register: UseFormRegister<CreateTestForm>;
   questionIndex: number;
+  onDelete: () => void;
 }
 
-const QuestionCard: React.FC<Props> = ({ type, control, register, questionIndex, ...props }) => {
+const QuestionCard: React.FC<Props> = ({
+  onDelete,
+  errors,
+  type,
+  control,
+  register,
+  questionIndex,
+  ...props
+}) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: `questions.${questionIndex}.answers` as const,
@@ -55,11 +67,12 @@ const QuestionCard: React.FC<Props> = ({ type, control, register, questionIndex,
           <TimeLimitInput
             {...register(`questions.${questionIndex}.timeLimit`)}
             ref={null}
-            defaultValue={null}
             disabled
           />
 
           <TextField
+            error={!!errors.questions?.[questionIndex]?.maxScore}
+            helperText={errors.questions?.[questionIndex]?.maxScore?.message?.toString()}
             {...register(`questions.${questionIndex}.maxScore`, { valueAsNumber: true })}
             type="text"
             size="small"
@@ -80,6 +93,8 @@ const QuestionCard: React.FC<Props> = ({ type, control, register, questionIndex,
         </Box>
 
         <TextField
+          error={!!errors.questions?.[questionIndex]?.title}
+          helperText={errors.questions?.[questionIndex]?.title?.message?.toString()}
           {...register(`questions.${questionIndex}.title`)}
           size="small"
           autoComplete="off"
@@ -111,6 +126,10 @@ const QuestionCard: React.FC<Props> = ({ type, control, register, questionIndex,
         <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
           {fields.map((field, index) => (
             <AnswerItem
+              /* error={!!errors.questions?.[questionIndex]?.answers?.[index]?.title} */
+              /* helperText={errors.questions?.[questionIndex]?.answers?.[
+                index
+              ]?.title.message?.toString()} */
               questionIndex={questionIndex}
               key={field.id}
               type={type}
@@ -125,6 +144,7 @@ const QuestionCard: React.FC<Props> = ({ type, control, register, questionIndex,
         sx={{ padding: '16px', paddingTop: '10px', display: 'flex', justifyContent: 'end' }}
       >
         <AddButton onClick={() => append({ title: '', isCorrect: false })} />
+        <DeleteButton onClick={onDelete} />
       </CardActions>
     </Card>
   );

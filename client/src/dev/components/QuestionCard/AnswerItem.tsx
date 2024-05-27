@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-nested-ternary */
 import { UseFieldArrayRemove, UseFormRegister } from 'react-hook-form';
-import { Checkbox, FormControlLabel, IconButton, Radio, TextField } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { CreateTestForm } from '../test/interfaces';
+import { Checkbox, FormControlLabel, Radio, TextField } from '@mui/material';
+import { CreateTestForm } from '../interfaces';
 import QuestionType from '../../../types/api/enums/Type';
+import CloseButton from '../buttons/CloseButton';
 
 interface Props {
   register: UseFormRegister<CreateTestForm>;
@@ -40,7 +40,7 @@ const AnswerItem: React.FC<Props> = ({ type, questionIndex, register, answerInde
           placeholder={`Answer ${answerIndex + 1}`}
           InputProps={{
             endAdornment: (
-              <IconButton
+              <CloseButton
                 disableRipple
                 sx={{
                   visibility: 'hidden',
@@ -54,14 +54,13 @@ const AnswerItem: React.FC<Props> = ({ type, questionIndex, register, answerInde
                 aria-label="delete answer"
                 onClick={() => remove(answerIndex)}
                 edge="end"
-              >
-                <DeleteIcon
-                  sx={{
+                iconProps={{
+                  sx: {
                     width: '20px',
                     height: '20px',
-                  }}
-                />
-              </IconButton>
+                  },
+                }}
+              />
             ),
           }}
         />

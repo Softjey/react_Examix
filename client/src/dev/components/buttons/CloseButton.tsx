@@ -1,10 +1,14 @@
 import { IconButtonProps, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-const CloseButton: React.FC<IconButtonProps> = (props) => {
+interface Props extends IconButtonProps {
+  iconProps?: React.ComponentProps<typeof CloseIcon>;
+}
+
+const CloseButton: React.FC<Props> = ({ iconProps, ...props }) => {
   return (
-    <IconButton size="small" aria-label="close" color="inherit" onClick={props.onClick} {...props}>
-      <CloseIcon fontSize="small" />
+    <IconButton aria-label="close" {...props}>
+      <CloseIcon {...iconProps} />
     </IconButton>
   );
 };
