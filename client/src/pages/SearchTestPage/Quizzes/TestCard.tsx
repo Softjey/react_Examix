@@ -4,7 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import Box from '@mui/material/Box';
-import { Test } from '../../../types/api/test';
+import { Test } from '../../../types/api/entities/test';
 
 interface TestCardProps {
   test: Test;

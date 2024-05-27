@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import TestCard from './TestCard';
-import { Test } from '../../../types/api/test';
+import { Test } from '../../../types/api/entities/test';
 
 interface TestsListProps {
   tests: Test[];

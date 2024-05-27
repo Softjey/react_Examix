@@ -10,7 +10,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import useTests from '../../hooks/queries/useTests';
-import Subject from '../../types/api/Subject';
+import Subject from '../../types/api/enums/Subject';
 import TestsList from './Quizzes/TestsList';
 
 const styles: Record<string, CSSObject> = {
