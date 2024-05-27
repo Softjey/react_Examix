@@ -1,69 +1,60 @@
-import { Stack, TextField } from '@mui/material';
-import StartLayout from '../../components/layouts/StartLayout';
+/* eslint-disable no-console */
+
+import { Box, Stack, TextField, TextFieldProps } from '@mui/material';
+import { useForm } from 'react-hook-form';
 import MainButton from '../../components/UI/buttons/MainButton';
-import { Role, useLoginPage } from './useLoginPage';
 import { columnCenter } from '../../styles/flex';
-import useLogin from '../../hooks/queries/useLogin';
+import StartLayout from '../../components/layouts/StartLayout';
 
 interface Props {
-  role: Role;
+  onSubmit: (data: LoginForm) => void;
+  firstFieldProps: TextFieldProps;
+  secondFieldProps: TextFieldProps;
+  submitButtonText: string;
 }
 
-const LoginPage: React.FC<Props> = ({ role }) => {
-  const { fields, inputProps, input1Ref, input2Ref } = useLoginPage(role);
-  const loginMutation = useLogin();
+export interface LoginForm {
+  firstField: string;
+  secondField: string;
+}
 
-  function onSubmit(event: React.FormEvent) {
-    event.preventDefault();
+const defaultValues: LoginForm = {
+  firstField: '',
+  secondField: '',
+};
 
-    if (input1Ref.current && input2Ref.current) {
-      if (role === 'teacher') {
-        const email = input1Ref.current.value;
-        const password = input2Ref.current.value;
+const LoginPage: React.FC<Props> = ({
+  onSubmit,
+  firstFieldProps,
+  secondFieldProps,
+  submitButtonText,
+}) => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<LoginForm>({ defaultValues });
 
-        loginMutation.mutate(
-          { email, password },
-          {
-            // TODO: Add error handling
-            onError: (error) => {
-              // eslint-disable-next-line no-console
-              console.log('error auth', error);
-            },
-          },
-        );
-      }
-    }
-  }
+  console.log(errors);
+  console.log(watch());
 
   return (
     <StartLayout backBtn>
-      <form css={{ gap: '20px', ...columnCenter }} onSubmit={onSubmit}>
+      <Box
+        component="form"
+        noValidate
+        sx={{ gap: '20px', ...columnCenter }}
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <Stack width="300px" direction="column" spacing={2}>
-          <TextField
-            label={fields.input1Label}
-            placeholder={fields.input1Placeholder}
-            variant="outlined"
-            inputProps={inputProps.input1}
-            fullWidth
-            inputRef={input1Ref}
-            required
-          />
-          <TextField
-            label={fields.input2Label}
-            placeholder={fields.input2Placeholder}
-            type={fields.input2Type}
-            variant="outlined"
-            inputProps={inputProps.input2}
-            autoComplete="off"
-            fullWidth
-            inputRef={input2Ref}
-            required
-          />
+          <TextField {...register('firstField')} {...firstFieldProps} />
+          <TextField {...register('secondField')} {...secondFieldProps} />
         </Stack>
-        <MainButton variant="contained" type="submit">
-          {fields.buttonText}
+        <MainButton disableElevation variant="contained" type="submit">
+          {submitButtonText}
         </MainButton>
-      </form>
+      </Box>
     </StartLayout>
   );
 };
