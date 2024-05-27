@@ -4,13 +4,13 @@ import { List } from '@mui/material';
 import { Socket, io } from 'socket.io-client';
 import React, { useEffect, useState } from 'react';
 import StudentPanel from './StudentPanel';
-import Button from '../UI/buttons/Button';
+import Button from '../components/UI/buttons/Button';
 import log from './log';
 import { getRandomName } from './randomNames';
 import { Response, createExam } from './createExam';
-import ApiClient from '../../services/Api/ApiClient';
-import HomeLayout from '../layouts/HomeLayout';
-import Role from '../../types/api/enums/Role';
+import ApiClient from '../services/Api/ApiClient';
+import HomeLayout from '../components/layouts/HomeLayout';
+import Role from '../types/api/enums/Role';
 
 const DebugPage: React.FC = () => {
   const [studentIds, setStudentIds] = useState<string[]>([]);

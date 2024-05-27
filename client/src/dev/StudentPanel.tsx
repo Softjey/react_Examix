@@ -11,7 +11,7 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material';
-import { columnCenter } from '../../styles/flex';
+import { columnCenter } from '../styles/flex';
 import log from './log';
 import createStudentSocket from './createStudentSocket';
 
