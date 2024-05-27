@@ -12,7 +12,7 @@ const Header: React.FC<Props> = ({ disableBackBtn, style }) => (
     <Logo />
     {!disableBackBtn && (
       <BackButton
-        style={{ position: 'absolute', transform: 'translateY(-50%)', top: '50%', left: '-95px' }}
+        sx={{ position: 'absolute', transform: 'translateY(-50%)', top: '50%', left: '-95px' }}
       />
     )}
   </header>

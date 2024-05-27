@@ -1,11 +1,10 @@
 import React from 'react';
-import { Avatar, Typography, Box } from '@mui/material';
-import ImageIcon from '@mui/icons-material/Image';
+import { Typography, Box } from '@mui/material';
 import { Link, LinkProps } from 'react-router-dom';
 import { trim } from '../../../utils/trim';
 import Routes from '../../../services/Router/Routes';
-import { generateAvatar } from '../../../utils/generateAvatar';
 import useAuth from '../../../hooks/queries/useAuth';
+import UserAvatar from '../../UI/UserAvatar';
 
 interface Props extends Omit<LinkProps, 'to'> {}
 
@@ -14,7 +13,6 @@ const MenuHeader: React.FC<Props> = ({ ...rest }) => {
   const isLoading = isPending || !user;
   const name = isLoading ? 'Loading...' : trim(user.name, 16);
   const email = isLoading ? 'Loading...' : trim(user.email, 20);
-  const generatedPhoto = generateAvatar(name);
 
   return (
     <Link
@@ -30,17 +28,7 @@ const MenuHeader: React.FC<Props> = ({ ...rest }) => {
       }}
       {...rest}
     >
-      <Avatar>
-        {isLoading || isError ? (
-          <ImageIcon fontSize="small" />
-        ) : (
-          <img
-            src={user.photo ?? generatedPhoto}
-            alt={`${user.name} avatar`}
-            css={{ maxWidth: '100%' }}
-          />
-        )}
-      </Avatar>
+      <UserAvatar user={user} />
 
       <Box>
         <Typography variant="body1" color={isError ? 'red' : 'inherit'}>

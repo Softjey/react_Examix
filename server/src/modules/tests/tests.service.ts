@@ -1,24 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { CreateTestDtoAuthorId } from './dtos/create-test.dto';
-import { Prisma, Test } from '@prisma/client';
+import { Prisma, Question, Test, TestQuestion, User } from '@prisma/client';
 import { GetTestsDto } from './dtos/get-tests.dto';
-import { TestQuestionIncludeQuestion } from './interfaces/test-question-include-question.interface';
+import { Answer } from '../questions/interfaces/question.interface';
+import { DETAILED_TEST_SELECT } from './utils/detailed-test-select';
 
 @Injectable()
 export class TestsService {
   constructor(private readonly prismaService: PrismaService) {}
-
-  createDetailedTest(test: Test, testQuestions: TestQuestionIncludeQuestion[]) {
-    return {
-      ...test,
-      questions: testQuestions.map(({ question, maxScore, timeLimit }) => ({
-        question,
-        maxScore,
-        timeLimit,
-      })),
-    };
-  }
 
   async create({ questions, name, image, description, subject, authorId }: CreateTestDtoAuthorId) {
     return this.prismaService.$transaction(async (prisma) => {
@@ -75,25 +65,12 @@ export class TestsService {
   }
 
   async getOne(testId: Test['id']) {
-    const [test, questions] = await this.getTestAndQuestionsByTestId(testId);
-
-    if (!test) {
-      return null;
-    }
-
-    return this.createDetailedTest(test, questions);
-  }
-
-  async getTestAndQuestionsByTestId(testId: Test['id']) {
-    const [test, questions] = await this.prismaService.$transaction([
-      this.prismaService.test.findUnique({ where: { id: testId } }),
-      this.prismaService.testQuestion.findMany({
-        where: { testId },
-        include: { question: true },
-      }),
-    ]);
-
-    return [test, questions as TestQuestionIncludeQuestion[]] as const;
+    return this.prismaService.test.findUnique({
+      where: { id: testId },
+      select: DETAILED_TEST_SELECT,
+    }) as any as Test & { author: Pick<User, 'name' | 'createdAt' | 'photo'> } & {
+      testQuestions: Array<TestQuestion & { question: Question & { answers: Answer[] } }>;
+    }; // use any here because type JsonValue have to be always Answer[]
   }
 
   getTestName(testId: Test['id']) {
