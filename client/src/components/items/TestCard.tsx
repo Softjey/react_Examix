@@ -3,9 +3,9 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/material';
-import { Test } from '../../../types/api/entities/test';
-import SubjectItem from '../../../components/UI/SubjectItem/SubjectItem';
-import TestAvatar from '../../../components/UI/TestAvatar';
+import { Test } from '../../types/api/entities/test';
+import SubjectItem from '../UI/SubjectItem/SubjectItem';
+import TestAvatar from '../UI/TestAvatar';
 
 interface TestCardProps {
   test: Test;
@@ -13,10 +13,18 @@ interface TestCardProps {
 
 const TestCard: React.FC<TestCardProps> = ({ test, test: { name, description, subject } }) => (
   <Card
-    sx={{ minWidth: '200px', width: '100%', minHeight: '100px', height: '100%', maxWidth: '250px' }}
+    sx={{
+      width: '250px',
+      minHeight: '100px',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    }}
   >
     <Box sx={{ position: 'relative' }}>
       <TestAvatar width={250} test={test} />
+
       <SubjectItem
         variant="chip"
         textVariant="caption"
@@ -25,7 +33,7 @@ const TestCard: React.FC<TestCardProps> = ({ test, test: { name, description, su
         sx={{ position: 'absolute', bottom: 10, left: 10, userSelect: 'none' }}
       />
     </Box>
-    <CardContent>
+    <CardContent sx={{ textAlign: 'center' }}>
       <Typography
         variant="body2"
         color="text.inherit"

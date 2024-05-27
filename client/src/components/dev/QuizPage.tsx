@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import React, { memo, useEffect, useRef, useState } from 'react';
-import StartLayout from '../components/layouts/StartLayout';
+import StartLayout from '../layouts/StartLayout';
 // eslint-disable-next-line import/no-cycle
 import questions from './questions';
 
