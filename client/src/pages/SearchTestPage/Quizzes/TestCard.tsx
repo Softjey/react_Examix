@@ -13,10 +13,10 @@ interface TestCardProps {
 
 const TestCard: React.FC<TestCardProps> = ({ test, test: { name, description, subject } }) => (
   <Card
-    sx={{ minWidth: '200px', width: '100%', minHeight: '100px', height: '100%', maxWidth: '300px' }}
+    sx={{ minWidth: '200px', width: '100%', minHeight: '100px', height: '100%', maxWidth: '250px' }}
   >
     <Box sx={{ position: 'relative' }}>
-      <TestAvatar width={300} test={test} />
+      <TestAvatar width={250} test={test} />
       <SubjectItem
         variant="chip"
         textVariant="caption"

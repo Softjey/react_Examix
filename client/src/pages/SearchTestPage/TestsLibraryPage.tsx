@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { CSSObject } from '@emotion/react';
 import { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -12,14 +11,6 @@ import FormControl from '@mui/material/FormControl';
 import useTests from '../../hooks/queries/useTests';
 import Subject from '../../types/api/enums/Subject';
 import TestsList from './Quizzes/TestsList';
-
-const styles: Record<string, CSSObject> = {
-  container: {
-    display: 'flex',
-    height: '100vh',
-    boxSizing: 'border-box',
-  },
-};
 
 const TestsLibraryPage: React.FC = () => {
   const { tests, isLoading, isError } = useTests({ limit: 2 });
@@ -36,11 +27,11 @@ const TestsLibraryPage: React.FC = () => {
     return <h1>error</h1>;
   }
   return (
-    <div css={styles.container}>
+    <Box sx={{ display: 'flex', height: '100vh', boxSizing: 'border-box' }}>
       <Box sx={{ width: '100%' }}>
         <Box sx={{ p: '16px' }}>
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={10}>
+            <Grid item xs={12} sm={9}>
               <TextField
                 label="Search..."
                 variant="standard"
@@ -48,7 +39,7 @@ const TestsLibraryPage: React.FC = () => {
                 InputProps={{ endAdornment: <SearchIcon /> }}
               />
             </Grid>
-            <Grid item xs={12} sm={2}>
+            <Grid item xs={12} sm={3}>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Subject</InputLabel>
                 <Select
@@ -71,7 +62,7 @@ const TestsLibraryPage: React.FC = () => {
         </Box>
         <TestsList tests={tests} />
       </Box>
-    </div>
+    </Box>
   );
 };
 
