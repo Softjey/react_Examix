@@ -1,26 +1,38 @@
-/* import { useRef } from 'react';
-import { useNavigate } from 'react-router'; */
-import LoginPage from './LoginPage';
-
-// import examSocket, { ExamRole } from '../../store/examSocket';
-// import Routes from '../../services/Router/Routes';
+/* eslint-disable no-console */
+import { useForm } from 'react-hook-form';
+import LoginPage, { LoginForm } from './LoginPage';
 
 const StudentJoinPage: React.FC = () => {
-  /* const navigate = useNavigate();
-  const input1Ref = useRef<HTMLInputElement>(null);
-  const input2Ref = useRef<HTMLInputElement>(null); */
+  const defaultValues: LoginForm<'name', 'code'> = {
+    name: '',
+    code: '',
+  };
 
-  /* const onSubmit = () => {
-    if (input1Ref.current?.value && input2Ref.current?.value) {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<LoginForm<'name', 'code'>>({ defaultValues, mode: 'onBlur' });
+
+  console.log(errors);
+  console.log(watch());
+
+  const onSubmit = handleSubmit((data) => {
+    if (data.name && data.code) {
+      console.log(data);
+      // TODO: make it when add quiz logic
+      /*
+      const { name, code } = data;
       examSocket.createSocket({
-        role: ExamRole.STUDENT,
-        examCode: input2Ref.current.value,
-        studentName: input1Ref.current.value,
-      });
-
+            role: ExamRole.STUDENT,
+            examCode: code,
+            studentName: name,
+          });
       navigate(Routes.WAITING_PAGE);
+      */
     }
-  }; */
+  });
 
   return (
     <LoginPage
@@ -30,6 +42,9 @@ const StudentJoinPage: React.FC = () => {
         variant: 'outlined',
         fullWidth: true,
         required: true,
+        ...register('name', { required: { value: true, message: 'Name is required' } }),
+        error: !!errors.name,
+        helperText: errors.name?.message,
       }}
       secondFieldProps={{
         label: 'Code',
@@ -40,9 +55,12 @@ const StudentJoinPage: React.FC = () => {
           maxLength: 6,
         },
         required: true,
+        ...register('code', { required: { value: true, message: 'Code is required' } }),
+        error: !!errors.code,
+        helperText: errors.code?.message,
       }}
       submitButtonText="Join"
-      onSubmit={() => {}}
+      onSubmit={onSubmit}
     />
   );
 };
