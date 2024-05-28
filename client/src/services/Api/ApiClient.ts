@@ -7,7 +7,9 @@ import { ExamsParams, ExamsResponse } from './types/exams';
 import { TestsFilters, TestsResponse } from './types/tests';
 import { DetailedTest } from '../../types/api/entities/detailedTest';
 import { User } from '../../types/api/entities/user';
+import { Exam } from '../../types/api/entities/exam';
 import { Test } from '../../types/api/entities/test';
+import { DetailedExam } from '../../types/api/entities/detailedExam';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
@@ -79,6 +81,12 @@ export default class ApiClient {
 
   static async getDetailedTest(id: DetailedTest['id']) {
     const { data } = await axios.get<DetailedTest>(`/tests/${id}`);
+
+    return data;
+  }
+
+  static async getExamById(id: Exam['id']) {
+    const { data } = await axios.get<DetailedExam>(`/exams/${id}`);
 
     return data;
   }
