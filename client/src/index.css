@@ -11,27 +11,18 @@ html {
   scrollbar-gutter: stable;
 }
 
-h1 {
-  font-size: 4rem;
-  text-align: center;
+/* disable defaoult autofill styles */
+
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-text-fill-color: #1876D2;
 }
 
-h2 {
-  font-size: 3rem;
-}
-
-h3 {
-  font-size: 2.4rem;
-}
-
-h4 {
-  font-size: 2.2rem;
-}
-
-h5 {
-  font-size: 2rem;
-}
-
-h6 {
-  font-size: 1.8rem;
+input:-moz-autofill,
+textarea:-moz-autofill,
+select:-moz-autofill {
+  transition: background-color 5000s ease-in-out 0s;
+  -moz-text-fill-color: #1876D2;
 }
