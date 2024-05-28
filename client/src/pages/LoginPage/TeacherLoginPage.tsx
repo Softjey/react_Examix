@@ -29,6 +29,7 @@ const TeacherLoginShema = z.object({
 type LoginForm = z.infer<typeof TeacherLoginShema>;
 
 const TeacherLoginPage: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const loginMutation = useLogin();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -62,6 +63,7 @@ const TeacherLoginPage: React.FC = () => {
 
   const onSubmit = handleSubmit((data) => {
     if (data.email && data.password) {
+      setIsLoading(true);
       const { email, password } = data;
 
       loginMutation.mutate(
@@ -72,6 +74,7 @@ const TeacherLoginPage: React.FC = () => {
             setServerError(error);
             setSnackBarOpen(true);
             console.log('error auth', error);
+            setIsLoading(false);
           },
         },
       );
@@ -100,6 +103,7 @@ const TeacherLoginPage: React.FC = () => {
           InputProps: {
             endAdornment: (
               <PasswordEyeButton
+                disabled={isLoading}
                 showPassword={showPassword}
                 onClick={handleClickShowPassword}
                 onMouseDown={(e) => e.preventDefault()}
@@ -114,6 +118,7 @@ const TeacherLoginPage: React.FC = () => {
           helperText: errors.password?.message,
           autoComplete: 'current-password',
         }}
+        isLoading={isLoading}
         submitButtonText="Login"
         onSubmit={onSubmit}
       />

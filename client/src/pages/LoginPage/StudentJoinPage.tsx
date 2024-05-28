@@ -2,6 +2,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import LoginPage from './LoginPage';
 
 const StudentJoinShema = z.object({
@@ -16,6 +17,8 @@ const StudentJoinShema = z.object({
 type LoginForm = z.infer<typeof StudentJoinShema>;
 
 const StudentJoinPage: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const defaultValues: LoginForm = {
     name: '',
     code: '',
@@ -33,7 +36,14 @@ const StudentJoinPage: React.FC = () => {
 
   const onSubmit = handleSubmit((data) => {
     if (data.name && data.code) {
-      console.log(data);
+      setIsLoading(true);
+
+      // server request emulation
+      setTimeout(() => {
+        setIsLoading(false);
+        console.log(data);
+      }, 1000);
+
       // TODO: make it when add quiz logic
       /*
       const { name, code } = data;
@@ -71,7 +81,9 @@ const StudentJoinPage: React.FC = () => {
         ...register('code'),
         error: !!errors.code,
         helperText: errors.code?.message,
+        autoComplete: 'off',
       }}
+      isLoading={isLoading}
       submitButtonText="Join"
       onSubmit={onSubmit}
     />
