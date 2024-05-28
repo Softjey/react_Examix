@@ -1,9 +1,22 @@
 /* eslint-disable no-console */
 import { useForm } from 'react-hook-form';
-import LoginPage, { LoginForm } from './LoginPage';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import LoginPage from './LoginPage';
+
+const StudentJoinShema = z.object({
+  name: z.string().min(1, 'Name is required').max(15, 'Max length is 15'),
+  code: z
+    .string()
+    .min(1, 'Code is required')
+    .regex(/^[0-9]+$/, 'Code must contain only digits')
+    .length(6, 'Code length must be 6'),
+});
+
+type LoginForm = z.infer<typeof StudentJoinShema>;
 
 const StudentJoinPage: React.FC = () => {
-  const defaultValues: LoginForm<'name', 'code'> = {
+  const defaultValues: LoginForm = {
     name: '',
     code: '',
   };
@@ -11,12 +24,12 @@ const StudentJoinPage: React.FC = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-  } = useForm<LoginForm<'name', 'code'>>({ defaultValues, mode: 'onBlur' });
-
-  console.log(errors);
-  console.log(watch());
+  } = useForm<LoginForm>({
+    resolver: zodResolver(StudentJoinShema),
+    defaultValues,
+    mode: 'onBlur',
+  });
 
   const onSubmit = handleSubmit((data) => {
     if (data.name && data.code) {
@@ -42,7 +55,7 @@ const StudentJoinPage: React.FC = () => {
         variant: 'outlined',
         fullWidth: true,
         required: true,
-        ...register('name', { required: { value: true, message: 'Name is required' } }),
+        ...register('name'),
         error: !!errors.name,
         helperText: errors.name?.message,
       }}
@@ -55,7 +68,7 @@ const StudentJoinPage: React.FC = () => {
           maxLength: 6,
         },
         required: true,
-        ...register('code', { required: { value: true, message: 'Code is required' } }),
+        ...register('code'),
         error: !!errors.code,
         helperText: errors.code?.message,
       }}
