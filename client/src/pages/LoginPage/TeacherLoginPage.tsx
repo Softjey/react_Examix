@@ -11,7 +11,7 @@ import PasswordEyeButton from '../../components/UI/buttons/PasswordEyeButton';
 import { Nullable } from '../../types/utils/Nullable';
 
 const TeacherLoginShema = z.object({
-  email: z.string().email('Invalid email format').min(1, 'Email is required'),
+  email: z.string().min(1, 'Email is required').email('Invalid email format'),
   password: z
     .string()
     .min(1, 'Password is required')

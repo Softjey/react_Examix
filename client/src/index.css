@@ -17,12 +17,12 @@ input:-webkit-autofill,
 textarea:-webkit-autofill,
 select:-webkit-autofill {
   transition: background-color 5000s ease-in-out 0s;
-  -webkit-text-fill-color: #1876D2;
+  -webkit-text-fill-color: #1876d2;
 }
 
 input:-moz-autofill,
 textarea:-moz-autofill,
 select:-moz-autofill {
   transition: background-color 5000s ease-in-out 0s;
-  -moz-text-fill-color: #1876D2;
+  -moz-text-fill-color: #1876d2;
 }
