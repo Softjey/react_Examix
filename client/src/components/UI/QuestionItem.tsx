@@ -4,27 +4,24 @@ import { TestQuestion } from '../../types/api/entities/testQuestion';
 import SubjectItem from './SubjectItem/SubjectItem';
 import prettifyDuration from '../../utils/prettifyDuration';
 import RectChip from './RectChip';
-import { Answer } from '../../types/api/entities/question';
+import { Answer, Question } from '../../types/api/entities/question';
 import AnswerItem from '../items/AnswerItem';
 import { Nullable } from '../../types/utils/Nullable';
 
-interface Props extends StackProps {
-  question: TestQuestion;
-  index: number;
+export interface Props extends StackProps {
+  question: TestQuestion | Question;
+  index?: number;
   studentAnswers?: Nullable<Pick<Answer, 'title'>[]>;
 }
 
 const QuestionItem: React.FC<Props> = ({ question, index, studentAnswers, ...rest }) => {
-  const {
-    maxScore,
-    question: { answers, subject, title, type },
-    timeLimit,
-  } = question;
+  const isTestQuestion = 'maxScore' in question;
+  const { answers, subject, title, type } = isTestQuestion ? question.question : question;
 
   return (
     <Stack direction="row" spacing={3} justifyContent="space-between" component="article" {...rest}>
       <Stack flexGrow={1} spacing={2}>
-        <Typography variant="h6">{`${index + 1}) ${title}`}</Typography>
+        <Typography variant="h6">{`${index ? `${index + 1})` : ''} ${title}`}</Typography>
 
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, pl: 5 }}>
           {answers.map((answer, answerIndex) => (
@@ -40,19 +37,21 @@ const QuestionItem: React.FC<Props> = ({ question, index, studentAnswers, ...res
         </Box>
       </Stack>
 
-      <Stack spacing={2} width={140} pt={1}>
-        <SubjectItem
-          chipVariant="outlined"
-          subject={subject}
-          variant="chip"
-          sx={{ borderRadius: 1 }}
-        />
+      {isTestQuestion && (
+        <Stack spacing={2} width={140} pt={1}>
+          <SubjectItem
+            chipVariant="outlined"
+            subject={subject}
+            variant="chip"
+            sx={{ borderRadius: 1 }}
+          />
 
-        <Stack direction="row" justifyItems="stretch" gap={1}>
-          <RectChip label={`${maxScore} points`} />
-          <RectChip label={prettifyDuration(timeLimit)} />
+          <Stack direction="row" justifyItems="stretch" gap={1}>
+            <RectChip label={`${question.maxScore} points`} />
+            <RectChip label={prettifyDuration(question.timeLimit)} />
+          </Stack>
         </Stack>
-      </Stack>
+      )}
     </Stack>
   );
 };
