@@ -9,10 +9,10 @@ import FormControl from '@mui/material/FormControl';
 import Subject from '../../types/api/enums/Subject';
 
 const SearchAndSelect: React.FC = () => {
-  const [selectedAge, setSelectedAge] = useState('');
+  const [selectedSearchAndSelect, setSelectedSearchAndSelect] = useState('');
 
   const handleAgeChange = (event: SelectChangeEvent<string>) => {
-    setSelectedAge(event.target.value);
+    setSelectedSearchAndSelect(event.target.value);
   };
 
   return (
@@ -28,7 +28,7 @@ const SearchAndSelect: React.FC = () => {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={selectedAge}
+          value={selectedSearchAndSelect}
           label="Subject"
           onChange={handleAgeChange}
         >
