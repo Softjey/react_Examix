@@ -3,7 +3,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
+import { AxiosResponse } from 'axios';
 import LoginPage from './LoginPage';
+import { Nullable } from '../../types/utils/Nullable';
 
 const StudentJoinShema = z.object({
   name: z.string().min(1, 'Name is required').max(15, 'Max length is 15'),
@@ -18,6 +20,7 @@ type LoginForm = z.infer<typeof StudentJoinShema>;
 
 const StudentJoinPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState<Nullable<AxiosResponse>>(null);
 
   const defaultValues: LoginForm = {
     name: '',
@@ -83,6 +86,8 @@ const StudentJoinPage: React.FC = () => {
         helperText: errors.code?.message,
         autoComplete: 'off',
       }}
+      error={serverError}
+      setError={setServerError}
       isLoading={isLoading}
       submitButtonText="Join"
       onSubmit={onSubmit}

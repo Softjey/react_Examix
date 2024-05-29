@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { z } from 'zod';
 import { IconButton, Snackbar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import axios, { AxiosResponse } from 'axios';
 import useLogin from '../../hooks/queries/useLogin';
 import LoginPage from './LoginPage';
 import PasswordEyeButton from '../../components/UI/buttons/PasswordEyeButton';
@@ -33,7 +34,7 @@ const TeacherLoginPage: React.FC = () => {
   const loginMutation = useLogin();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [serverError, setServerError] = useState<Nullable<Error>>(null);
+  const [serverError, setServerError] = useState<Nullable<AxiosResponse>>(null);
   const [snackBarOpen, setSnackBarOpen] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -61,23 +62,31 @@ const TeacherLoginPage: React.FC = () => {
     setSnackBarOpen(false);
   };
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     if (data.email && data.password) {
       setIsLoading(true);
       const { email, password } = data;
 
-      loginMutation.mutate(
-        { email, password },
-        {
-          // TODO: Add server errors handling (idk how)
-          onError: (error) => {
-            setServerError(error);
-            setSnackBarOpen(true);
-            console.log('error auth', error);
-            setIsLoading(false);
+      try {
+        await loginMutation.mutateAsync(
+          { email, password },
+          {
+            onError: (error) => {
+              if (axios.isAxiosError(error)) {
+                // eslint-disable-next-line @typescript-eslint/no-throw-literal
+                throw error.response;
+              } else {
+                throw error;
+              }
+            },
           },
-        },
-      );
+        );
+      } catch (error) {
+        setServerError(error as AxiosResponse);
+        console.log('error auth', error);
+        setSnackBarOpen(true);
+        setIsLoading(false);
+      }
     }
   });
 
@@ -91,7 +100,7 @@ const TeacherLoginPage: React.FC = () => {
           fullWidth: true,
           required: true,
           ...register('email'),
-          error: !!errors.email,
+          error: !!errors.email || serverError?.data.statusCode === 401,
           helperText: errors.email?.message,
           autoComplete: 'email',
         }}
@@ -114,10 +123,12 @@ const TeacherLoginPage: React.FC = () => {
           fullWidth: true,
           required: true,
           ...register('password'),
-          error: !!errors.password,
+          error: !!errors.password || serverError?.data.statusCode === 401,
           helperText: errors.password?.message,
           autoComplete: 'current-password',
         }}
+        error={serverError}
+        setError={setServerError}
         isLoading={isLoading}
         submitButtonText="Login"
         onSubmit={onSubmit}
@@ -126,7 +137,7 @@ const TeacherLoginPage: React.FC = () => {
         open={snackBarOpen}
         autoHideDuration={6000}
         onClose={handleSnackBarClose}
-        message={serverError?.message}
+        message={serverError?.data.statusCode === 401 ? 'Wrong email or password' : 'Server error'}
         action={
           <IconButton size="small" aria-label="close" color="inherit" onClick={handleSnackBarClose}>
             <CloseIcon fontSize="small" />
