@@ -1,12 +1,4 @@
-import {
-  Alert,
-  AlertTitle,
-  Box,
-  IconButton,
-  Stack,
-  TextField,
-  TextFieldProps,
-} from '@mui/material';
+import { Alert, Box, IconButton, Stack, TextField, TextFieldProps } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { AxiosResponse } from 'axios';
 import MainButton from '../../components/UI/buttons/MainButton';
@@ -65,7 +57,6 @@ const LoginPage: React.FC<Props> = ({
               </IconButton>
             }
           >
-            <AlertTitle>Error</AlertTitle>
             {error.data.statusCode === 401 ? 'Wrong email or password' : 'Server error'}
           </Alert>
         )}

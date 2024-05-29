@@ -34,7 +34,6 @@ const StudentJoinPage: React.FC = () => {
   } = useForm<LoginForm>({
     resolver: zodResolver(StudentJoinShema),
     defaultValues,
-    mode: 'onBlur',
   });
 
   const onSubmit = handleSubmit((data) => {
