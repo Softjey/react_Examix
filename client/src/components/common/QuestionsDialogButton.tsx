@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { ButtonProps, Dialog, DialogProps } from '@mui/material';
+import { ButtonProps, DialogProps } from '@mui/material';
 import Button from '../UI/buttons/Button';
-import QuestionItem from '../UI/QuestionItem';
 import { TestQuestion } from '../../types/api/entities/testQuestion';
 import { Answer } from '../../types/api/entities/question';
 import { Nullable } from '../../types/utils/Nullable';
+import QuestionDialog from './QuestionDialog';
 
 interface Props extends ButtonProps {
   dialogProps?: DialogProps;
@@ -28,19 +28,15 @@ const QuestionsDialogButton: React.FC<Props> = ({
     <>
       <Button onClick={handleOpen} {...rest} />
 
-      <Dialog
-        maxWidth="md"
-        {...dialogProps}
-        PaperProps={{
-          sx: { p: 4, borderRadius: 1.5 },
-          ...dialogProps?.PaperProps,
+      <QuestionDialog
+        itemProps={{
+          question,
+          studentAnswers,
+          index: questionIndex,
         }}
-        onClose={handleClose}
         open={open}
-        disableScrollLock
-      >
-        <QuestionItem index={questionIndex} question={question} studentAnswers={studentAnswers} />
-      </Dialog>
+        onClose={handleClose}
+      />
     </>
   );
 };
