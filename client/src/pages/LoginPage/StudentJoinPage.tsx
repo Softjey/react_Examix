@@ -4,8 +4,9 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { AxiosResponse } from 'axios';
-import LoginPage from './LoginPage';
+import LoginForm from '../../components/forms/LoginForm';
 import { Nullable } from '../../types/utils/Nullable';
+import StartLayout from '../../components/layouts/StartLayout';
 
 const StudentJoinShema = z.object({
   name: z.string().min(1, 'Name is required').max(15, 'Max length is 15'),
@@ -16,13 +17,13 @@ const StudentJoinShema = z.object({
     .length(6, 'Code length must be 6'),
 });
 
-type LoginForm = z.infer<typeof StudentJoinShema>;
+type LoginFormType = z.infer<typeof StudentJoinShema>;
 
 const StudentJoinPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState<Nullable<AxiosResponse>>(null);
 
-  const defaultValues: LoginForm = {
+  const defaultValues: LoginFormType = {
     name: '',
     code: '',
   };
@@ -31,7 +32,7 @@ const StudentJoinPage: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginForm>({
+  } = useForm<LoginFormType>({
     resolver: zodResolver(StudentJoinShema),
     defaultValues,
   });
@@ -60,37 +61,39 @@ const StudentJoinPage: React.FC = () => {
   });
 
   return (
-    <LoginPage
-      firstFieldProps={{
-        label: 'Name',
-        placeholder: 'Enter name',
-        variant: 'outlined',
-        fullWidth: true,
-        required: true,
-        ...register('name'),
-        error: !!errors.name,
-        helperText: errors.name?.message,
-      }}
-      secondFieldProps={{
-        label: 'Code',
-        placeholder: 'Enter code',
-        variant: 'outlined',
-        fullWidth: true,
-        inputProps: {
-          maxLength: 6,
-        },
-        required: true,
-        ...register('code'),
-        error: !!errors.code,
-        helperText: errors.code?.message,
-        autoComplete: 'off',
-      }}
-      error={serverError}
-      setError={setServerError}
-      isLoading={isLoading}
-      submitButtonText="Join"
-      onSubmit={onSubmit}
-    />
+    <StartLayout backBtn>
+      <LoginForm
+        firstFieldProps={{
+          label: 'Name',
+          placeholder: 'Enter name',
+          variant: 'outlined',
+          fullWidth: true,
+          required: true,
+          ...register('name'),
+          error: !!errors.name,
+          helperText: errors.name?.message,
+        }}
+        secondFieldProps={{
+          label: 'Code',
+          placeholder: 'Enter code',
+          variant: 'outlined',
+          fullWidth: true,
+          inputProps: {
+            maxLength: 6,
+          },
+          required: true,
+          ...register('code'),
+          error: !!errors.code,
+          helperText: errors.code?.message,
+          autoComplete: 'off',
+        }}
+        submitButtonText="Join"
+        error={serverError}
+        setError={setServerError}
+        isLoading={isLoading}
+        onSubmit={onSubmit}
+      />
+    </StartLayout>
   );
 };
 

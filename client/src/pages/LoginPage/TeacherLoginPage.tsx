@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { z } from 'zod';
 import axios, { AxiosResponse } from 'axios';
 import useLogin from '../../hooks/queries/useLogin';
-import LoginPage from './LoginPage';
+import LoginForm from '../../components/forms/LoginForm';
 import EyeButton from '../../components/UI/buttons/EyeButton';
 import { Nullable } from '../../types/utils/Nullable';
+import StartLayout from '../../components/layouts/StartLayout';
 
 const TeacherLoginShema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email format'),
@@ -17,7 +18,7 @@ const TeacherLoginShema = z.object({
     .max(20, 'Max length is 20'),
 });
 
-type LoginForm = z.infer<typeof TeacherLoginShema>;
+type LoginFormType = z.infer<typeof TeacherLoginShema>;
 
 const TeacherLoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +29,7 @@ const TeacherLoginPage: React.FC = () => {
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const defaultValues: LoginForm = {
+  const defaultValues: LoginFormType = {
     email: '',
     password: '',
   };
@@ -37,7 +38,7 @@ const TeacherLoginPage: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginForm>({
+  } = useForm<LoginFormType>({
     resolver: zodResolver(TeacherLoginShema),
     defaultValues,
   });
@@ -70,48 +71,50 @@ const TeacherLoginPage: React.FC = () => {
   });
 
   return (
-    <LoginPage
-      firstFieldProps={{
-        label: 'Email',
-        placeholder: 'Enter email',
-        variant: 'outlined',
-        fullWidth: true,
-        required: true,
-        ...register('email'),
-        error: !!errors.email || serverError?.data.statusCode === 401,
-        helperText: errors.email?.message,
-        autoComplete: 'email',
-      }}
-      secondFieldProps={{
-        label: 'Password',
-        placeholder: 'Enter password',
-        variant: 'outlined',
-        type: showPassword ? 'text' : 'password',
-        InputProps: {
-          endAdornment: (
-            <EyeButton
-              aria-label="toggle password visibility"
-              disabled={isLoading}
-              isEyeClosed={showPassword}
-              onClick={handleClickShowPassword}
-              onMouseDown={(e) => e.preventDefault()}
-              edge="end"
-            />
-          ),
-        },
-        fullWidth: true,
-        required: true,
-        ...register('password'),
-        error: !!errors.password || serverError?.data.statusCode === 401,
-        helperText: errors.password?.message,
-        autoComplete: 'current-password',
-      }}
-      error={serverError}
-      setError={setServerError}
-      isLoading={isLoading}
-      submitButtonText="Login"
-      onSubmit={onSubmit}
-    />
+    <StartLayout backBtn>
+      <LoginForm
+        firstFieldProps={{
+          label: 'Email',
+          placeholder: 'Enter email',
+          variant: 'outlined',
+          fullWidth: true,
+          required: true,
+          ...register('email'),
+          error: !!errors.email || serverError?.data.statusCode === 401,
+          helperText: errors.email?.message,
+          autoComplete: 'email',
+        }}
+        secondFieldProps={{
+          label: 'Password',
+          placeholder: 'Enter password',
+          variant: 'outlined',
+          type: showPassword ? 'text' : 'password',
+          InputProps: {
+            endAdornment: (
+              <EyeButton
+                aria-label="toggle password visibility"
+                disabled={isLoading}
+                isEyeClosed={showPassword}
+                onClick={handleClickShowPassword}
+                onMouseDown={(e) => e.preventDefault()}
+                edge="end"
+              />
+            ),
+          },
+          fullWidth: true,
+          required: true,
+          ...register('password'),
+          error: !!errors.password || serverError?.data.statusCode === 401,
+          helperText: errors.password?.message,
+          autoComplete: 'current-password',
+        }}
+        error={serverError}
+        setError={setServerError}
+        isLoading={isLoading}
+        submitButtonText="Login"
+        onSubmit={onSubmit}
+      />
+    </StartLayout>
   );
 };
 
