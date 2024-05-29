@@ -1,4 +1,4 @@
-import { Stack } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import HomeLayout, { Props as HomeLayoutProps } from '../components/layouts/HomeLayout';
 import StartLayout, { Props as StartLayoutProps } from '../components/layouts/StartLayout';
@@ -16,8 +16,12 @@ const NotFoundPage: React.FC<Props> = ({ layout, item, ...rest }) => {
 
   const content = (
     <>
-      <h1>404</h1>
-      <h2>{item ?? 'Page'} Not Found</h2>
+      <Typography fontWeight={400} variant="h1" component="h1">
+        404
+      </Typography>
+      <Typography variant="h2" component="h2">
+        {item ?? 'Page'} Not Found
+      </Typography>
 
       <Stack direction="row" spacing={3} alignItems="center">
         <Button onClick={() => navigate(-1)} size="large">
