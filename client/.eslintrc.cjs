@@ -22,6 +22,7 @@ module.exports = {
     'import/no-absolute-path': 'off',
     'arrow-body-style': 'off',
     'no-plusplus': 'off',
+    'operator-linebreak': 'off',
     'import/no-duplicates': 'off',
     '@typescript-eslint/lines-between-class-members': 'off',
     'react/jsx-props-no-spreading': 'off',

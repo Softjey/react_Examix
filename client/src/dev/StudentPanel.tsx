@@ -1,3 +1,6 @@
+/* eslint-disable function-paren-newline */
+/* eslint-disable implicit-arrow-linebreak */
+
 import { Socket } from 'socket.io-client';
 
 import React, { memo, useEffect, useState } from 'react';

@@ -1,4 +1,5 @@
 import { Test } from './test';
+import { Result } from './testQuestion';
 import { User } from './user';
 
 export interface Exam {
@@ -6,5 +7,5 @@ export interface Exam {
   authorId: User['id'];
   createdAt: string;
   test: Pick<Test, 'id' | 'name' | 'image' | 'description' | 'subject' | 'createdAt'>;
-  results: { studentName: string }[];
+  results: Pick<Result, 'studentName'>[];
 }
