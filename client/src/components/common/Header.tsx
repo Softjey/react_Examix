@@ -8,7 +8,7 @@ interface Props {
 }
 
 const Header: React.FC<Props> = ({ disableBackBtn, style }) => (
-  <header css={{ userSelect: 'none', position: 'relative', ...style }}>
+  <header css={{ position: 'relative', ...style }}>
     <Logo />
     {!disableBackBtn && (
       <BackButton

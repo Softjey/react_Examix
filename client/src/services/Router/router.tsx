@@ -10,8 +10,8 @@ import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
 import TestPage from '../../pages/TestPage';
-import TeacherLoginPage from '../../pages/LoginPage/TeacherLoginPage';
-import StudentJoinPage from '../../pages/LoginPage/StudentJoinPage';
+import LoginPage from '../../pages/Login/LoginPage';
+import JoinPage from '../../pages/Login/JoinPage';
 
 const router = createRouter([
   {
@@ -26,7 +26,7 @@ const router = createRouter([
     path: Routes.LOGIN,
     element: (
       <OnlyPublic>
-        <TeacherLoginPage />
+        <LoginPage />
       </OnlyPublic>
     ),
   },
@@ -34,7 +34,7 @@ const router = createRouter([
     path: Routes.JOIN,
     element: (
       <OnlyPublic>
-        <StudentJoinPage />
+        <JoinPage />
       </OnlyPublic>
     ),
   },

@@ -1,16 +1,14 @@
 import { Alert, Box, IconButton, Stack, TextField, TextFieldProps } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { AxiosResponse } from 'axios';
 import MainButton from '../UI/buttons/MainButton';
 import { columnCenter } from '../../styles/flex';
 import LoadingButton from '../UI/buttons/LoadingButton';
 import { Nullable } from '../../types/utils/Nullable';
 
 interface Props {
-  error: Nullable<AxiosResponse>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setError: React.Dispatch<React.SetStateAction<Nullable<AxiosResponse<any, any>>>>;
+  errorMessage: Nullable<string>;
   isLoading: boolean;
+  onAlertClose: () => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   firstFieldProps: TextFieldProps;
   secondFieldProps: TextFieldProps;
@@ -18,8 +16,8 @@ interface Props {
 }
 
 const LoginForm: React.FC<Props> = ({
-  error,
-  setError,
+  errorMessage,
+  onAlertClose,
   onSubmit,
   isLoading,
   firstFieldProps,
@@ -41,21 +39,16 @@ const LoginForm: React.FC<Props> = ({
       >
         {submitButtonText}
       </LoadingButton>
-      {error && (
+      {errorMessage && (
         <Alert
           severity="error"
           action={
-            <IconButton
-              size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={() => setError(null)}
-            >
+            <IconButton size="small" aria-label="close" color="inherit" onClick={onAlertClose}>
               <CloseIcon fontSize="small" />
             </IconButton>
           }
         >
-          {error.data.statusCode === 401 ? 'Wrong email or password' : 'Server error'}
+          {errorMessage}
         </Alert>
       )}
     </Box>

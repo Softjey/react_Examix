@@ -3,12 +3,11 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
-import { AxiosResponse } from 'axios';
 import LoginForm from '../../components/forms/LoginForm';
 import { Nullable } from '../../types/utils/Nullable';
 import StartLayout from '../../components/layouts/StartLayout';
 
-const StudentJoinShema = z.object({
+const JoinFormShema = z.object({
   name: z.string().min(1, 'Name is required').max(15, 'Max length is 15'),
   code: z
     .string()
@@ -17,13 +16,13 @@ const StudentJoinShema = z.object({
     .length(6, 'Code length must be 6'),
 });
 
-type LoginFormType = z.infer<typeof StudentJoinShema>;
+type JoinFormType = z.infer<typeof JoinFormShema>;
 
-const StudentJoinPage: React.FC = () => {
+const JoinPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [serverError, setServerError] = useState<Nullable<AxiosResponse>>(null);
+  const [serverErrorMessage, setServerErrorMessage] = useState<Nullable<string>>(null);
 
-  const defaultValues: LoginFormType = {
+  const defaultValues: JoinFormType = {
     name: '',
     code: '',
   };
@@ -32,8 +31,8 @@ const StudentJoinPage: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormType>({
-    resolver: zodResolver(StudentJoinShema),
+  } = useForm<JoinFormType>({
+    resolver: zodResolver(JoinFormShema),
     defaultValues,
   });
 
@@ -70,7 +69,7 @@ const StudentJoinPage: React.FC = () => {
           fullWidth: true,
           required: true,
           ...register('name'),
-          error: !!errors.name,
+          error: !!errors.name || !!serverErrorMessage,
           helperText: errors.name?.message,
         }}
         secondFieldProps={{
@@ -83,13 +82,13 @@ const StudentJoinPage: React.FC = () => {
           },
           required: true,
           ...register('code'),
-          error: !!errors.code,
+          error: !!errors.code || !!serverErrorMessage,
           helperText: errors.code?.message,
           autoComplete: 'off',
         }}
         submitButtonText="Join"
-        error={serverError}
-        setError={setServerError}
+        errorMessage={serverErrorMessage}
+        onAlertClose={() => setServerErrorMessage(null)}
         isLoading={isLoading}
         onSubmit={onSubmit}
       />
@@ -97,4 +96,4 @@ const StudentJoinPage: React.FC = () => {
   );
 };
 
-export default StudentJoinPage;
+export default JoinPage;
