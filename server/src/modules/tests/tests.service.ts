@@ -39,9 +39,7 @@ export class TestsService {
     }
 
     if (subjects && subjects.length > 0) {
-      where.AND = {
-        OR: [{ subject: { in: subjects } }, { subject: null }],
-      };
+      where.subject = { in: subjects };
     }
 
     const [tests, testsAmount] = await this.prismaService.$transaction([
