@@ -38,11 +38,7 @@ const LinkListOption: React.FC<Props> = (props) => {
   return (
     <ListItem disablePadding onClick={handleClick} {...rest}>
       {to ? (
-        <Link
-          to={to}
-          style={{ textDecoration: 'none', color: 'inherit', width: '100%', ...linkStyle }}
-          {...linkProps}
-        >
+        <Link to={to} style={{ width: '100%', ...linkStyle }} {...linkProps}>
           {content}
         </Link>
       ) : (

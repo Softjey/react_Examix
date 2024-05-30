@@ -18,7 +18,11 @@ const ExamsHistoryPage: React.FC<Props> = ({ ...rest }) => {
         onFiltersUpdate={handleFiltersUpdate}
       />
 
-      {isError && <Alert severity="error">An error occurred while loading exams</Alert>}
+      {isError && (
+        <Alert severity="error" sx={{ mt: 6 }}>
+          An error occurred while loading exams
+        </Alert>
+      )}
       {!isError && (
         <ExamsList loadingProps={{ sx: { pt: '60px' } }} exams={exams} isLoading={isPending} />
       )}

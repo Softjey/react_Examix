@@ -1,8 +1,16 @@
-/* eslint-disable import/prefer-default-export */
-import { CSSObject } from '@emotion/react';
+import { SxTheme } from '../types/utils/SxTheme';
 
-export const textEllipsis: CSSObject = {
+export const textEllipsis: SxTheme = {
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
 };
+
+export const textMultilineEllipsis = (linesAmount: number): SxTheme => ({
+  display: '-webkit-box',
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  WebkitLineClamp: linesAmount,
+  lineClamp: linesAmount,
+});

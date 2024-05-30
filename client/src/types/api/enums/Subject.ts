@@ -1,6 +1,5 @@
 enum Subject {
   MATH = 'MATH',
-  ENGLISH = 'ENGLISH',
   SCIENCE = 'SCIENCE',
   HISTORY = 'HISTORY',
   GEOGRAPHY = 'GEOGRAPHY',
@@ -19,6 +18,7 @@ enum Subject {
   SPANISH = 'SPANISH',
   FRENCH = 'FRENCH',
   GERMAN = 'GERMAN',
+  ENGLISH = 'ENGLISH',
 }
 
 export default Subject;
