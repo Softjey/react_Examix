@@ -6,17 +6,25 @@ import { center } from '../../styles/flex';
 import getSubjectImgPath from '../../utils/getSubjectImgPath';
 import Logo from './Logo';
 
-interface Props extends AvatarProps {
+interface BaseProps extends AvatarProps {
   test: Pick<Test, 'image' | 'name' | 'subject' | 'createdAt'>;
-  width?: number | string;
 }
 
-const TestAvatar: React.FC<Props> = ({ test, width = 60, sx, ...rest }) => {
+type NumberProps = { width: number } & BaseProps;
+type StringProps = { width: string; logoFontSize: string | number } & BaseProps;
+type Props = NumberProps | StringProps;
+
+const isStringProps = (props: Props): props is StringProps => {
+  return typeof props.width === 'string';
+};
+
+const TestAvatar: React.FC<Props> = (props) => {
+  const { test, width = 60, sx, ...rest } = props;
   const { image, name, createdAt, subject } = test;
   const [bgcolor, textColor] = generateColorsPair(`${name}--${createdAt}`);
   const aspectRatio = 3 / 4;
-  const w = typeof width === 'number' ? `${width}px` : width;
-  const fontSize = typeof width === 'number' ? width / 4.5 : 'calc(100% * 2)';
+  const w = isStringProps(props) ? props.width : `${props.width}px`;
+  const fontSize = isStringProps(props) ? props.logoFontSize : `${props.width / 4.5}px`;
 
   return (
     <Avatar

@@ -21,7 +21,7 @@ const QuestionItem: React.FC<Props> = ({ question, index, studentAnswers, ...res
   return (
     <Stack direction="row" spacing={3} justifyContent="space-between" component="article" {...rest}>
       <Stack flexGrow={1} spacing={2}>
-        <Typography variant="h6">{`${index ? `${index + 1})` : ''} ${title}`}</Typography>
+        <Typography variant="h6">{`${index !== undefined ? `${index + 1})` : ''} ${title}`}</Typography>
 
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, pl: 5 }}>
           {answers.map((answer, answerIndex) => (

@@ -28,7 +28,7 @@ const TestCard: React.FC<TestCardProps> = ({ test, sx, ...rest }) => {
     <Card sx={{ ...cardSx, ...sx }} component="article" {...rest}>
       <Link to={`${Routes.TEST}/${id}`}>
         <Box sx={{ position: 'relative' }}>
-          <TestAvatar width="100%" test={test} />
+          <TestAvatar logoFontSize={60} width="100%" test={test} />
 
           <SubjectItem
             variant="chip"
