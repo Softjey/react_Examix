@@ -23,7 +23,7 @@ const HomeLayout: React.FC<Props> = ({
   return (
     <Box sx={{ display: 'flex', ...sx }} {...rest}>
       <Menu width={220} />
-      <Box sx={{ flexGrow: '1', minHeight: '100vh', ...center, ...contentSx }}>
+      <Box sx={{ flexGrow: '1', minHeight: '100vh', ...center, ...contentSx }} component="main">
         {centered ? (
           <Box sx={{ p: 2, maxWidth: contentWidth, width: '100%', ...centeredSx }}>{children}</Box>
         ) : (

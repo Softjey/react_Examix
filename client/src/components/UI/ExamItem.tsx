@@ -26,8 +26,6 @@ const ExamItem: React.FC<Props> = ({ exam, ...rest }) => {
           width: '100%',
           display: 'flex',
           userSelect: 'none',
-          textDecoration: 'none',
-          color: 'inherit',
           justifyContent: 'space-between',
         }}
       >

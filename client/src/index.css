@@ -10,3 +10,8 @@ html {
   overflow: auto;
   scrollbar-gutter: stable;
 }
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
