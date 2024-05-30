@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
-import { MenuItem, Stack, StackProps, TextField } from '@mui/material';
+import { Button, MenuItem, Stack, StackProps, TextField } from '@mui/material';
 import { TestsFilters as ITestsFilters } from '../../services/Api/types/tests';
 import SubjectSelect from '../UI/SubjectSelect';
 import useDebouncedCallback from '../../hooks/useDebouncedCallback';
@@ -34,6 +34,10 @@ const TestsFilters: React.FC<Props> = (props) => {
     debouncedSearchChange(value);
   };
 
+  const reactFiltersUpdate = () => {
+    onFiltersChange?.({ search, subjects });
+  };
+
   const handleSubjectChange = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) => {
@@ -45,21 +49,26 @@ const TestsFilters: React.FC<Props> = (props) => {
   };
 
   return (
-    <Stack direction="row" spacing={6} flexWrap="wrap" paddingInline={1} component="form" {...rest}>
+    <Stack direction="row" spacing={5} flexWrap="wrap" paddingInline={1} component="form" {...rest}>
       <TextField
         label="Search..."
-        variant="standard"
         value={search}
         onChange={handleSearchChange}
-        InputProps={{ endAdornment: <SearchIcon opacity={0.85} /> }}
+        InputProps={{
+          endAdornment: (
+            <Button onClick={reactFiltersUpdate} color="inherit">
+              <SearchIcon opacity={0.85} />
+            </Button>
+          ),
+        }}
         autoComplete="off"
         sx={{ minWidth: 300, flexGrow: 1 }}
       />
+
       <SubjectSelect
         sx={{ minWidth: 200 }}
         maxHeight={500}
-        variant="standard"
-        defaultValue={defaultValues?.subject ?? 'all'}
+        value={defaultValues?.subject ?? 'all'}
         otherMenuItems={<MenuItem value="all">All</MenuItem>}
         onChange={handleSubjectChange}
       />

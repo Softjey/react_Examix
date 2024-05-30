@@ -7,7 +7,7 @@ import Authenticated from '../../components/hocs/Authenticated';
 import DebugPage from '../../dev/DebugPage';
 import QuizPage from '../../dev/QuizPage';
 import HomePage from '../../pages/HomePage';
-import TestsLibraryPage from '../../pages/TestsLibraryPage';
+import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';

@@ -12,19 +12,27 @@ export interface TestsListProps extends BoxProps {
 
 const TestsList: React.FC<TestsListProps> = ({ tests, sx, error, isLoading, ...rest }) => {
   if (error) {
-    return <Alert severity="error">{error}</Alert>;
+    return (
+      <Alert severity="error" sx={sx}>
+        {error}
+      </Alert>
+    );
   }
 
   if (isLoading || !tests) {
     return (
-      <Box sx={center}>
-        <CircularProgress size={50} />
+      <Box sx={{ ...center, ...sx }}>
+        <CircularProgress size={40} />
       </Box>
     );
   }
 
   if (!tests.length) {
-    return <Alert severity="info">No tests found</Alert>;
+    return (
+      <Alert severity="info" sx={sx}>
+        No tests found
+      </Alert>
+    );
   }
 
   return (
