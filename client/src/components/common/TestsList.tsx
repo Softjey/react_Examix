@@ -1,22 +1,43 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Alert, Box, BoxProps, CircularProgress } from '@mui/material';
 import TestCard from '../items/TestCard';
 import { Test } from '../../types/api/entities/test';
+import { center } from '../../styles/flex';
 
-interface TestsListProps {
-  tests: Test[];
+export interface TestsListProps extends BoxProps {
+  tests?: Test[];
+  error?: string;
+  isLoading?: boolean;
 }
 
-const TestsList: React.FC<TestsListProps> = ({ tests }) => {
+const TestsList: React.FC<TestsListProps> = ({ tests, sx, error, isLoading, ...rest }) => {
+  if (error) {
+    return <Alert severity="error">{error}</Alert>;
+  }
+
+  if (isLoading || !tests) {
+    return (
+      <Box sx={center}>
+        <CircularProgress size={50} />
+      </Box>
+    );
+  }
+
+  if (!tests.length) {
+    return <Alert severity="info">No tests found</Alert>;
+  }
+
   return (
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
+        gridTemplateColumns: 'repeat(auto-fill, 300px)',
         justifyContent: 'center',
-        marginTop: '32px',
-        gap: '20px',
+        gap: 4,
+        ...sx,
       }}
+      component="section"
+      {...rest}
     >
       {tests.map((test) => (
         <TestCard key={test.id} test={test} />

@@ -50,16 +50,14 @@ const Ava: React.FC<{ name: string }> = memo(({ name }) => (
 const StudentPanel: React.FC<Props> = memo(({ name, examCode }) => {
   const [studentAuth, setStudentAuth] = useState<StudentAuth | null>(null);
   const [question, setQuestion] = useState<Question | null>(null);
-  const [socket, setSocket] = useState<Socket>(() =>
-    createStudentSocket(
+  const [socket, setSocket] = useState<Socket>(() => createStudentSocket(
       name,
       examCode,
       setQuestion,
       setStudentAuth,
       studentAuth?.studentId,
       studentAuth?.studentToken,
-    ),
-  );
+    ));
 
   useEffect(() => {
     setTimeout(() => {
