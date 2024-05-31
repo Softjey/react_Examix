@@ -7,6 +7,7 @@ import Authenticated from '../../components/hocs/Authenticated';
 import DebugPage from '../../dev/DebugPage';
 import QuizPage from '../../dev/QuizPage';
 import HomePage from '../../pages/HomePage';
+import ErrorPage from '../../pages/ErrorPage';
 import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
@@ -42,6 +43,10 @@ const router = createRouter([
   {
     path: Routes.NOT_FOUND,
     element: <NotFoundPage />,
+  },
+  {
+    path: Routes.ERROR,
+    element: <ErrorPage />,
   },
   {
     path: Routes.HOME,
