@@ -10,6 +10,7 @@ import HomePage from '../../pages/HomePage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
+import SettingsPage from '../../pages/SettingsPage';
 
 const router = createRouter([
   {
@@ -92,7 +93,7 @@ const router = createRouter([
     path: Routes.SETTINGS,
     element: (
       <Authenticated>
-        <HomeLayout>Settings page</HomeLayout>
+        <SettingsPage />
       </Authenticated>
     ),
   },
