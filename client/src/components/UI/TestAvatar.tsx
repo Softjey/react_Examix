@@ -27,7 +27,7 @@ const TestAvatar: React.FC<Props> = (props) => {
   const w = isStringProps(props) ? props.width : `${props.width}px`;
   const fontSize = isStringProps(props)
     ? props.logoFontSize
-    : `${props.width ?? defaultWidth / 4.5}px`;
+    : `${(props.width ?? defaultWidth) / 4.5}px`;
 
   return (
     <Avatar
