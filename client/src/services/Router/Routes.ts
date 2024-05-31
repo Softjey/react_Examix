@@ -10,6 +10,7 @@ enum Routes {
   EXAMS_HISTORY = '/history',
   SETTINGS = '/settings',
   EXAM = '/exam',
+  ONGOING_EXAM = '/ongoing-exam',
 }
 
 export default Routes;

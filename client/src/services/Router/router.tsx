@@ -115,6 +115,14 @@ const router = createRouter([
       </Authenticated>
     ),
   },
+  {
+    path: Routes.ONGOING_EXAM,
+    element: (
+      <Authenticated>
+        <HomeLayout>Ongoing exam page</HomeLayout>
+      </Authenticated>
+    ),
+  },
 ]);
 
 export default router;
