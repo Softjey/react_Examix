@@ -19,13 +19,16 @@ const cardSx: SxTheme = {
   display: 'flex',
   flexDirection: 'column',
   height: '360px',
+  ':hover': {
+    boxShadow: (theme) => theme.shadows[5],
+  },
 };
 
 const TestCard: React.FC<TestCardProps> = ({ test, sx, ...rest }) => {
   const { id, name, description, subject } = test;
 
   return (
-    <Card sx={{ ...cardSx, ...sx }} component="article" {...rest}>
+    <Card sx={{ ...cardSx, ...sx }} elevation={2} component="article" {...rest}>
       <Link to={`${Routes.TEST}/${id}`}>
         <Box sx={{ position: 'relative' }}>
           <TestAvatar logoFontSize={60} width="100%" test={test} />
