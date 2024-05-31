@@ -44,4 +44,11 @@ export class UsersService {
       data: { password: encryptedPassword },
     });
   }
+
+  async update(id: User['id'], newUser: Partial<User>) {
+    return this.prismaService.user.update({
+      where: { id },
+      data: newUser,
+    });
+  }
 }
