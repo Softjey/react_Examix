@@ -15,9 +15,10 @@ type ErrorDetails = {
 type Props = LayoutProps & {
   error?: Error;
   errorDetails?: ErrorDetails;
+  refreshPage: () => void; // Add refreshPage as a prop
 };
 
-const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, ...rest }) => {
+const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, refreshPage, ...rest }) => {
   let status;
   let message;
   let title;
@@ -35,10 +36,6 @@ const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, ...rest }) =>
     message = 'Oops! Something went wrong(';
     title = 'Error';
   }
-
-  const refreshPage = () => {
-    window.location.reload();
-  };
 
   const content = (
     <>
