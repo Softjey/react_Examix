@@ -35,7 +35,7 @@ interface Props {
   onDisconnect: () => void;
 }
 
-interface StudentAuth {
+export interface StudentAuth {
   studentId: string;
   studentToken: string;
 }
