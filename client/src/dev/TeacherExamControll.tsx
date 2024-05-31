@@ -13,7 +13,6 @@ import PersonIcon from '@mui/icons-material/Person';
 // import StartLayout from '../components/StartLayout';
 import Button from '../components/UI/buttons/Button';
 
-// eslint-disable-next-line react/jsx-props-no-spreading
 const OutlinedPaper: React.FC<PaperProps> = (props) => <Paper variant="outlined" {...props} />;
 
 interface Props {

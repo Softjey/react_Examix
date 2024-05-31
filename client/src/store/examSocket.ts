@@ -78,7 +78,6 @@ class ExamStore {
 
   createSocket(options: CreateSocketOptions) {
     if (options !== null) {
-      // eslint-disable-next-line operator-linebreak
       this.auth =
         options.role === ExamRole.STUDENT
           ? this.createStudentAuth(options)

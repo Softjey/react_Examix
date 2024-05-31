@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-/* eslint-disable @typescript-eslint/indent */
+
 import { useState } from 'react';
 import { ButtonGroup, Button } from '@mui/material';
 import {
@@ -25,7 +25,7 @@ const AnswersButtonGroup: React.FC<Props> = ({ answers, setValue, setIsShowAnswe
       <ButtonGroup fullWidth orientation="vertical">
         {answers.map((answer) => {
           const isTypeSingle = type === QuestionType.SINGLE_CHOICE;
-          // eslint-disable-next-line operator-linebreak
+
           const isSelected =
             selectedAnswers !== null
               ? isTypeSingle

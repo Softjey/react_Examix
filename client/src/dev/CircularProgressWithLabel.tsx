@@ -9,7 +9,7 @@ const CircularProgressWithLabel = (
   },
 ) => (
   <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+    {}
     <CircularProgress variant="determinate" {...props} />
     <Box
       sx={{
