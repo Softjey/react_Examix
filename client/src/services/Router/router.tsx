@@ -1,11 +1,13 @@
 import { createHashRouter as createRouter } from 'react-router-dom';
 import Routes from './Routes';
 import StartPage from '../../pages/StartPage';
-import LoginPage from '../../pages/LoginPage/LoginPage';
 import NotFoundPage from '../../pages/NotFoundPage';
 import Authenticated from '../../components/hocs/Authenticated';
 import DebugPage from '../../dev/DebugPage';
 import QuizPage from '../../dev/QuizPage';
+import TeacherLoginPage from '../../pages/LoginPage/TeacherLoginPage';
+import StudentJoinPage from '../../pages/LoginPage/StudentJoinPage';
+import WaitingPage from '../../dev/WaitingPage';
 import HomePage from '../../pages/HomePage';
 import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
@@ -27,7 +29,7 @@ const router = createRouter([
     path: Routes.LOGIN,
     element: (
       <OnlyPublic>
-        <LoginPage role="teacher" />
+        <TeacherLoginPage />
       </OnlyPublic>
     ),
   },
@@ -35,7 +37,7 @@ const router = createRouter([
     path: Routes.JOIN,
     element: (
       <OnlyPublic>
-        <LoginPage role="student" />
+        <StudentJoinPage />
       </OnlyPublic>
     ),
   },
@@ -60,12 +62,12 @@ const router = createRouter([
     ),
   },
   {
-    path: 'quiz',
-    element: (
-      <Authenticated>
-        <QuizPage />
-      </Authenticated>
-    ),
+    path: Routes.QUIZ,
+    element: <QuizPage />,
+  },
+  {
+    path: Routes.WAITING,
+    element: <WaitingPage />,
   },
   {
     path: Routes.EXAMS_HISTORY,
