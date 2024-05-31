@@ -40,11 +40,7 @@ const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, refreshPage, 
   const content = (
     <>
       <Box sx={{ height: '200px', width: 'auto' }}>
-        <img
-          src="/images/SadSmiley.svg"
-          alt="Sad Smiley"
-          style={{ height: '100%', width: 'auto' }}
-        />
+        <img src="/images/SadSmiley.svg" alt="Sad Smiley" css={{ height: '100%', width: 'auto' }} />
       </Box>
       <Typography fontWeight={400} variant="h1" component="h1" color="error">
         {title}
@@ -68,7 +64,7 @@ const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, refreshPage, 
     const props = rest as HomeLayoutProps;
 
     return (
-      <HomeLayout contentSx={{ ...props.contentSx }} {...props}>
+      <HomeLayout {...props}>
         <Stack spacing={2} alignItems="center">
           {content}
         </Stack>
