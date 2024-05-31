@@ -1,12 +1,11 @@
 import React from 'react';
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import HomeLayout, { Props as HomeLayoutProps } from '../components/layouts/HomeLayout';
 import StartLayout, { Props as StartLayoutProps } from '../components/layouts/StartLayout';
 import Button from '../components/UI/buttons/Button';
 import Routes from '../services/Router/Routes';
 import { LayoutProps } from '../types/utils/LayoutProps';
-import { center } from '../styles/flex';
 import ApiError from '../services/Api/ApiError';
 
 type ErrorDetails = {
@@ -15,13 +14,11 @@ type ErrorDetails = {
 };
 
 type Props = LayoutProps & {
-  layout: 'home' | 'start';
-  error?: ApiError;
+  error?: Error;
   errorDetails?: ErrorDetails;
-  item?: string;
 };
 
-const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, item, ...rest }) => {
+const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, ...rest }) => {
   const navigate = useNavigate();
 
   let status;
@@ -44,7 +41,14 @@ const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, item, ...rest
 
   const content = (
     <>
-      <Typography fontWeight={400} variant="h1" component="h1">
+      <Box sx={{ height: '200px', width: 'auto' }}>
+        <img
+          src="/images/SadSmiley.svg"
+          alt="Sad Smiley"
+          style={{ height: '100%', width: 'auto' }}
+        />
+      </Box>
+      <Typography fontWeight={400} variant="h1" component="h1" color="error">
         {title}
       </Typography>
       <Typography variant="h2" component="h2">
@@ -53,7 +57,7 @@ const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, item, ...rest
 
       <Stack direction="row" spacing={3} alignItems="center">
         <Button onClick={() => navigate(-1)} size="large">
-          Go Back
+          Try again
         </Button>
         <Button to={Routes.HOME} variant="contained" size="large">
           Go Home
