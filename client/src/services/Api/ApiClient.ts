@@ -11,6 +11,7 @@ import { Exam } from '../../types/api/entities/exam';
 import { Test } from '../../types/api/entities/test';
 import { DetailedExam } from '../../types/api/entities/detailedExam';
 import ApiError from './ApiError';
+import { CreateExamResponse } from './types/create-exam';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
@@ -90,6 +91,12 @@ export class RawApiClient {
 
   static async getExamById(id: Exam['id']) {
     const { data } = await axios.get<DetailedExam>(`/exams/${id}`);
+
+    return data;
+  }
+
+  static async createExam(testId: Test['id']) {
+    const { data } = await axios.post<CreateExamResponse>('/exams', { testId });
 
     return data;
   }
