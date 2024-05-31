@@ -21,8 +21,7 @@ const LoginFormSchema = z.object({
 type LoginFormType = z.infer<typeof LoginFormSchema>;
 
 const LoginPage: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const loginMutation = useLogin();
+  const { mutate, isPending } = useLogin();
 
   const [showPassword, setShowPassword] = useState(false);
   const [serverErrorMessage, setServerErrorMessage] = useState<Nullable<string>>(null);
@@ -43,16 +42,14 @@ const LoginPage: React.FC = () => {
     defaultValues,
   });
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = handleSubmit((data) => {
     if (data.email && data.password) {
-      setIsLoading(true);
       const { email, password } = data;
 
-      loginMutation.mutate(
+      mutate(
         { email, password },
         {
           onError: (error) => {
-            setIsLoading(false);
             if (axios.isAxiosError(error)) {
               if (error.response?.data.statusCode === 401) {
                 setServerErrorMessage('Invalid email or password');
@@ -91,7 +88,7 @@ const LoginPage: React.FC = () => {
             endAdornment: (
               <EyeButton
                 aria-label="toggle password visibility"
-                disabled={isLoading}
+                disabled={isPending}
                 isEyeClosed={showPassword}
                 onClick={handleClickShowPassword}
                 onMouseDown={(e) => e.preventDefault()}
@@ -108,7 +105,7 @@ const LoginPage: React.FC = () => {
         }}
         errorMessage={serverErrorMessage}
         onAlertClose={() => setServerErrorMessage(null)}
-        isLoading={isLoading}
+        isLoading={isPending}
         submitButtonText="Login"
         onSubmit={onSubmit}
       />
