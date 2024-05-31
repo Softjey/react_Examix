@@ -10,7 +10,7 @@ interface BaseProps extends AvatarProps {
   test: Pick<Test, 'image' | 'name' | 'subject' | 'createdAt'>;
 }
 
-type NumberProps = { width: number } & BaseProps;
+type NumberProps = { width?: number } & BaseProps;
 type StringProps = { width: string; logoFontSize: string | number } & BaseProps;
 type Props = NumberProps | StringProps;
 
@@ -19,12 +19,15 @@ const isStringProps = (props: Props): props is StringProps => {
 };
 
 const TestAvatar: React.FC<Props> = (props) => {
-  const { test, width = 60, sx, ...rest } = props;
+  const defaultWidth = 60;
+  const { test, width = defaultWidth, sx, ...rest } = props;
   const { image, name, createdAt, subject } = test;
   const [bgcolor, textColor] = generateColorsPair(`${name}--${createdAt}`);
   const aspectRatio = 3 / 4;
   const w = isStringProps(props) ? props.width : `${props.width}px`;
-  const fontSize = isStringProps(props) ? props.logoFontSize : `${props.width / 4.5}px`;
+  const fontSize = isStringProps(props)
+    ? props.logoFontSize
+    : `${props.width ?? defaultWidth / 4.5}px`;
 
   return (
     <Avatar
