@@ -23,8 +23,6 @@ const MenuHeader: React.FC<Props> = ({ ...rest }) => {
         alignItems: 'center',
         gap: '8px',
         userSelect: 'none',
-        textDecoration: 'none',
-        color: 'inherit',
       }}
       {...rest}
     >

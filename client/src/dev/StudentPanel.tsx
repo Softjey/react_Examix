@@ -1,7 +1,3 @@
-/* eslint-disable function-paren-newline */
-/* eslint-disable implicit-arrow-linebreak */
-
-/* eslint-disable operator-linebreak */
 import { Socket } from 'socket.io-client';
 
 import React, { memo, useEffect, useState } from 'react';
@@ -54,16 +50,14 @@ const Ava: React.FC<{ name: string }> = memo(({ name }) => (
 const StudentPanel: React.FC<Props> = memo(({ name, examCode }) => {
   const [studentAuth, setStudentAuth] = useState<StudentAuth | null>(null);
   const [question, setQuestion] = useState<Question | null>(null);
-  const [socket, setSocket] = useState<Socket>(() =>
-    createStudentSocket(
+  const [socket, setSocket] = useState<Socket>(() => createStudentSocket(
       name,
       examCode,
       setQuestion,
       setStudentAuth,
       studentAuth?.studentId,
       studentAuth?.studentToken,
-    ),
-  );
+    ));
 
   useEffect(() => {
     setTimeout(() => {

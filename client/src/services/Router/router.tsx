@@ -6,12 +6,14 @@ import Authenticated from '../../components/hocs/Authenticated';
 import DebugPage from '../../dev/DebugPage';
 import QuizPage from '../../dev/QuizPage';
 import HomePage from '../../pages/HomePage';
+import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
 import TestPage from '../../pages/TestPage';
 import LoginPage from '../../pages/Login/LoginPage';
 import JoinPage from '../../pages/Login/JoinPage';
+import ExamPage from '../../pages/ExamPage';
 
 const router = createRouter([
   {
@@ -86,7 +88,7 @@ const router = createRouter([
     path: Routes.TESTS_LIBRARY,
     element: (
       <Authenticated>
-        <HomeLayout>Tests library page</HomeLayout>
+        <TestsLibraryPage />
       </Authenticated>
     ),
   },
@@ -103,6 +105,14 @@ const router = createRouter([
     element: (
       <Authenticated>
         <TestPage />
+      </Authenticated>
+    ),
+  },
+  {
+    path: `${Routes.EXAM}/:id`,
+    element: (
+      <Authenticated>
+        <ExamPage />
       </Authenticated>
     ),
   },
