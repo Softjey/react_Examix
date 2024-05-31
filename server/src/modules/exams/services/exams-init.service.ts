@@ -28,10 +28,10 @@ export class ExamsInitService {
   }
 
   async create(userId: User['id'], testId: Test['id']) {
-    const [test, questions] = await this.testsService.getTestAndQuestionsByTestId(testId);
-    const examsQuestions = questions.map((question) => new ExamQuestion(question));
+    const test = await this.testsService.getOne(testId);
+    const examsQuestions = test.testQuestions.map((question) => new ExamQuestion(question));
 
-    if (!test || !questions.length) {
+    if (!test || !test.testQuestions.length) {
       throw new BadRequestException(`Test with id ${testId} not found`);
     }
 

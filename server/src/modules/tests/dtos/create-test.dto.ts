@@ -1,14 +1,20 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty } from 'class-validator';
+import { IsOptional, IsString, IsUrl, ValidateNested } from 'class-validator';
 import { CreateTestQuestionDto } from './create-test-question.dto';
 import { User, $Enums } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import IsUniqueQuestions from '../utils/is-unique-questions.decorator';
 
 export type CreateTestDtoAuthorId = CreateTestDto & { authorId: User['id'] };
 export class CreateTestDto {
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  @IsOptional()
+  @IsUrl()
+  image?: string;
 
   @ApiProperty({ enum: $Enums.Subject, enumName: 'Subject', required: false })
   @IsOptional()
@@ -22,5 +28,6 @@ export class CreateTestDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateTestQuestionDto)
+  @IsUniqueQuestions()
   questions: CreateTestQuestionDto[];
 }

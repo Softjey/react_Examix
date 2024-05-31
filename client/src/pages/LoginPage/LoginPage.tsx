@@ -1,6 +1,5 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { Stack, TextField, TextFieldProps } from '@mui/material';
-import StartLayout from '../../components/StartLayout';
+import StartLayout from '../../components/layouts/StartLayout';
 import MainButton from '../../components/UI/buttons/MainButton';
 import { columnCenter } from '../../styles/flex';
 

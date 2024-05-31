@@ -41,7 +41,7 @@ enum Subject {
   LITERATURE
   ART
   MUSIC
-  PHYSICAL_EDUCATION
+  SPORT
   HEALTH
   SPANISH
   FRENCH
@@ -53,12 +53,13 @@ model User {
   name      String
   role      Role       @default(TEACHER)
   email     String     @unique
+  photo     String?
   password  String
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   questions Question[]
   tests     Test[]
-  Exam      Exam[]
+  exam      Exam[]
 }
 
 model Question {
@@ -76,13 +77,14 @@ model Question {
 model Test {
   id            Int            @id @default(autoincrement())
   name          String
+  image         String?
   description   String
   subject       Subject?
   authorId      Int?
-  Author        User?          @relation(fields: [authorId], references: [id])
+  author        User?          @relation(fields: [authorId], references: [id])
   createdAt     DateTime       @default(now())
   testQuestions TestQuestion[]
-  Exam          Exam[]
+  exam          Exam[]
 }
 
 model TestQuestion {

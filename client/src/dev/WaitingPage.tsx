@@ -11,7 +11,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import StartLayout from '../components/StartLayout';
+import StartLayout from '../components/layouts/StartLayout';
 import Button from '../components/UI/buttons/Button';
 import BookLoader from './BookLoader/BookLoader';
 import DottedText from './DottedText/DottedText';
@@ -36,9 +36,9 @@ const WaitingPage: React.FC = () => {
   studentExamSocket.onOpen(() => setIsLoading(false));
   // studentExamSocket.onClose(() => setIsLoading(true));
 
-  studentExamSocket.on(MessageNames.EXAM_STARTED, () => navigate(Routes.QUIZ_PAGE));
+  studentExamSocket.on(MessageNames.EXAM_STARTED, () => navigate(Routes.QUIZ));
   studentExamSocket.on(MessageNames.TEST_INFO, (newTestInfo) => setTestInfo(newTestInfo));
-  studentExamSocket.on(MessageNames.EXAM_FINISHED, () => navigate(Routes.QUIZ_PAGE));
+  studentExamSocket.on(MessageNames.EXAM_FINISHED, () => navigate(Routes.QUIZ));
   studentExamSocket.on(MessageNames.EXCEPTION, (newException) => {
     // eslint-disable-next-line no-console
     console.error(newException);
@@ -56,7 +56,7 @@ const WaitingPage: React.FC = () => {
   // FIXME: fix problem with incorrect connecting
 
   return (
-    <StartLayout innerStyle={{ gap: '100px' }} header={false}>
+    <StartLayout header={false}>
       {!isLoading ? (
         <>
           <Typography sx={{ fontWeight: '500' }} variant="h2">
@@ -160,12 +160,7 @@ const WaitingPage: React.FC = () => {
       ) : (
         <CircularProgress />
       )}
-      <Button
-        onClick={() => navigate(Routes.JOIN_PAGE)}
-        variant="contained"
-        size="large"
-        color="error"
-      >
+      <Button onClick={() => navigate(Routes.JOIN)} variant="contained" size="large" color="error">
         Leave
       </Button>
     </StartLayout>

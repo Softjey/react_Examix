@@ -9,6 +9,7 @@ import { StudentAnswer } from '../dtos/question-answer.dto';
 import { ExamsHistoryService } from './exams-history.service';
 import { DetailedExam } from '../interfaces/detailed-exam.interface';
 import { ExamsCacheService } from './exams-cache.service';
+import { Exam } from '../entities/exam.entity';
 
 @Injectable()
 export class ExamManagementService extends EventEmitter {
@@ -25,7 +26,7 @@ export class ExamManagementService extends EventEmitter {
     this.examFinishedEventName = (examCode: string) => `finished-${examCode}`;
   }
 
-  getExam(examCode: string, nullable = false) {
+  getExam(examCode: string, nullable = false): Promise<Exam | null> {
     return this.examsCacheService.getExam(examCode).catch((exam) => {
       if (nullable) {
         return null;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router';
-import StartLayout from '../components/StartLayout';
+import StartLayout from '../components/layouts/StartLayout';
 import QuizCard from './QuizCard';
 import Timer from '../components/UI/Timer';
 import { Question, StudentAnswer } from './questions';
@@ -22,7 +22,7 @@ const QuizPage: React.FC = () => {
   studentExamSocket.on(MessageNames.EXAM_FINISHED, () => {
     log('finished')();
     setIsLoading(false);
-    navigate(Routes.JOIN_PAGE);
+    navigate(Routes.JOIN);
   });
 
   return (

@@ -4,21 +4,27 @@ import { WebSocketException } from './websocket.exception';
 import { WebSocketExceptionResponse } from './websocket-exception.response';
 import { Socket } from 'socket.io';
 
-type Exception = WebSocketException | Error | BadRequestException;
+type Exception = BadRequestException | WebSocketException | Error;
 
-@Catch(WebSocketException, Error, BadRequestException)
+@Catch(BadRequestException, WebSocketException, Error)
 export class WsExceptionsFilter extends BaseWsExceptionFilter {
   private static readonly eventName = 'exception';
 
   catch(exception: Exception, host: ArgumentsHost) {
-    const client = host.switchToWs().getClient();
-    if (exception instanceof BadRequestException) {
-      const response = exception.getResponse() as { message: string };
-      const badRequest = WebSocketException.BadRequest(response.message, {
-        cause: exception,
-      });
+    const client = host.switchToWs().getClient<Socket>();
+    const isWsServerException = exception instanceof WebSocketException && exception.status >= 500;
 
-      client.emit(WsExceptionsFilter.eventName, new WebSocketExceptionResponse(badRequest));
+    if (exception instanceof BadRequestException) {
+      client.emit(WsExceptionsFilter.eventName, new WebSocketExceptionResponse(exception));
+
+      return;
+    }
+
+    if (exception instanceof Error || isWsServerException) {
+      const wsServerException = WebSocketException.ServerError();
+
+      console.error(exception);
+      client.emit(WsExceptionsFilter.eventName, new WebSocketExceptionResponse(wsServerException));
 
       return;
     }
@@ -27,21 +33,10 @@ export class WsExceptionsFilter extends BaseWsExceptionFilter {
       const clientToHandle = exception.details.client ?? client;
 
       WsExceptionsFilter.handleError(clientToHandle, exception);
-
-      return;
     }
-
-    const serverError = WebSocketException.ServerError('Internal server error', {
-      cause: exception,
-    });
-
-    console.log(exception);
-    client.emit(WsExceptionsFilter.eventName, new WebSocketExceptionResponse(serverError));
-
-    return;
   }
 
-  public static handleError(client: Socket, exception: WebSocketException) {
+  static handleError(client: Socket, exception: WebSocketException) {
     client.emit(WsExceptionsFilter.eventName, new WebSocketExceptionResponse(exception));
 
     if (exception.details.disconnect) {

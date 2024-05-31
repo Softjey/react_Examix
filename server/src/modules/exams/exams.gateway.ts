@@ -47,6 +47,12 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
           case 'error':
             break;
           case 'new':
+            if (!students[studentId]) {
+              throw WebSocketException.ServerError('Student was not created', {
+                payload: { studentId, auth },
+              });
+            }
+
             const { studentToken, name } = students[studentId];
             this.server.to(author.clientId!).emit('student-joined', { name, studentId });
             client.emit('student-joined', { studentId, studentToken });

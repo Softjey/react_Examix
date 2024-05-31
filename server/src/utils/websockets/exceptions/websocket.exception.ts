@@ -5,6 +5,7 @@ type Message = string | string[];
 
 interface WebSocketExceptionDetails {
   disconnect?: boolean;
+  payload?: Record<string, unknown>;
   date?: Date;
   cause?: Error;
   client?: Socket;

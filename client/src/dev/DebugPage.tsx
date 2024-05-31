@@ -1,22 +1,22 @@
 /* eslint-disable no-console */
 /* eslint-disable no-alert */
-import { List, TextField, Typography } from '@mui/material';
+import { List } from '@mui/material';
 import { Socket, io } from 'socket.io-client';
 import React, { useEffect, useState } from 'react';
-import StartLayout from '../components/StartLayout';
 import StudentPanel from './StudentPanel';
 import Button from '../components/UI/buttons/Button';
 import log from './log';
 import { getRandomName } from './randomNames';
 import { Response, createExam } from './createExam';
 import ApiClient from '../services/Api/ApiClient';
+import HomeLayout from '../components/layouts/HomeLayout';
+import Role from '../types/api/enums/Role';
 
-const TestPage: React.FC = () => {
+const DebugPage: React.FC = () => {
   const [studentIds, setStudentIds] = useState<string[]>([]);
   const [response, setResponse] = useState<Response | null>(null);
   const [students, setStudents] = useState<string[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [inputStudentId, setInputStudentId] = useState('');
 
   useEffect(() => {
     if (response) {
@@ -42,15 +42,8 @@ const TestPage: React.FC = () => {
       authorSocket.on('student-kicked', log('author Student kicked'));
 
       setSocket(authorSocket);
-
-      log(response.examCode);
     }
   }, [response]);
-
-  const kickStudent = (studentId: string) => {
-    log('author kick student requested')(studentId);
-    socket!.emit('kick-student', { studentId });
-  };
 
   const kickRandomStudent = () => {
     const randomStudentId = studentIds[Math.floor(Math.random() * studentIds.length)];
@@ -64,7 +57,7 @@ const TestPage: React.FC = () => {
     const name = prompt('Enter name');
     const role = prompt('Enter role');
 
-    if (role !== 'TEACHER' && role !== 'ADMIN') {
+    if (role !== Role.TEACHER && role !== Role.ADMIN) {
       throw new Error('Invalid role. Must be TEACHER or ADMIN');
     }
 
@@ -83,53 +76,38 @@ const TestPage: React.FC = () => {
   };
 
   return (
-    <StartLayout style={{ display: 'flex', justifyContent: 'space-around', flexDirection: 'row' }}>
-      <div css={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <Typography variant="h5" align="center">
-          Test Page
-        </Typography>
+    <HomeLayout style={{ display: 'flex' }}>
+      <div
+        css={{
+          display: 'flex',
+          paddingTop: '100px',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '20px',
+        }}
+      >
+        <h2>Test Page</h2>
+
         <Button onClick={createUser}>Create User</Button>
-        <Button
-          onClick={async () => {
-            const res = await createExam(1);
-            console.log(res);
-            setResponse(res);
-          }}
-          size="large"
-        >
+        <Button onClick={async () => setResponse(await createExam(2))} size="large">
           Create Exam
         </Button>
+
+        <Button size="large" onClick={() => socket!.emit('start-exam')}>
+          Start exam
+        </Button>
+
         <Button size="large" onClick={() => socket!.connect()}>
           Connect Author
         </Button>
-        <Button
-          size="large"
-          onClick={() => {
-            console.log(response!.examCode);
-            navigator.clipboard.writeText(response!.examCode).then(() => console.log('copied'));
-          }}
-        >
-          Get code
-        </Button>
+
         <Button size="large" onClick={() => setStudents([...students, getRandomName()])}>
           Connect Student
-        </Button>
-        <Button size="large" onClick={() => socket!.emit('start-exam')}>
-          Start exam
         </Button>
 
         <Button size="large" onClick={kickRandomStudent}>
           Kick Random Student
         </Button>
-
-        <TextField
-          label="enter student id to kick"
-          value={inputStudentId}
-          onChange={(e) => {
-            setInputStudentId(e.currentTarget.value);
-          }}
-        />
-        <Button onClick={() => kickStudent(inputStudentId)}>Kick</Button>
       </div>
 
       <List
@@ -150,8 +128,8 @@ const TestPage: React.FC = () => {
           />
         ))}
       </List>
-    </StartLayout>
+    </HomeLayout>
   );
 };
 
-export default TestPage;
+export default DebugPage;

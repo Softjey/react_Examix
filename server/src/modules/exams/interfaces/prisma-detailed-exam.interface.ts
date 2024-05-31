@@ -1,4 +1,4 @@
-import { $Enums, Prisma } from '@prisma/client';
+import { $Enums, Prisma, Question, User } from '@prisma/client';
 
 export interface PrismaDetailedExam {
   id: number;
@@ -12,6 +12,8 @@ export interface PrismaDetailedExamTest {
   id: number;
   name: string;
   description: string;
+  authorId: number;
+  author: { name: User['name']; photo: User['photo']; createdAt: User['createdAt'] };
   subject: $Enums.Subject | null;
   testQuestions: PrismaDetailedExamQuestion[];
 }
@@ -19,6 +21,7 @@ export interface PrismaDetailedExamTest {
 export interface PrismaDetailedExamQuestion {
   id: number;
   question: {
+    id: Question['id'];
     type: string;
     subject: $Enums.Subject | null;
     title: string;

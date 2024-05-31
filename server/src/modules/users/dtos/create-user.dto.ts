@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { $Enums, User } from '@prisma/client';
 // eslint-disable-next-line max-len
-import { IsEmail, IsEnum, IsNotEmpty, IsString, IsStrongPassword, MinLength } from 'class-validator'; // prettier-ignore
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, IsStrongPassword, IsUrl, MinLength } from 'class-validator'; // prettier-ignore
 
 export class CreateUserDto
-  implements Pick<User, 'email' | 'password' | 'name'>, Partial<Pick<User, 'role'>>
+  implements Pick<User, 'email' | 'password' | 'name'>, Partial<Pick<User, 'role' | 'photo'>>
 {
   @IsEmail()
   email: string;
@@ -20,6 +20,10 @@ export class CreateUserDto
     { message: 'Password have to be at least 8 characters long' },
   )
   password: string;
+
+  @IsOptional()
+  @IsUrl()
+  photo?: string;
 
   @ApiProperty({ enumName: 'Role', enum: $Enums.Role, required: false })
   @IsEnum($Enums.Role)

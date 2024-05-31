@@ -21,7 +21,7 @@ export class QuestionsService {
     const where: Prisma.QuestionWhereInput = {};
 
     if (subjects && subjects.length > 0) {
-      where.OR = [{ subject: { in: subjects } }, { subject: null }];
+      where.subject = { in: subjects };
     }
 
     if (types && types.length > 0) {

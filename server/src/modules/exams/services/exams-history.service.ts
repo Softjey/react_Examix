@@ -26,9 +26,12 @@ export class ExamsHistoryService {
     const whereCond: Prisma.ExamWhereInput = {};
     const skip = limit && page ? (page - 1) * limit : 0;
     const createdAt = { lte: options.dateTo, gte: options.dateFrom };
-    const test = { select: { id: true, name: true, description: true, subject: true } };
-    const results = { select: { studentName: true } };
+    const test = {
+      select: { id: true, name: true, description: true, subject: true, createdAt: true },
+    };
+    const results = { distinct: ['studentName' as const], select: { studentName: true } };
     const select = { id: true, authorId: true, createdAt: true, test, results };
+    const orderBy = { createdAt: 'desc' as const };
 
     if (search) {
       whereCond.OR = [
@@ -42,7 +45,12 @@ export class ExamsHistoryService {
 
     const where: Prisma.ExamWhereInput = { authorId, testId, createdAt, ...whereCond };
 
-    return this.prismaService.exam.findMany({ select, skip, take: limit, where });
+    const [exams, amount] = await this.prismaService.$transaction([
+      this.prismaService.exam.findMany({ select, skip, take: limit, where, orderBy }),
+      this.prismaService.exam.count({ where }),
+    ]);
+
+    return { exams, amount, pagesAmount: Math.ceil(amount / limit ?? 1) };
   }
 
   async saveExam({ author, students, test, questions }: Exam): Promise<DetailedExam> {

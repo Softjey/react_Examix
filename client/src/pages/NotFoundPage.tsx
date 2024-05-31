@@ -1,20 +1,56 @@
-import { Typography } from '@mui/material';
-import StartLayout from '../components/StartLayout';
+import { Stack, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import HomeLayout, { Props as HomeLayoutProps } from '../components/layouts/HomeLayout';
+import StartLayout, { Props as StartLayoutProps } from '../components/layouts/StartLayout';
 import Button from '../components/UI/buttons/Button';
 import Routes from '../services/Router/Routes';
+import { LayoutProps } from '../types/utils/LayoutProps';
+import { center } from '../styles/flex';
 
-const NotFoundPage: React.FC = () => (
-  <StartLayout header={false}>
-    <Typography fontWeight={700} variant="h1">
-      404
-    </Typography>
-    <Typography fontWeight={600} variant="h2">
-      Page Not Found
-    </Typography>
-    <Button to={Routes.START_PAGE} variant="contained" size="large">
-      Home
-    </Button>
-  </StartLayout>
-);
+type Props = LayoutProps & {
+  item?: string;
+};
+
+const NotFoundPage: React.FC<Props> = ({ layout, item, ...rest }) => {
+  const navigate = useNavigate();
+
+  const content = (
+    <>
+      <Typography fontWeight={400} variant="h1" component="h1">
+        404
+      </Typography>
+      <Typography variant="h2" component="h2">
+        {item ?? 'Page'} Not Found
+      </Typography>
+
+      <Stack direction="row" spacing={3} alignItems="center">
+        <Button onClick={() => navigate(-1)} size="large">
+          Go Back
+        </Button>
+        <Button to={Routes.HOME} variant="contained" size="large">
+          Go Home
+        </Button>
+      </Stack>
+    </>
+  );
+
+  if (layout === 'home') {
+    const props = rest as HomeLayoutProps;
+
+    return (
+      <HomeLayout contentSx={{ ...props.contentSx, ...center }} {...props}>
+        <Stack spacing={2} alignItems="center">
+          {content}
+        </Stack>
+      </HomeLayout>
+    );
+  }
+
+  return (
+    <StartLayout header={false} {...(rest as StartLayoutProps)}>
+      {content}
+    </StartLayout>
+  );
+};
 
 export default NotFoundPage;
