@@ -1,6 +1,5 @@
 import React from 'react';
 import { Stack, Typography, Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import HomeLayout, { Props as HomeLayoutProps } from '../components/layouts/HomeLayout';
 import StartLayout, { Props as StartLayoutProps } from '../components/layouts/StartLayout';
 import Button from '../components/UI/buttons/Button';
@@ -19,8 +18,6 @@ type Props = LayoutProps & {
 };
 
 const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, ...rest }) => {
-  const navigate = useNavigate();
-
   let status;
   let message;
   let title;
@@ -39,6 +36,10 @@ const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, ...rest }) =>
     title = 'Error';
   }
 
+  const refreshPage = () => {
+    window.location.reload();
+  };
+
   const content = (
     <>
       <Box sx={{ height: '200px', width: 'auto' }}>
@@ -56,7 +57,7 @@ const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, ...rest }) =>
       </Typography>
 
       <Stack direction="row" spacing={3} alignItems="center">
-        <Button onClick={() => navigate(-1)} size="large">
+        <Button onClick={refreshPage} size="large">
           Try again
         </Button>
         <Button to={Routes.HOME} variant="contained" size="large">
@@ -70,7 +71,7 @@ const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, ...rest }) =>
     const props = rest as HomeLayoutProps;
 
     return (
-      <HomeLayout contentSx={{ ...props.contentSx, ...center }} {...props}>
+      <HomeLayout contentSx={{ ...props.contentSx }} {...props}>
         <Stack spacing={2} alignItems="center">
           {content}
         </Stack>
