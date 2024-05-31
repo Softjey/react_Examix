@@ -1,17 +1,20 @@
 import React from 'react';
 import dayjs from 'dayjs';
-import { Stack, Typography, Box, Button, StackProps } from '@mui/material';
+import { Stack, Typography, Box, StackProps } from '@mui/material';
+import { observer } from 'mobx-react-lite';
 import SubjectItem from '../UI/SubjectItem/SubjectItem';
 import TestAvatar from '../UI/TestAvatar';
 import { DetailedTest } from '../../types/api/entities/detailedTest';
 import UserAvatar from '../UI/UserAvatar';
+import teacherExamStore from '../../store/ExamStore/TeacherExamStore';
+import Button from '../UI/buttons/Button';
 
 interface Props extends StackProps {
   test: DetailedTest;
 }
 
-const BaseTestInfo: React.FC<Props> = ({ sx, test, ...rest }) => {
-  const { name, description, subject, createdAt } = test;
+const BaseTestInfo: React.FC<Props> = observer(({ sx, test, ...rest }) => {
+  const { id, name, description, subject, createdAt } = test;
   const date = dayjs(createdAt).format('DD/MM/YYYY');
 
   return (
@@ -54,12 +57,20 @@ const BaseTestInfo: React.FC<Props> = ({ sx, test, ...rest }) => {
           />
         </Box>
 
-        <Button variant="contained" color="secondary" disableElevation>
-          Start Exam with this Test
+        <Button
+          variant="contained"
+          color="secondary"
+          // sx={{ fontSize: (t) => t.typography.caption.fontSize }}
+          disabled={teacherExamStore.status !== 'idle'}
+          onClick={() => teacherExamStore.createExam(id)}
+        >
+          {teacherExamStore.status !== 'idle'
+            ? 'You have already started the exam'
+            : 'Create Exam with this Test'}
         </Button>
       </Stack>
     </Stack>
   );
-};
+});
 
 export default BaseTestInfo;
