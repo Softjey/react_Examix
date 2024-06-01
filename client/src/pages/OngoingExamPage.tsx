@@ -8,6 +8,7 @@ import Routes from '../services/Router/Routes';
 import BaseTestInfo from '../components/common/BaseTestInfo';
 import QuestionsList from '../components/common/QuestionsList';
 import LoadingPage from './LoadingPage';
+import StudentsList from '../components/common/StudentsList';
 
 interface Props extends HomeLayoutProps {}
 
@@ -34,6 +35,16 @@ const OngoingExamPage: React.FC<Props> = observer(({ ...rest }) => {
       />
 
       <QuestionsList variant="accordion" questions={test.testQuestions} />
+
+      <StudentsList
+        variant="accordion"
+        students={[
+          { name: 'Alex', studentId: '123123' },
+          { name: 'John', studentId: '12asdfa124' },
+          { name: 'Alice', studentId: '123asfsd25' },
+          { name: 'Bob', studentId: '12343fgs126' },
+        ]}
+      />
     </HomeLayout>
   );
 });
