@@ -35,7 +35,7 @@ const ExamPage: React.FC<Props> = ({ ...rest }) => {
 
       <QuestionsList variant="accordion" questions={exam.test.testQuestions} />
 
-      <ExamResultsTable questions={exam.test.testQuestions.concat(exam.test.testQuestions)} />
+      <ExamResultsTable questions={exam.test.testQuestions} />
     </HomeLayout>
   );
 };
