@@ -6,6 +6,7 @@ import underscoreToUpperToSentence from '../../../utils/underscoreToUpperToSente
 import Subject from '../../../types/api/enums/Subject';
 import { Nullable } from '../../../types/utils/Nullable';
 import getIconSizeByTypographyVariant from '../../../utils/getIconSizeByTypographyVariant';
+import { SxTheme } from '../../../types/utils/SxTheme';
 
 interface Props {
   subject?: Nullable<Subject>;
@@ -32,7 +33,14 @@ const SubjectItemContent: React.FC<Props> = ({
         component="span"
         variant={textVariant}
         {...typographyProps}
-        sx={{ maxWidth: '100%', lineHeight: 'normal', ...textEllipsis, ...typographyProps?.sx }}
+        sx={
+          {
+            maxWidth: '100%',
+            lineHeight: 'normal',
+            ...textEllipsis,
+            ...typographyProps?.sx,
+          } as SxTheme
+        }
       >
         {subject ? underscoreToUpperToSentence(subject) : 'No subject'}
         {endText ? `. ${endText}` : ''}
