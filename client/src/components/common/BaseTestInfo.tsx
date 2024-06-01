@@ -11,10 +11,10 @@ import Button from '../UI/buttons/Button';
 
 interface Props extends StackProps {
   test: DetailedTest;
-  button?: React.ReactNode;
+  action?: React.ReactNode;
 }
 
-const BaseTestInfo: React.FC<Props> = observer(({ sx, test, button, ...rest }) => {
+const BaseTestInfo: React.FC<Props> = observer(({ sx, test, action: button, ...rest }) => {
   const { id, name, description, subject, createdAt } = test;
   const date = dayjs(createdAt).format('DD/MM/YYYY');
 
