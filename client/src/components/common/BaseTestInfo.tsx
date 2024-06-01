@@ -1,6 +1,7 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import { Stack, Typography, Box, StackProps } from '@mui/material';
+import { useNavigate } from 'react-router';
 import { observer } from 'mobx-react-lite';
 import SubjectItem from '../UI/SubjectItem/SubjectItem';
 import TestAvatar from '../UI/TestAvatar';
@@ -8,6 +9,7 @@ import { DetailedTest } from '../../types/api/entities/detailedTest';
 import UserAvatar from '../UI/UserAvatar';
 import teacherExamStore from '../../store/ExamStore/TeacherExamStore';
 import Button from '../UI/buttons/Button';
+import Routes from '../../services/Router/Routes';
 
 interface Props extends StackProps {
   test: DetailedTest;
@@ -15,8 +17,15 @@ interface Props extends StackProps {
 }
 
 const BaseTestInfo: React.FC<Props> = observer(({ sx, test, action: button, ...rest }) => {
+  const navigate = useNavigate();
   const { id, name, description, subject, createdAt } = test;
   const date = dayjs(createdAt).format('DD/MM/YYYY');
+
+  const createExam = async () => {
+    teacherExamStore.createExam(id).then(() => {
+      navigate(Routes.ONGOING_EXAM);
+    });
+  };
 
   return (
     <Stack
@@ -63,7 +72,7 @@ const BaseTestInfo: React.FC<Props> = observer(({ sx, test, action: button, ...r
             variant="contained"
             color="secondary"
             disabled={teacherExamStore.status !== 'idle'}
-            onClick={() => teacherExamStore.createExam(id)}
+            onClick={createExam}
           >
             {teacherExamStore.status !== 'idle'
               ? 'You have already started the exam'

@@ -15,6 +15,7 @@ import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
 import TestPage from '../../pages/TestPage';
 import ExamPage from '../../pages/ExamPage';
+import OngoingExamPage from '../../pages/OngoingExamPage';
 
 const router = createRouter([
   {
@@ -121,7 +122,7 @@ const router = createRouter([
     path: Routes.ONGOING_EXAM,
     element: (
       <Authenticated>
-        <HomeLayout>Ongoing exam page</HomeLayout>
+        <OngoingExamPage />
       </Authenticated>
     ),
   },
