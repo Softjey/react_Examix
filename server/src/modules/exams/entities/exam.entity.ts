@@ -1,7 +1,7 @@
-import { Test } from '@prisma/client';
 import { ExamQuestion } from './exam-question.entity';
 import { Student } from './student.entity';
 import { Author } from './author.entity';
+import { PrismaDetailedExamTest } from '../interfaces/prisma-detailed-exam.interface';
 
 export class Exam {
   status: 'created' | 'started' | 'finished' = 'created';
@@ -10,7 +10,7 @@ export class Exam {
 
   constructor(
     readonly author: Author,
-    readonly test: Test,
+    readonly test: PrismaDetailedExamTest,
     readonly questions: ExamQuestion[],
   ) {}
 }

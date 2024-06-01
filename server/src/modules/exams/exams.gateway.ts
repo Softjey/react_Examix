@@ -38,13 +38,22 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     switch (auth.role) {
       case 'author':
         await this.examsService.joinAuthor(auth.examCode, client.id);
+        const exam = await this.examsService.getExam(auth.examCode);
+
+        client.join(auth.examCode);
+        client.emit('connected', {
+          message: 'You are connected to the exam room like an author',
+          test: exam.test,
+        });
         break;
       case 'student':
         const [status, studentId] = await authenticator.authorizeStudent(auth);
-        const { author, students } = await this.examsService.getExam(auth.examCode);
+        const { author, students, test } = await this.examsService.getExam(auth.examCode);
+        const { testQuestions, ...restTest } = test;
 
         switch (status) {
           case 'error':
+            console.error('Error', { payload: { studentId, students, auth } });
             break;
           case 'new':
             if (!students[studentId]) {
@@ -54,11 +63,18 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
             }
 
             const { studentToken, name } = students[studentId];
+
             this.server.to(author.clientId!).emit('student-joined', { name, studentId });
-            client.emit('student-joined', { studentId, studentToken });
+            client.emit('connected', {
+              message: 'You are connected to the exam room like a student',
+              studentId,
+              test: { ...restTest, questionsAmount: testQuestions.length },
+              studentToken,
+            });
+
             break;
           case 'reconnected':
-            client.emit('student-reconnected');
+            client.emit('reconnected');
             break;
         }
         break;
@@ -69,18 +85,10 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(@ConnectedSocket() client: Socket) {
     const authenticator = new WsExamsAuthenticator(this.examsService, this.server, client);
-    const { isAuthenticated, auth } = await authenticator.authenticate();
+    const { isAuthenticated } = await authenticator.authenticate();
 
     if (isAuthenticated) {
       await this.handleRole(authenticator, client);
-
-      const exam = await this.examsService.getExam(auth.examCode);
-
-      client.join(auth.examCode);
-      client.emit('connected', {
-        message: 'You are connected to the exam room',
-        test: exam.test,
-      });
     }
   }
 
