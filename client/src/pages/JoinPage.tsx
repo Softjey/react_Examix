@@ -1,13 +1,14 @@
-/* eslint-disable no-console */
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { observer } from 'mobx-react-lite';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import LoginForm from '../components/forms/LoginForm';
 import { Nullable } from '../types/utils/Nullable';
 import StartLayout from '../components/layouts/StartLayout';
+import studentExamStore from '../store/ExamStore/StudentExamStore';
 
-const JoinFormShema = z.object({
+const JoinFormSchema = z.object({
   name: z.string().min(1, 'Name is required').max(15, 'Max length is 15'),
   code: z
     .string()
@@ -16,9 +17,9 @@ const JoinFormShema = z.object({
     .length(6, 'Code length must be 6'),
 });
 
-type JoinFormType = z.infer<typeof JoinFormShema>;
+type JoinFormType = z.infer<typeof JoinFormSchema>;
 
-const JoinPage: React.FC = () => {
+const JoinPage: React.FC = observer(() => {
   const [isLoading, setIsLoading] = useState(false);
   const [serverErrorMessage, setServerErrorMessage] = useState<Nullable<string>>(null);
 
@@ -32,30 +33,21 @@ const JoinPage: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<JoinFormType>({
-    resolver: zodResolver(JoinFormShema),
+    resolver: zodResolver(JoinFormSchema),
     defaultValues,
   });
 
-  const onSubmit = handleSubmit((data) => {
-    if (data.name && data.code) {
+  const onSubmit = handleSubmit(async ({ code, name }) => {
+    if (name && code) {
       setIsLoading(true);
 
-      // server request emulation
-      setTimeout(() => {
-        setIsLoading(false);
-        console.log(data);
-      }, 1000);
-
-      // TODO: make it when add quiz logic
-      /*
-      const { name, code } = data;
-      examSocket.createSocket({
-            role: ExamRole.STUDENT,
-            examCode: code,
-            studentName: name,
-          });
-      navigate(Routes.WAITING_PAGE);
-      */
+      await studentExamStore
+        .connectToExam({ examCode: code, studentName: name })
+        .then(() => {})
+        .catch((error) => {
+          setServerErrorMessage(error.message);
+        })
+        .finally(() => setIsLoading(false));
     }
   });
 
@@ -90,6 +82,6 @@ const JoinPage: React.FC = () => {
       />
     </StartLayout>
   );
-};
+});
 
 export default JoinPage;
