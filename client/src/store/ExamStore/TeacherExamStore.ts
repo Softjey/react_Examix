@@ -3,10 +3,11 @@ import { Socket, io } from 'socket.io-client';
 import ApiClient from '../../services/Api/ApiClient';
 import { Test } from '../../types/api/entities/test';
 import Message from './types/Message';
-import WsException from '../../services/Api/ws/types/WsException';
-import WsApiError from '../../services/Api/ws/WsApiError';
-import ConnectedResponse from '../../services/Api/ws/types/responses/ConnectedResponse';
+import WsException from './ws/types/WsException';
+import WsApiError from './ws/WsApiError';
+import { AuthorConnectedResponse } from './ws/types/responses/ConnectedResponse';
 import { DetailedTest } from '../../types/api/entities/detailedTest';
+import { AuthorAuth } from './types/auth';
 
 class TeacherExamStore {
   private EXAM_CODE_KEY = 'examCode';
@@ -53,7 +54,7 @@ class TeacherExamStore {
           role: 'author',
           authorToken,
           examCode,
-        },
+        } as AuthorAuth,
         autoConnect: false,
       });
 
@@ -63,13 +64,20 @@ class TeacherExamStore {
         this.error = error;
       });
 
-      socket.on(Message.CONNECTED, ({ test }: ConnectedResponse) => {
+      socket.on(Message.CONNECTED, ({ test }: AuthorConnectedResponse) => {
         this.isLoading = false;
         this.status = 'ongoing';
         this.socket = socket;
         this.test = test;
         this.examCode = examCode;
         resolve();
+      });
+
+      Object.values(Message).forEach((message) => {
+        socket.on(message, (data: unknown) => {
+          // eslint-disable-next-line no-console
+          console.log(message, data);
+        });
       });
 
       socket.connect();
