@@ -3,8 +3,8 @@ import React from 'react';
 
 interface Props extends TypographyProps {}
 
-const Logo: React.FC<Props> = ({ ...rest }) => (
-  <Typography variant="h1" {...rest}>
+const Logo: React.FC<Props> = ({ sx, ...rest }) => (
+  <Typography sx={{ userSelect: 'none', ...sx }} variant="h1" {...rest}>
     Examix
   </Typography>
 );

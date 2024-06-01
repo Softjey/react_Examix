@@ -5,8 +5,6 @@ import NotFoundPage from '../../pages/NotFoundPage';
 import Authenticated from '../../components/hocs/Authenticated';
 import DebugPage from '../../dev/DebugPage';
 import QuizPage from '../../dev/QuizPage';
-import TeacherLoginPage from '../../pages/LoginPage/TeacherLoginPage';
-import StudentJoinPage from '../../pages/LoginPage/StudentJoinPage';
 import WaitingPage from '../../dev/WaitingPage';
 import HomePage from '../../pages/HomePage';
 import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
@@ -16,6 +14,8 @@ import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
 import TestPage from '../../pages/TestPage';
 import ExamPage from '../../pages/ExamPage';
 import OngoingExamPage from '../../pages/OngoingExamPage';
+import LoginPage from '../../pages/LoginPage';
+import JoinPage from '../../pages/JoinPage';
 
 const router = createRouter([
   {
@@ -30,7 +30,7 @@ const router = createRouter([
     path: Routes.LOGIN,
     element: (
       <OnlyPublic>
-        <TeacherLoginPage />
+        <LoginPage />
       </OnlyPublic>
     ),
   },
@@ -38,7 +38,7 @@ const router = createRouter([
     path: Routes.JOIN,
     element: (
       <OnlyPublic>
-        <StudentJoinPage />
+        <JoinPage />
       </OnlyPublic>
     ),
   },
