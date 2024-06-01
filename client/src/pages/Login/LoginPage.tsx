@@ -2,11 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { z } from 'zod';
-import axios from 'axios';
 import useLogin from '../../hooks/queries/useLogin';
 import LoginForm from '../../components/forms/LoginForm';
 import EyeButton from '../../components/UI/buttons/EyeButton';
-import { Nullable } from '../../types/utils/Nullable';
 import StartLayout from '../../components/layouts/StartLayout';
 
 const LoginFormSchema = z.object({
@@ -21,10 +19,9 @@ const LoginFormSchema = z.object({
 type LoginFormType = z.infer<typeof LoginFormSchema>;
 
 const LoginPage: React.FC = () => {
-  const { mutate, isPending } = useLogin();
+  const { mutate, isPending, reset, error: serverError, isError } = useLogin();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [serverErrorMessage, setServerErrorMessage] = useState<Nullable<string>>(null);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -46,22 +43,7 @@ const LoginPage: React.FC = () => {
     if (data.email && data.password) {
       const { email, password } = data;
 
-      mutate(
-        { email, password },
-        {
-          onError: (error) => {
-            if (axios.isAxiosError(error)) {
-              if (error.response?.data.statusCode === 401) {
-                setServerErrorMessage('Invalid email or password');
-              } else {
-                setServerErrorMessage(error.response?.data.message);
-              }
-            } else {
-              setServerErrorMessage(error.message);
-            }
-          },
-        },
-      );
+      mutate({ email, password }, {});
     }
   });
 
@@ -75,7 +57,7 @@ const LoginPage: React.FC = () => {
           fullWidth: true,
           required: true,
           ...register('email'),
-          error: !!errors.email || !!serverErrorMessage,
+          error: !!errors.email || isError,
           helperText: errors.email?.message,
           autoComplete: 'email',
         }}
@@ -99,12 +81,12 @@ const LoginPage: React.FC = () => {
           fullWidth: true,
           required: true,
           ...register('password'),
-          error: !!errors.password || !!serverErrorMessage,
+          error: !!errors.password || isError,
           helperText: errors.password?.message,
           autoComplete: 'current-password',
         }}
-        errorMessage={serverErrorMessage}
-        onAlertClose={() => setServerErrorMessage(null)}
+        errorMessage={serverError ? serverError.message : null}
+        onAlertClose={() => reset()}
         isLoading={isPending}
         submitButtonText="Login"
         onSubmit={onSubmit}
