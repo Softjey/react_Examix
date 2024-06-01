@@ -74,11 +74,13 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (isAuthenticated) {
       await this.handleRole(authenticator, client);
 
-      const { test, questions } = await this.examsService.getExam(auth.examCode);
-      const testInfo = { ...test, questionsAmount: questions.length };
+      const exam = await this.examsService.getExam(auth.examCode);
 
       client.join(auth.examCode);
-      client.emit('test-info', testInfo);
+      client.emit('connected', {
+        message: 'You are connected to the exam room',
+        test: exam.test,
+      });
     }
   }
 
@@ -92,6 +94,8 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
+  @UseGuards(RoomAuthorGuard)
+  @SubscribeMessage('get-results')
   sendResults(client: Socket, examCode: string) {
     this.examsService.getResults(examCode).then((results) => {
       client.emit('results', results);
