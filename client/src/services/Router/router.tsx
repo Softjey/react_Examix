@@ -1,7 +1,6 @@
 import { createHashRouter as createRouter } from 'react-router-dom';
 import Routes from './Routes';
 import StartPage from '../../pages/StartPage';
-import LoginPage from '../../pages/LoginPage/LoginPage';
 import NotFoundPage from '../../pages/NotFoundPage';
 import Authenticated from '../../components/hocs/Authenticated';
 import DebugPage from '../../dev/DebugPage';
@@ -12,6 +11,8 @@ import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
 import TestPage from '../../pages/TestPage';
+import LoginPage from '../../pages/Login/LoginPage';
+import JoinPage from '../../pages/Login/JoinPage';
 import ExamPage from '../../pages/ExamPage';
 
 const router = createRouter([
@@ -27,7 +28,7 @@ const router = createRouter([
     path: Routes.LOGIN,
     element: (
       <OnlyPublic>
-        <LoginPage role="teacher" />
+        <LoginPage />
       </OnlyPublic>
     ),
   },
@@ -35,7 +36,7 @@ const router = createRouter([
     path: Routes.JOIN,
     element: (
       <OnlyPublic>
-        <LoginPage role="student" />
+        <JoinPage />
       </OnlyPublic>
     ),
   },
