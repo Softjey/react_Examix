@@ -65,8 +65,6 @@ const JoinPage: React.FC = () => {
         firstFieldProps={{
           label: 'Name',
           placeholder: 'Enter name',
-          variant: 'outlined',
-          fullWidth: true,
           required: true,
           ...register('name'),
           error: !!errors.name || !!serverErrorMessage,
@@ -75,8 +73,6 @@ const JoinPage: React.FC = () => {
         secondFieldProps={{
           label: 'Code',
           placeholder: 'Enter code',
-          variant: 'outlined',
-          fullWidth: true,
           inputProps: {
             maxLength: 6,
           },
@@ -88,7 +84,7 @@ const JoinPage: React.FC = () => {
         }}
         submitButtonText="Join"
         errorMessage={serverErrorMessage}
-        onAlertClose={() => setServerErrorMessage(null)}
+        onErrorClose={() => setServerErrorMessage(null)}
         isLoading={isLoading}
         onSubmit={onSubmit}
       />

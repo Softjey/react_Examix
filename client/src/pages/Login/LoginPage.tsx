@@ -53,8 +53,7 @@ const LoginPage: React.FC = () => {
         firstFieldProps={{
           label: 'Email',
           placeholder: 'Enter email',
-          variant: 'outlined',
-          fullWidth: true,
+          type: 'email',
           required: true,
           ...register('email'),
           error: !!errors.email || isError,
@@ -64,8 +63,8 @@ const LoginPage: React.FC = () => {
         secondFieldProps={{
           label: 'Password',
           placeholder: 'Enter password',
-          variant: 'outlined',
           type: showPassword ? 'text' : 'password',
+          required: true,
           InputProps: {
             endAdornment: (
               <EyeButton
@@ -78,15 +77,13 @@ const LoginPage: React.FC = () => {
               />
             ),
           },
-          fullWidth: true,
-          required: true,
           ...register('password'),
           error: !!errors.password || isError,
           helperText: errors.password?.message,
           autoComplete: 'current-password',
         }}
         errorMessage={serverError ? serverError.message : null}
-        onAlertClose={() => reset()}
+        onErrorClose={() => reset()}
         isLoading={isPending}
         submitButtonText="Login"
         onSubmit={onSubmit}

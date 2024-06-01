@@ -8,7 +8,7 @@ import { Nullable } from '../../types/utils/Nullable';
 interface Props {
   errorMessage: Nullable<string>;
   isLoading: boolean;
-  onAlertClose: () => void;
+  onErrorClose: () => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   firstFieldProps: TextFieldProps;
   secondFieldProps: TextFieldProps;
@@ -17,7 +17,7 @@ interface Props {
 
 const LoginForm: React.FC<Props> = ({
   errorMessage,
-  onAlertClose,
+  onErrorClose,
   onSubmit,
   isLoading,
   firstFieldProps,
@@ -27,8 +27,8 @@ const LoginForm: React.FC<Props> = ({
   return (
     <Box component="form" noValidate sx={{ gap: '20px', ...columnCenter }} onSubmit={onSubmit}>
       <Stack width="300px" direction="column" spacing={2}>
-        <TextField disabled={isLoading} {...firstFieldProps} />
-        <TextField disabled={isLoading} {...secondFieldProps} />
+        <TextField disabled={isLoading} fullWidth variant="outlined" {...firstFieldProps} />
+        <TextField disabled={isLoading} fullWidth variant="outlined" {...secondFieldProps} />
       </Stack>
       <LoadingButton
         buttonBase={MainButton}
@@ -43,7 +43,7 @@ const LoginForm: React.FC<Props> = ({
         <Alert
           severity="error"
           action={
-            <IconButton size="small" aria-label="close" color="inherit" onClick={onAlertClose}>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={onErrorClose}>
               <CloseIcon fontSize="small" />
             </IconButton>
           }
