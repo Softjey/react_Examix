@@ -11,9 +11,10 @@ import Button from '../UI/buttons/Button';
 
 interface Props extends StackProps {
   test: DetailedTest;
+  button?: React.ReactNode;
 }
 
-const BaseTestInfo: React.FC<Props> = observer(({ sx, test, ...rest }) => {
+const BaseTestInfo: React.FC<Props> = observer(({ sx, test, button, ...rest }) => {
   const { id, name, description, subject, createdAt } = test;
   const date = dayjs(createdAt).format('DD/MM/YYYY');
 
@@ -57,17 +58,18 @@ const BaseTestInfo: React.FC<Props> = observer(({ sx, test, ...rest }) => {
           />
         </Box>
 
-        <Button
-          variant="contained"
-          color="secondary"
-          // sx={{ fontSize: (t) => t.typography.caption.fontSize }}
-          disabled={teacherExamStore.status !== 'idle'}
-          onClick={() => teacherExamStore.createExam(id)}
-        >
-          {teacherExamStore.status !== 'idle'
-            ? 'You have already started the exam'
-            : 'Create Exam with this Test'}
-        </Button>
+        {button ?? (
+          <Button
+            variant="contained"
+            color="secondary"
+            disabled={teacherExamStore.status !== 'idle'}
+            onClick={() => teacherExamStore.createExam(id)}
+          >
+            {teacherExamStore.status !== 'idle'
+              ? 'You have already started the exam'
+              : 'Create Exam with this Test'}
+          </Button>
+        )}
       </Stack>
     </Stack>
   );
