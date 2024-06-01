@@ -12,7 +12,7 @@ const LoginFormSchema = z.object({
   password: z
     .string()
     .min(1, 'Password is required')
-    .min(6, 'Password must be at least 6 characters')
+    .min(8, 'Password must be at least 8 characters')
     .max(20, 'Max length is 20'),
 });
 
@@ -20,9 +20,7 @@ type LoginFormType = z.infer<typeof LoginFormSchema>;
 
 const LoginPage: React.FC = () => {
   const { mutate, isPending, reset, error: serverError, isError } = useLogin();
-
   const [showPassword, setShowPassword] = useState(false);
-
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const defaultValues: LoginFormType = {
@@ -43,7 +41,7 @@ const LoginPage: React.FC = () => {
     if (data.email && data.password) {
       const { email, password } = data;
 
-      mutate({ email, password }, {});
+      mutate({ email, password });
     }
   });
 

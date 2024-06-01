@@ -16,7 +16,7 @@ const OngoingExamPage: React.FC<Props> = observer(({ ...rest }) => {
     return <Navigate to={Routes.HOME} />;
   }
 
-  if (!teacherExamStore.isLoading || !teacherExamStore.test) {
+  if (teacherExamStore.isLoading || !teacherExamStore.test) {
     return <LoadingPage layout="home" />;
   }
 
