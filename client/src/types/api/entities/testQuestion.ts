@@ -1,8 +1,9 @@
+import { Nullable } from '../../utils/Nullable';
 import { Answer, Question } from './question';
 
 export interface Result {
   studentName: string;
-  studentAnswer: { answers: Answer[] };
+  studentAnswer: Nullable<{ answers: Pick<Answer, 'title'>[] }>;
 }
 
 export interface TestQuestion {

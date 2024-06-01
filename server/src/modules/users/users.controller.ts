@@ -1,9 +1,12 @@
-import { BadRequestException, Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Patch, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UseSessionGuard } from 'src/modules/auth/decorators/session-guard.decorator';
 import { AdminGuard } from '../auth/guards/admin.guard';
 import { ApiOperation } from '@nestjs/swagger';
+import { User } from '../auth/decorators/user.decorator';
+import { User as IUser } from '@prisma/client';
+import { UpdateUserDto } from './dtos/update-user.dto';
 
 @Controller('users')
 @UseSessionGuard()
@@ -25,6 +28,16 @@ export class UsersController {
     return {
       message: 'User created successfully',
       newUser: this.usersService.normalize(newUser),
+    };
+  }
+
+  @Patch('me')
+  async updateMe(@User() user: IUser, @Body() userDto: UpdateUserDto) {
+    const updatedUser = await this.usersService.update(user.id, userDto);
+
+    return {
+      message: 'User updated successfully',
+      user: this.usersService.normalize(updatedUser),
     };
   }
 }

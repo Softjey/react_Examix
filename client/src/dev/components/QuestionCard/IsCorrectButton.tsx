@@ -1,4 +1,3 @@
-/* eslint-disable operator-linebreak */
 import { Checkbox, CheckboxProps } from '@mui/material';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';

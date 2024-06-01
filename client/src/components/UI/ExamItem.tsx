@@ -26,14 +26,12 @@ const ExamItem: React.FC<Props> = ({ exam, ...rest }) => {
           width: '100%',
           display: 'flex',
           userSelect: 'none',
-          textDecoration: 'none',
-          color: 'inherit',
           justifyContent: 'space-between',
         }}
       >
         <Box display="flex" alignItems="center" width="40%">
           <ListItemAvatar>
-            <TestAvatar test={test} sx={{ mr: '20px' }} />
+            <TestAvatar width={60} test={test} sx={{ mr: '20px' }} />
           </ListItemAvatar>
 
           <ListItemText
