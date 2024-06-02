@@ -17,7 +17,7 @@ const HomeLayout: React.FC<Props> = ({
   centeredSx,
   ...rest
 }) => {
-  const contentWidth = 1000;
+  const contentWidth = 100;
   const center = centered ? columnCenter : {};
 
   return (

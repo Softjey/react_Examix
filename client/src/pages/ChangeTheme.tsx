@@ -59,7 +59,7 @@ const ChangeTheme: React.FC = () => {
   };
 
   return (
-    <ListItem>
+    <ListItem sx={{ width: '100%', maxWidth: 600, paddingTop: 0, bgcolor: 'background.paper' }}>
       <ListItemIcon>{isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}</ListItemIcon>
       <ListItemText primary="Toggle Dark/Light Theme" />
       <MaterialUISwitch

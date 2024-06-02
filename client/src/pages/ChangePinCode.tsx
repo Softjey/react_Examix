@@ -16,23 +16,23 @@ import {
 import PinIcon from '@mui/icons-material/Pin';
 
 const CustomSwitch = styled(Switch)(({ theme }) => ({
-  '& .MuiSwitch-switchBase.Mui-checked': {
+  '& .MuiSwitch-switchBase': {
     color: green[600],
     '&:hover': {
       backgroundColor: alpha(green[600], theme.palette.action.hoverOpacity),
     },
   },
-  '& .MuiSwitch-switchBase': {
+  '& .MuiSwitch-switchBase.Mui-checked': {
     color: red[600],
     '&:hover': {
       backgroundColor: alpha(red[600], theme.palette.action.hoverOpacity),
     },
   },
   '& .MuiSwitch-track': {
-    backgroundColor: red[600],
+    backgroundColor: green[600],
   },
   '& .Mui-checked + .MuiSwitch-track': {
-    backgroundColor: green[600],
+    backgroundColor: red[500],
   },
 }));
 
