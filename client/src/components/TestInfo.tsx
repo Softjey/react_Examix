@@ -1,8 +1,8 @@
 import { Box, BoxProps, TextField } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
-import ImageUploader from './ImageUploader';
-import { CreateTestForm } from '../interfaces';
-import SubjectSelect from '../../../components/UI/SubjectSelect';
+import ImageUploader from '../dev/components/ImageUploader';
+import { CreateTestForm } from '../schemas/createTestFormValidationSchemas';
+import SubjectSelect from './UI/SubjectSelect';
 
 interface Props extends BoxProps {}
 

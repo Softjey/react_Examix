@@ -7,7 +7,7 @@ interface Props extends IconButtonProps {
 
 const CloseButton: React.FC<Props> = ({ iconProps, ...props }) => {
   return (
-    <IconButton aria-label="close" {...props}>
+    <IconButton aria-label="close" color="inherit" {...props}>
       <CloseIcon {...iconProps} />
     </IconButton>
   );

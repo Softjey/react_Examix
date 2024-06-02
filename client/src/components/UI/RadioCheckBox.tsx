@@ -3,13 +3,13 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import QuestionType from '../../../types/api/enums/Type';
+import QuestionType from '../../types/api/enums/Type';
 
 interface Props extends CheckboxProps {
   type: QuestionType;
 }
 
-const IsCorrectButton: React.FC<Props> = ({ type, ...props }) => {
+const RadioCheckBox: React.FC<Props> = ({ type, ...props }) => {
   const icon =
     type === QuestionType.SINGLE_CHOICE ? (
       <RadioButtonUncheckedIcon />
@@ -21,4 +21,4 @@ const IsCorrectButton: React.FC<Props> = ({ type, ...props }) => {
   return <Checkbox icon={icon} checkedIcon={checkedIcon} {...props} />;
 };
 
-export default IsCorrectButton;
+export default RadioCheckBox;

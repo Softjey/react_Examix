@@ -1,26 +1,6 @@
 import { z } from 'zod';
-import Subject from '../../types/api/enums/Subject';
-import QuestionType from '../../types/api/enums/Type';
-
-export interface Answer {
-  title: string;
-  isCorrect: boolean;
-}
-
-export interface Question {
-  title: string;
-  type: QuestionType;
-  answers: Answer[];
-  maxScore: number;
-  timeLimit: number;
-}
-/* export interface CreateTestForm {
-  testImage: File | null;
-  testName: string;
-  testDescription: string;
-  subject: Subject | null;
-  questions: Question[];
-} */
+import Subject from '../types/api/enums/Subject';
+import QuestionType from '../types/api/enums/Type';
 
 const AnswerSchema = z.object({
   title: z.string().min(1, 'Answer title is required'),
@@ -35,7 +15,13 @@ const QuestionSchema = z.object({
     // QuestionType.TRUE_FALSE,
     // QuestionType.SHORT_ANSWER,
   ]),
-  answers: z.array(AnswerSchema).min(2, 'At least two answers are required'),
+  answers: z
+    .array(AnswerSchema)
+    .min(2, 'At least two answers are required')
+    .max(6, 'Max 6 answers')
+    .refine((answers) => answers.some((answer) => answer.isCorrect), {
+      message: 'At least one answer must be correct',
+    }),
   maxScore: z.number().min(0),
   timeLimit: z.number().min(0),
 });

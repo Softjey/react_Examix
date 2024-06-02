@@ -1,6 +1,6 @@
 import { MenuItem, TextField, TextFieldProps } from '@mui/material';
-import QuestionType from '../../../types/api/enums/Type';
-import underscoreToUpperToSentence from '../../../utils/underscoreToUpperToSentence';
+import QuestionType from '../../types/api/enums/Type';
+import underscoreToUpperToSentence from '../../utils/underscoreToUpperToSentence';
 
 interface Props extends TextFieldProps<'standard'> {}
 
@@ -15,7 +15,7 @@ const QuestionTypeSelect: React.FC<Props> = ({ ...rest }) => {
     >
       {(Object.keys(QuestionType) as Array<keyof typeof QuestionType>).map((type) => (
         <MenuItem
-          disabled={type === 'SHORT_ANSWER' || type === 'TRUE_FALSE'}
+          disabled={type === QuestionType.SHORT_ANSWER || type === QuestionType.TRUE_FALSE}
           key={type}
           value={type}
         >

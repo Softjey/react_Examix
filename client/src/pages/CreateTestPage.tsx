@@ -1,13 +1,13 @@
+/* eslint-disable no-console */
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable react/jsx-curly-newline */
-/* eslint-disable no-console */
 import { Box, Button, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import TestInfo from '../dev/components/TestInfo/TestInfo';
+import TestInfo from '../components/TestInfo';
 import QuestionType from '../types/api/enums/Type';
-import QuestionCard from '../dev/components/QuestionCard/QuestionCard';
-import { CreateTestForm, CreateTestSchema } from '../dev/components/interfaces';
+import QuestionCard from '../components/items/QuestionCard';
+import { CreateTestForm, CreateTestSchema } from '../schemas/createTestFormValidationSchemas';
 
 interface Props {}
 
@@ -46,10 +46,6 @@ const CreateTestPage: React.FC<Props> = () => {
     name: 'questions',
   });
 
-  const watchedValues = methods.watch();
-
-  console.log(watchedValues.questions[0].answers);
-
   return (
     <FormProvider {...methods}>
       <Box
@@ -66,7 +62,7 @@ const CreateTestPage: React.FC<Props> = () => {
       >
         <TestInfo />
 
-        {errors.questions && (
+        {(errors.questions?.message || errors.questions?.root?.message) && (
           <Typography color="error" variant="body1">
             {errors.questions.message || errors.questions.root?.message}
           </Typography>
@@ -77,7 +73,7 @@ const CreateTestPage: React.FC<Props> = () => {
             <QuestionCard
               key={field.id}
               questionIndex={index}
-              type={watchedValues.questions[index].type}
+              type={methods.watch(`questions.${index}.type`)}
               onDelete={() => remove(index)}
             />
           ))}
@@ -85,17 +81,20 @@ const CreateTestPage: React.FC<Props> = () => {
         <Button
           type="button"
           onClick={() =>
-            append({
-              title: '',
-              type: QuestionType.SINGLE_CHOICE,
-              answers: [
-                { title: '', isCorrect: true },
-                { title: '', isCorrect: false },
-                { title: '', isCorrect: false },
-              ],
-              maxScore: 0,
-              timeLimit: 0,
-            })
+            append(
+              {
+                title: '',
+                type: QuestionType.SINGLE_CHOICE,
+                answers: [
+                  { title: '', isCorrect: true },
+                  { title: '', isCorrect: false },
+                  { title: '', isCorrect: false },
+                ],
+                maxScore: 0,
+                timeLimit: 0,
+              },
+              { shouldFocus: false },
+            )
           }
         >
           Add

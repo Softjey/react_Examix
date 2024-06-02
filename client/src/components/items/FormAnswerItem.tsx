@@ -1,37 +1,52 @@
-/* eslint-disable react/jsx-curly-newline */
-/* eslint-disable implicit-arrow-linebreak */
 import { useFormContext } from 'react-hook-form';
 import { Box, TextField } from '@mui/material';
-import { CreateTestForm } from '../interfaces';
-import QuestionType from '../../../types/api/enums/Type';
-import CloseButton from '../buttons/CloseButton';
-import IsCorrectButton from './IsCorrectButton';
+import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
+import QuestionType from '../../types/api/enums/Type';
+import CloseButton from '../UI/buttons/CloseButton';
+import RadioCheckBox from '../UI/RadioCheckBox';
 
 interface Props {
   answerIndex: number;
   questionIndex: number;
   type: QuestionType;
   onDelete: () => void;
+  onCheckBoxClick: () => void;
 }
 
-const AnswerItem: React.FC<Props> = ({ type, questionIndex, answerIndex, onDelete }) => {
-  const { register, watch, setValue } = useFormContext<CreateTestForm>();
+const FormAnswerItem: React.FC<Props> = ({
+  type,
+  questionIndex,
+  answerIndex,
+  onDelete,
+  onCheckBoxClick,
+}) => {
+  const {
+    register,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useFormContext<CreateTestForm>();
 
   return (
-    <Box sx={{ display: 'flex', gap: '2px', alignItems: 'center' }}>
-      <IsCorrectButton
+    <Box sx={{ display: 'flex', gap: '2px', alignItems: 'start' }}>
+      <RadioCheckBox
         {...register(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`)}
         type={type}
         ref={null}
         /* this is neccessary because mui checkbox component
         is not working correctly with react-hook-form */
         checked={watch(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`)}
-        onChange={(e) =>
-          setValue(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`, e.target.checked)
-        }
+        onChange={(e) => {
+          onCheckBoxClick();
+          setValue(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`, e.target.checked);
+        }}
       />
       <TextField
         {...register(`questions.${questionIndex}.answers.${answerIndex}.title`)}
+        error={!!errors.questions?.[questionIndex]?.answers?.[answerIndex]?.title}
+        helperText={errors.questions?.[questionIndex]?.answers?.[
+          answerIndex
+        ]?.title?.message?.toString()}
         autoComplete="off"
         size="small"
         sx={{
@@ -65,4 +80,4 @@ const AnswerItem: React.FC<Props> = ({ type, questionIndex, answerIndex, onDelet
   );
 };
 
-export default AnswerItem;
+export default FormAnswerItem;
