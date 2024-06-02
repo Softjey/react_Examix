@@ -1,15 +1,17 @@
 import { Box, BoxProps, TextField } from '@mui/material';
-import { FieldErrors, UseFormRegister } from 'react-hook-form';
-import SubjectSelect from './SubjectSelect';
+import { useFormContext } from 'react-hook-form';
 import ImageUploader from './ImageUploader';
 import { CreateTestForm } from '../interfaces';
+import SubjectSelect from '../../../components/UI/SubjectSelect';
 
-interface Props extends BoxProps {
-  register: UseFormRegister<CreateTestForm>;
-  errors: FieldErrors<CreateTestForm>;
-}
+interface Props extends BoxProps {}
 
-const TestInfo: React.FC<Props> = ({ register, errors, sx, ...rest }) => {
+const TestInfo: React.FC<Props> = ({ sx, ...rest }) => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<CreateTestForm>();
+
   return (
     <Box {...rest} display="flex" flexDirection="column" gap="24px" sx={{ width: '100%', ...sx }}>
       <ImageUploader

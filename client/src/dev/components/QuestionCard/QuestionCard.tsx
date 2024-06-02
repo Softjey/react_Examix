@@ -8,38 +8,33 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Control, FieldErrors, UseFormRegister } from 'react-hook-form';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import QuestionTypeSelect from './QuestionTypeSelect';
 import TimeLimitInput from './TimeLimitInput';
-// import AddButton from '../buttons/AddButton';
+import AddButton from '../buttons/AddButton';
 import DragBar from './DragBar';
 import { CreateTestForm } from '../interfaces';
 import QuestionType from '../../../types/api/enums/Type';
 import DeleteButton from '../buttons/DeleteButton';
-// import AnswersGroup from './AnswersGroup';
+import AnswersGroup from './AnswersGroup';
 
 interface Props extends CardProps {
-  errors: FieldErrors<CreateTestForm>;
   type: QuestionType;
-  control: Control<CreateTestForm> | undefined;
-  register: UseFormRegister<CreateTestForm>;
   questionIndex: number;
   onDelete: () => void;
 }
 
-const QuestionCard: React.FC<Props> = ({
-  onDelete,
-  errors,
-  type,
-  control,
-  register,
-  questionIndex,
-  ...props
-}) => {
-  // const { fields, append, remove } = useFieldArray({
-  //   control,
-  //   name: `questions.${questionIndex}.answers`,
-  // });
+const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props }) => {
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = useFormContext<CreateTestForm>();
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `questions.${questionIndex}.answers`,
+  });
 
   return (
     <Card
@@ -106,17 +101,18 @@ const QuestionCard: React.FC<Props> = ({
           Answers
         </Typography>
 
-        {/* FIXME: add answers logic */}
-        {/*  <AnswersGroup
-          {...register(`questions.${questionIndex}.answers`)}
+        <AnswersGroup
+          fields={fields}
+          remove={remove}
           questionIndex={questionIndex}
-        /> */}
+          questionType={type}
+        />
       </CardContent>
 
       <CardActions
         sx={{ padding: '16px', paddingTop: '10px', display: 'flex', justifyContent: 'end' }}
       >
-        {/* <AddButton disabled onClick={() => append({ title: '', isCorrect: false })} /> */}
+        <AddButton onClick={() => append({ title: '', isCorrect: false })} />
         <DeleteButton onClick={onDelete} />
       </CardActions>
     </Card>

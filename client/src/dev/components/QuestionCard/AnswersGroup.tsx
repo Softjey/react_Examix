@@ -1,39 +1,74 @@
-import { RadioGroup, FormControlLabel, Radio } from '@mui/material';
-import { UseFormRegisterReturn } from 'react-hook-form';
-import { useState } from 'react';
+import { Box, BoxProps } from '@mui/material';
+import { FieldArrayWithId, UseFieldArrayRemove } from 'react-hook-form';
+import QuestionType from '../../../types/api/enums/Type';
+import { CreateTestForm } from '../interfaces';
+import AnswerItem from './AnswerItem';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface Props extends UseFormRegisterReturn<any> {
+interface Props extends BoxProps {
+  questionType: QuestionType;
   questionIndex: number;
+  fields: FieldArrayWithId<CreateTestForm, `questions.${number}.answers`, 'id'>[];
+  remove: UseFieldArrayRemove;
 }
 
-const AnswersGroup: React.FC<Props> = (props) => {
-  const { name, onChange, onBlur, ref, /* required, */ disabled } = props;
-  const [value, setValue] = useState<number | undefined>();
+const AnswersGroup: React.FC<Props> = ({
+  fields,
+  questionType,
+  questionIndex,
+  remove,
+  ...boxProps
+}) => {
+  /*  const [answers, setAnswers] =
+    useState<FieldArrayWithId<CreateTestForm, `questions.${number}.answers`, 'id'>[]>(fields);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>, currentValue: string) => {
-    setValue(+event.target.value);
-    const answers = [1, 2, 3].map((i) => ({
-      title: '',
-      isCorrect: i === +currentValue,
-    }));
+  useEffect(() => {
+    if (questionType === QuestionType.SINGLE_CHOICE) {
+      // устанавливаем всем кроме нажатого false
+    }
+  }, [questionType]); */
 
-    onChange({ target: { name, value: answers } });
-  };
+  // const updateCorrect = (index: number) => {
+  //   if (questionType === QuestionType.SINGLE_CHOICE) {
+  //     // устанавливаем всем кроме нажатого false
+  //     setAnswers((prev) => {
+  //       return prev.map((item, i) => {
+  //         console.log(item);
+  //         if (i === index) {
+  //           return {
+  //             ...item,
+  //             isCorrect: true,
+  //           };
+  //         }
+  //         return {
+  //           ...item,
+  //           isCorrect: false,
+  //         };
+  //       });
+  //     });
+  //   }
+  // };
 
   return (
-    <RadioGroup
-      name={name}
-      onChange={handleChange}
-      value={value}
-      onBlur={onBlur}
-      ref={ref}
-      aria-disabled={disabled}
-    >
-      <FormControlLabel value={1} control={<Radio />} label="Business" />
-      <FormControlLabel value={2} control={<Radio />} label="Non-Profit" />
-      <FormControlLabel value={3} control={<Radio />} label="Event" />
-    </RadioGroup>
+    <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2} {...boxProps}>
+      {fields.map((item, index) => (
+        /* <Checkbox
+          key={item.id}
+          {...register(`questions.${questionIndex}.answers.${index}.isCorrect`)}
+          checked={watch(`questions.${questionIndex}.answers.${index}.isCorrect`)}
+          onChange={(e) =>
+            setValue(`questions.${questionIndex}.answers.${index}.isCorrect`, e.target.checked)
+          }
+        /> */
+
+        <AnswerItem
+          onDelete={() => remove(index)}
+          answerIndex={index}
+          questionIndex={questionIndex}
+          key={item.id}
+          type={questionType}
+        />
+      ))}
+    </Box>
   );
 };
 
