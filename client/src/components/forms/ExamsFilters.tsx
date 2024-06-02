@@ -1,10 +1,11 @@
-import { Button, Paper, PaperProps, SxProps, TextField, Theme, Typography } from '@mui/material';
+import { Paper, PaperProps, SxProps, TextField, Theme, Typography } from '@mui/material';
 import React from 'react';
 import { Dayjs } from 'dayjs';
 import { useForm } from 'react-hook-form';
-import { Test } from '../../types/api/test';
+import { Test } from '../../types/api/entities/test';
 import TestsAutocomplete from '../UI/TestsAutocomplete/TestsAutocomplete';
 import DatePicker from '../UI/DatePicker';
+import Button from '../UI/buttons/Button';
 
 export interface ExamsFiltersForm {
   search: string;

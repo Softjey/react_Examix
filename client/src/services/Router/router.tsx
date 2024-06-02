@@ -1,16 +1,20 @@
 import { createHashRouter as createRouter } from 'react-router-dom';
 import Routes from './Routes';
 import StartPage from '../../pages/StartPage';
-import LoginPage from '../../pages/LoginPage/LoginPage';
 import NotFoundPage from '../../pages/NotFoundPage';
 import Authenticated from '../../components/hocs/Authenticated';
-import TestPage from '../../dev/TestPage';
+import DebugPage from '../../dev/DebugPage';
 import QuizPage from '../../dev/QuizPage';
 import HomePage from '../../pages/HomePage';
+import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
+import LoginPage from '../../pages/Login/LoginPage';
+import JoinPage from '../../pages/Login/JoinPage';
 import SettingsPage from '../../pages/SettingsPage';
+import TestPage from '../../pages/TestPage';
+import ExamPage from '../../pages/ExamPage';
 
 const router = createRouter([
   {
@@ -25,7 +29,7 @@ const router = createRouter([
     path: Routes.LOGIN,
     element: (
       <OnlyPublic>
-        <LoginPage role="teacher" />
+        <LoginPage />
       </OnlyPublic>
     ),
   },
@@ -33,7 +37,7 @@ const router = createRouter([
     path: Routes.JOIN,
     element: (
       <OnlyPublic>
-        <LoginPage role="student" />
+        <JoinPage />
       </OnlyPublic>
     ),
   },
@@ -50,10 +54,10 @@ const router = createRouter([
     ),
   },
   {
-    path: 'test',
+    path: 'debug',
     element: (
       <Authenticated>
-        <TestPage />
+        <DebugPage />
       </Authenticated>
     ),
   },
@@ -85,7 +89,7 @@ const router = createRouter([
     path: Routes.TESTS_LIBRARY,
     element: (
       <Authenticated>
-        <HomeLayout>Tests library page</HomeLayout>
+        <TestsLibraryPage />
       </Authenticated>
     ),
   },
@@ -94,6 +98,22 @@ const router = createRouter([
     element: (
       <Authenticated>
         <SettingsPage />
+      </Authenticated>
+    ),
+  },
+  {
+    path: `${Routes.TEST}/:id`,
+    element: (
+      <Authenticated>
+        <TestPage />
+      </Authenticated>
+    ),
+  },
+  {
+    path: `${Routes.EXAM}/:id`,
+    element: (
+      <Authenticated>
+        <ExamPage />
       </Authenticated>
     ),
   },

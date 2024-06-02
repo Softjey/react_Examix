@@ -1,6 +1,6 @@
-import { Exam } from '../../../types/api/exam';
-import { Question } from '../../../types/api/question';
-import { Test } from '../../../types/api/test';
+import { Exam } from '../../../types/api/entities/exam';
+import { Question } from '../../../types/api/entities/question';
+import { Test } from '../../../types/api/entities/test';
 import { WithMessage } from './utils';
 
 export type GlobalSearchResponse = WithMessage<{
@@ -12,17 +12,17 @@ export type GlobalSearchResult =
   | GlobalSearchResultTest
   | GlobalSearchResultExam;
 
-interface GlobalSearchResultExam {
+export interface GlobalSearchResultExam {
   type: 'exam';
   item: Exam;
 }
 
-interface GlobalSearchResultTest {
+export interface GlobalSearchResultTest {
   type: 'test';
   item: Test;
 }
 
-interface GlobalSearchResultQuestion {
+export interface GlobalSearchResultQuestion {
   type: 'question';
   item: Question;
 }
