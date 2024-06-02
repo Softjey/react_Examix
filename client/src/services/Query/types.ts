@@ -4,4 +4,6 @@ export const enum QueryKey {
   EXAMS = 'exams',
   TESTS = 'tests',
   TEST_NAME = 'test_name',
+  TEST = 'test',
+  EXAM = 'exam',
 }

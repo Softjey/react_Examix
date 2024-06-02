@@ -1,4 +1,10 @@
-import { Autocomplete, AutocompleteProps, CircularProgress, TextField } from '@mui/material';
+import {
+  Autocomplete,
+  AutocompleteInputChangeReason,
+  AutocompleteProps,
+  CircularProgress,
+  TextField,
+} from '@mui/material';
 import React, { SyntheticEvent } from 'react';
 import useGlobalSearch from '../../../hooks/queries/useGlobalSearch';
 import { getOptionLabel, renderOption } from './renderOption';
@@ -8,16 +14,21 @@ type AutoCompletePropsI = AutocompleteProps<GlobalSearchResult, boolean, boolean
 
 interface Props extends Omit<AutoCompletePropsI, 'options' | 'renderInput'> {}
 
-const GlobalSearchBar: React.FC<Props> = ({ ...rest }) => {
+const GlobalSearchBar: React.FC<Props> = ({ onInputChange, ...rest }) => {
   const { search, data: results, isPending } = useGlobalSearch();
-  const onInputChange = (_: SyntheticEvent<Element, Event>, newQuery: string) => {
+  const handleInputChange = (
+    _: SyntheticEvent<Element, Event>,
+    newQuery: string,
+    reason: AutocompleteInputChangeReason,
+  ) => {
     search({ query: newQuery });
+    onInputChange?.(_, newQuery, reason);
   };
 
   return (
     <Autocomplete
       freeSolo
-      onInputChange={onInputChange}
+      onInputChange={handleInputChange}
       loading={isPending}
       options={results ?? []}
       getOptionLabel={getOptionLabel}

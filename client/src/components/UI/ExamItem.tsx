@@ -3,11 +3,11 @@ import { ListItemText, ListItemProps, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import React from 'react';
 import prettifyDate from '../../utils/prettifyDate';
-import { Exam } from '../../types/api/exam';
+import { Exam } from '../../types/api/entities/exam';
 import Routes from '../../services/Router/Routes';
 import { trim } from '../../utils/trim';
 import TestAvatar from './TestAvatar';
-import SubjectItem from './SubjectItem';
+import SubjectItem from './SubjectItem/SubjectItem';
 
 interface Props extends ListItemProps {
   exam: Exam;
@@ -26,14 +26,12 @@ const ExamItem: React.FC<Props> = ({ exam, ...rest }) => {
           width: '100%',
           display: 'flex',
           userSelect: 'none',
-          textDecoration: 'none',
-          color: 'inherit',
           justifyContent: 'space-between',
         }}
       >
         <Box display="flex" alignItems="center" width="40%">
           <ListItemAvatar>
-            <TestAvatar test={test} sx={{ mr: '20px' }} />
+            <TestAvatar width={60} test={test} sx={{ mr: '20px' }} />
           </ListItemAvatar>
 
           <ListItemText

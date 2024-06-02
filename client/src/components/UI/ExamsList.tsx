@@ -1,6 +1,6 @@
 import { Box, BoxProps, CircularProgress, List, ListProps } from '@mui/material';
 import React from 'react';
-import { Exam } from '../../types/api/exam';
+import { Exam } from '../../types/api/entities/exam';
 import ExamItem from './ExamItem';
 import { center } from '../../styles/flex';
 

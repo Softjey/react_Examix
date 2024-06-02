@@ -1,6 +1,6 @@
-import { Nullable } from '../utils/Nullable';
-import Subject from './Subject';
-import Type from './Type';
+import { Nullable } from '../../utils/Nullable';
+import Subject from '../enums/Subject';
+import QuestionType from '../enums/Type';
 import { User } from './user';
 
 export type Answer = { title: string; isCorrect: boolean };
@@ -8,7 +8,7 @@ export type Answer = { title: string; isCorrect: boolean };
 export interface Question {
   id: number;
   title: string;
-  type: Type;
+  type: QuestionType;
   answers: Answer[];
   createdAt: Date;
   authorId: Nullable<User['id']>;
