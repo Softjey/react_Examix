@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { alpha, styled } from '@mui/material/styles';
-import { red, green } from '@mui/material/colors';
 import Switch from '@mui/material/Switch';
+import FiberPinIcon from '@mui/icons-material/FiberPin';
 
 import {
   Button,
@@ -14,27 +13,6 @@ import {
   Box,
 } from '@mui/material';
 import PinIcon from '@mui/icons-material/Pin';
-
-const CustomSwitch = styled(Switch)(({ theme }) => ({
-  '& .MuiSwitch-switchBase': {
-    color: green[600],
-    '&:hover': {
-      backgroundColor: alpha(green[600], theme.palette.action.hoverOpacity),
-    },
-  },
-  '& .MuiSwitch-switchBase.Mui-checked': {
-    color: red[600],
-    '&:hover': {
-      backgroundColor: alpha(red[600], theme.palette.action.hoverOpacity),
-    },
-  },
-  '& .MuiSwitch-track': {
-    backgroundColor: green[600],
-  },
-  '& .Mui-checked + .MuiSwitch-track': {
-    backgroundColor: red[500],
-  },
-}));
 
 const label = { inputProps: { 'aria-label': 'controlled' } };
 
@@ -56,18 +34,26 @@ const ChangePinCode: React.FC = () => {
   return (
     <>
       <ListItem>
-        <ListItemIcon>
-          <PinIcon />
+        <ListItemIcon sx={{ minWidth: 50 }}>
+          <FiberPinIcon sx={{ fontSize: 35 }} />
         </ListItemIcon>
-        <ListItemText primary="Change PIN Code" />
+        <ListItemText primary={<Typography variant="h6">Pin Code</Typography>} />
         <Button onClick={() => setIsPinModalOpen(true)}>Change</Button>
       </ListItem>
       <ListItem>
-        <ListItemIcon>
-          <PinIcon />
+        <ListItemIcon sx={{ minWidth: 50 }}>
+          <PinIcon sx={{ fontSize: 35 }} />
         </ListItemIcon>
-        <ListItemText primary="Enable/Disable PIN Code" />
-        <CustomSwitch {...label} checked={isPinEnabled} onChange={handlePinToggle} />
+        <ListItemText
+          primary={
+            <Typography variant="h6">
+              Pin Code is:{' '}
+              <span style={{ textDecoration: isPinEnabled ? 'underline' : 'none' }}>Enabled</span>/
+              <span style={{ textDecoration: !isPinEnabled ? 'underline' : 'none' }}>Disabled</span>
+            </Typography>
+          }
+        />
+        <Switch {...label} checked={isPinEnabled} onChange={handlePinToggle} />
       </ListItem>
 
       <Modal
@@ -80,7 +66,7 @@ const ChangePinCode: React.FC = () => {
           sx={{
             width: 400,
             bgcolor: 'background.paper',
-            p: 1,
+            padding: 3,
             m: 'auto',
             mt: '15%',
             borderRadius: 1,

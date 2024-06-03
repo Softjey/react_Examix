@@ -1,29 +1,45 @@
 import React from 'react';
-import { List, Box } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Paper } from '@mui/material';
 import HomeLayout from '../components/layouts/HomeLayout';
-import ChangePinCode from './ChangePinCode';
-import ChangeTheme from './ChangeTheme';
-import ChangeUserInfo from './ChangeUserInfo';
-import DeleteAccount from './DeleteAccount';
+import ChangePinCode from '../components/ChangePinCode';
+import ChangeTheme from '../components/ChangeTheme';
+import ChangeUserInfo from '../components/ChangeUserInfo';
+import DeleteAccount from '../components/DeleteAccount';
+
+const sx = {
+  padding: '25px',
+};
 
 const SettingsPage: React.FC = () => {
   return (
     <HomeLayout>
-      <Box sx={{ bgcolor: 'background.paper', color: 'text.primary', height: '100vh', p: 1 }}>
-        <List sx={{ width: '100%', maxWidth: 350, paddingTop: 0, bgcolor: 'background.paper' }}>
-          <Box sx={{ mb: 1 }}>
-            <ChangeUserInfo />
-          </Box>
-          <Box sx={{ mb: 1 }}>
-            <ChangePinCode />
-          </Box>
-          <Box sx={{ mb: 1 }}>
-            <ChangeTheme />
-          </Box>
-          <Box sx={{ mb: 1 }}>
-            <DeleteAccount />
-          </Box>
-        </List>
+      <Box sx={sx}>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="settings table">
+            <TableBody>
+              <TableRow>
+                <TableCell>
+                  <ChangeUserInfo />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  <ChangePinCode />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  <ChangeTheme />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  <DeleteAccount />
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
     </HomeLayout>
   );
