@@ -20,7 +20,7 @@ const ChangeUserInfo: React.FC = () => {
             /* Add logic for changing avatar */
           }}
         >
-          Change
+          Click
         </Button>
       </ListItem>
 
@@ -34,7 +34,7 @@ const ChangeUserInfo: React.FC = () => {
             /* Add logic for changing name */
           }}
         >
-          Change
+          Click
         </Button>
       </ListItem>
     </>
