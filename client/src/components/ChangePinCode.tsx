@@ -35,24 +35,16 @@ const ChangePinCode: React.FC = () => {
     <>
       <ListItem>
         <ListItemIcon sx={{ minWidth: 50 }}>
-          <FiberPinIcon sx={{ fontSize: 35 }} />
+          <PinIcon sx={{ fontSize: 35 }} />
         </ListItemIcon>
         <ListItemText primary={<Typography variant="h6">Pin Code</Typography>} />
         <Button onClick={() => setIsPinModalOpen(true)}>Change</Button>
       </ListItem>
       <ListItem>
         <ListItemIcon sx={{ minWidth: 50 }}>
-          <PinIcon sx={{ fontSize: 35 }} />
+          <FiberPinIcon sx={{ fontSize: 35 }} />
         </ListItemIcon>
-        <ListItemText
-          primary={
-            <Typography variant="h6">
-              Pin Code is:{' '}
-              <span style={{ textDecoration: isPinEnabled ? 'underline' : 'none' }}>Enabled</span>/
-              <span style={{ textDecoration: !isPinEnabled ? 'underline' : 'none' }}>Disabled</span>
-            </Typography>
-          }
-        />
+        <ListItemText primary={<Typography variant="h6">Pin Code protection</Typography>} />
         <Switch {...label} checked={isPinEnabled} onChange={handlePinToggle} />
       </ListItem>
 
