@@ -44,7 +44,7 @@ const ChangePinCode: React.FC = () => {
         <ListItemIcon sx={{ minWidth: 50 }}>
           <FiberPinIcon sx={{ fontSize: 35 }} />
         </ListItemIcon>
-        <ListItemText primary={<Typography variant="h6">Pin Code protection</Typography>} />
+        <ListItemText primary={<Typography variant="h6">Pin Code Protection</Typography>} />
         <Switch {...label} checked={isPinEnabled} onChange={handlePinToggle} />
       </ListItem>
 
