@@ -12,7 +12,7 @@ import QuestionsGroup from '../dev/components/QuestionsGroup';
 interface Props {}
 
 const defaultValues: CreateTestForm = {
-  testImage: null,
+  testImageLink: null,
   testName: '',
   testDescription: '',
   subject: '',

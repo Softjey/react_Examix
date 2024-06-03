@@ -1,8 +1,8 @@
 import { Box, BoxProps, TextField } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
-import ImageUploader from '../dev/components/ImageUploader';
 import { CreateTestForm } from '../schemas/createTestFormValidationSchemas';
 import SubjectSelect from './UI/SubjectSelect';
+import ImageLinkUploader from '../dev/components/ImageLinkUploader';
 
 interface Props extends BoxProps {}
 
@@ -14,8 +14,7 @@ const TestInfo: React.FC<Props> = ({ sx, ...rest }) => {
 
   return (
     <Box {...rest} display="flex" flexDirection="column" gap="24px" sx={{ width: '100%', ...sx }}>
-      <ImageUploader
-        // {...register('testImage')}
+      <ImageLinkUploader
         sx={{
           alignSelf: 'start',
           maxHeight: '150px',
