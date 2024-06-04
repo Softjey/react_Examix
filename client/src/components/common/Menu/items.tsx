@@ -41,7 +41,7 @@ export const getItems = ({ ongoingExam }: ItemsParams): MenuItemType[] => {
     items.splice(0, 0, {
       icon: <TimelapseIcon color="error" />,
       text: 'Ongoing exam',
-      url: Routes.ONGOING_EXAM,
+      url: Routes.ONGOING_EXAM_PANEL,
     });
   }
 

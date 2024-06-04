@@ -16,6 +16,7 @@ import ExamPage from '../../pages/ExamPage';
 import OngoingExamPage from '../../pages/OngoingExamPage';
 import LoginPage from '../../pages/LoginPage';
 import JoinPage from '../../pages/JoinPage';
+import OngoingExamPanelPage from '../../pages/OngoingExamPanelPage';
 
 const router = createRouter([
   {
@@ -119,11 +120,19 @@ const router = createRouter([
     ),
   },
   {
-    path: Routes.ONGOING_EXAM,
+    path: Routes.ONGOING_EXAM_PANEL,
     element: (
       <Authenticated>
-        <OngoingExamPage />
+        <OngoingExamPanelPage />
       </Authenticated>
+    ),
+  },
+  {
+    path: Routes.ONGOING_EXAM,
+    element: (
+      <OnlyPublic>
+        <OngoingExamPage />
+      </OnlyPublic>
     ),
   },
 ]);

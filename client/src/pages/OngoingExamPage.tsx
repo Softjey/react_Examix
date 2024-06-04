@@ -1,58 +1,43 @@
 import React from 'react';
-import { observer } from 'mobx-react-lite';
 import { Navigate } from 'react-router';
-import { Stack, Typography } from '@mui/material';
-import HomeLayout, { Props as HomeLayoutProps } from '../components/layouts/HomeLayout';
-import teacherExamStore from '../store/ExamStore/TeacherExamStore';
+import { observer } from 'mobx-react-lite';
+import { Paper, Stack, Typography } from '@mui/material';
+import studentExamStore from '../store/ExamStore/StudentExamStore';
 import Routes from '../services/Router/Routes';
-import BaseTestInfo from '../components/common/BaseTestInfo';
-import QuestionsList from '../components/common/QuestionsList';
-import LoadingPage from './LoadingPage';
 import StudentsList from '../components/common/StudentsList';
-import Button from '../components/UI/buttons/Button';
+import BaseTestInfo from '../components/common/BaseTestInfo';
+import DottedText from '../dev/DottedText/DottedText';
 
-interface Props extends HomeLayoutProps {}
+interface Props {}
 
-const OngoingExamPage: React.FC<Props> = observer(({ ...rest }) => {
-  if (teacherExamStore.status === 'idle') {
-    return <Navigate to={Routes.HOME} />;
+const OngoingExamPage: React.FC<Props> = observer(() => {
+  const { status, students, test } = studentExamStore;
+
+  if (status !== 'ongoing') {
+    return <Navigate to={Routes.JOIN} />;
   }
-
-  if (teacherExamStore.isLoading || !teacherExamStore.test) {
-    return <LoadingPage layout="home" />;
-  }
-
-  const { test } = teacherExamStore;
 
   return (
-    <HomeLayout centered {...rest}>
-      <BaseTestInfo
-        test={test}
-        action={
-          <Stack direction="row" justifyContent="space-around">
-            <Typography align="center" variant="h4" color={(theme) => theme.palette.secondary.dark}>
-              {teacherExamStore.examCode}
+    <Stack alignItems="center" justifyContent="center" minHeight="100vh">
+      <Stack spacing={10} maxWidth={800} width="90%">
+        {test && (
+          <BaseTestInfo
+            test={test}
+            action={<DottedText variant="h6">Waiting for the exam to start</DottedText>}
+          />
+        )}
+
+        <Paper component={Stack} variant="outlined" spacing={4} padding={4}>
+          {students?.length !== 0 && (
+            <Typography variant="h4" textAlign="center">
+              Connected students:
             </Typography>
+          )}
 
-            <Button variant="contained" color="secondary">
-              Start exam
-            </Button>
-          </Stack>
-        }
-      />
-
-      <QuestionsList variant="accordion" questions={test.testQuestions} />
-
-      <StudentsList
-        variant="accordion"
-        students={[
-          { name: 'Alex', studentId: '123123' },
-          { name: 'John', studentId: '12asdfa124' },
-          { name: 'Alice', studentId: '123asfsd25' },
-          { name: 'Bob', studentId: '12343fgs126' },
-        ]}
-      />
-    </HomeLayout>
+          <StudentsList students={students ?? []} sx={{ minHeight: 360 }} />
+        </Paper>
+      </Stack>
+    </Stack>
   );
 });
 
