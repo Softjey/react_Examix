@@ -8,6 +8,7 @@ import WsApiError from './ws/WsApiError';
 import { AuthorConnectedResponse } from './ws/types/responses/ConnectedResponse';
 import { DetailedTest } from '../../types/api/entities/detailedTest';
 import { AuthorAuth } from './types/auth';
+import Student from './types/Student';
 
 class TeacherExamStore {
   private EXAM_CODE_KEY = 'examCode';
@@ -15,6 +16,7 @@ class TeacherExamStore {
   private socket: Socket | null = null;
   examCode: string | null = null;
   test: DetailedTest | null = null;
+  students: Student[] | null = null;
   error: WsException | null = null;
   status: 'idle' | 'ongoing' = 'idle';
   isLoading = false;
@@ -22,13 +24,14 @@ class TeacherExamStore {
   constructor() {
     makeAutoObservable(this);
 
-    const examCode = localStorage.getItem(this.EXAM_CODE_KEY);
-    const authorToken = localStorage.getItem(this.AUTHOR_TOKEN_KEY);
+    const examCode = sessionStorage.getItem(this.EXAM_CODE_KEY);
+    const authorToken = sessionStorage.getItem(this.AUTHOR_TOKEN_KEY);
 
     if (examCode && authorToken) {
       this.connectToExam(authorToken, examCode).catch(() => {
-        localStorage.removeItem(this.EXAM_CODE_KEY);
-        localStorage.removeItem(this.AUTHOR_TOKEN_KEY);
+        this.socket = null;
+        sessionStorage.removeItem(this.EXAM_CODE_KEY);
+        sessionStorage.removeItem(this.AUTHOR_TOKEN_KEY);
       });
     }
   }
@@ -38,8 +41,8 @@ class TeacherExamStore {
 
     const { authorToken, examCode } = await ApiClient.createExam(testId);
 
-    localStorage.setItem(this.EXAM_CODE_KEY, examCode);
-    localStorage.setItem(this.AUTHOR_TOKEN_KEY, authorToken);
+    sessionStorage.setItem(this.EXAM_CODE_KEY, examCode);
+    sessionStorage.setItem(this.AUTHOR_TOKEN_KEY, authorToken);
 
     await this.connectToExam(authorToken, examCode);
   }
@@ -49,38 +52,44 @@ class TeacherExamStore {
     this.error = null;
 
     return new Promise<void>((resolve, reject) => {
-      const socket = io(`${import.meta.env.VITE_SERVER_WS_URL}/join-exam`, {
-        auth: {
-          role: 'author',
-          authorToken,
-          examCode,
-        } as AuthorAuth,
+      this.socket = io(`${import.meta.env.VITE_SERVER_WS_URL}/join-exam`, {
+        auth: { role: 'author', authorToken, examCode } as AuthorAuth,
         autoConnect: false,
       });
 
-      socket.on(Message.EXCEPTION, (error: WsException) => {
+      this.socket.on(Message.EXCEPTION, (error: WsException) => {
         reject(new WsApiError(error));
         this.isLoading = false;
         this.error = error;
       });
 
-      socket.on(Message.CONNECTED, ({ test }: AuthorConnectedResponse) => {
+      this.socket.on(Message.CONNECTED, ({ test, students }: AuthorConnectedResponse) => {
         this.isLoading = false;
         this.status = 'ongoing';
-        this.socket = socket;
         this.test = test;
         this.examCode = examCode;
+        this.students = students;
         resolve();
       });
 
+      this.socket.on(Message.STUDENT_JOINED, (student: Student) => {
+        if (!this.students) return;
+        this.students = [...this.students, student];
+      });
+
+      this.socket.on(Message.STUDENT_RECONNECTED, (student: Student) => {
+        if (!this.students) return;
+        this.students = this.students.map((s) => (s.studentId === student.studentId ? student : s));
+      });
+
       Object.values(Message).forEach((message) => {
-        socket.on(message, (data: unknown) => {
+        this.socket?.on(message, (data: unknown) => {
           // eslint-disable-next-line no-console
           console.log(message, data);
         });
       });
 
-      socket.connect();
+      this.socket.connect();
     });
   }
 }
