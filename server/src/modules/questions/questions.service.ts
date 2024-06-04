@@ -52,19 +52,19 @@ export class QuestionsService {
 
   async createMany(createQuestionDtos: (CreateQuestionDto & { authorId: User['id'] })[]) {
     const questionsData = createQuestionDtos.map(({ type, answers: rawAnswers, ...question }) => {
-      const answers = this.validateAnswers(type, rawAnswers) as Answer[];
+      const answers = this.validateAnswers(type, rawAnswers);
 
       return { ...question, type, answers };
     });
 
-    const questions = await this.prismaService.question.createMany({
-      data: questionsData,
-    });
+    const questions = await this.prismaService.$transaction(
+      questionsData.map((question) => this.prismaService.question.create({ data: question })),
+    );
 
-    return questions.count;
+    return questions;
   }
 
-  validateAnswers(type: Question['type'], answers: Question['answers']) {
+  validateAnswers(type: Question['type'], answers: Question['answers']): Answer[] {
     const correctAnswersLength = answers.filter((answer) => answer.isCorrect).length;
 
     switch (type) {
