@@ -1,15 +1,15 @@
 /* eslint-disable react/self-closing-comp */
-import './BookLoader.css';
+import classes from './BookLoader.module.css';
 
 const BookLoader: React.FC = () => {
   const pages = Array.from({ length: 18 }, (_, i) => i);
 
   return (
-    <div className="book">
-      <div className="inner">
-        <div className="left"></div>
-        <div className="middle"></div>
-        <div className="right"></div>
+    <div className={classes.book}>
+      <div className={classes.inner}>
+        <div className={classes.left}></div>
+        <div className={classes.middle}></div>
+        <div className={classes.right}></div>
       </div>
       <ul>
         {pages.map((page) => (
