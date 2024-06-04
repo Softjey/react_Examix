@@ -12,18 +12,21 @@ import Button from '../UI/buttons/Button';
 import Routes from '../../services/Router/Routes';
 
 interface Props extends StackProps {
-  test: DetailedTest;
+  test: Pick<
+    DetailedTest,
+    'id' | 'image' | 'name' | 'description' | 'author' | 'subject' | 'createdAt'
+  >;
   action?: React.ReactNode;
 }
 
-const BaseTestInfo: React.FC<Props> = observer(({ sx, test, action: button, ...rest }) => {
+const BaseTestInfo: React.FC<Props> = observer(({ sx, test, action, ...rest }) => {
   const navigate = useNavigate();
   const { id, name, description, subject, createdAt } = test;
   const date = dayjs(createdAt).format('DD/MM/YYYY');
 
   const createExam = async () => {
     teacherExamStore.createExam(id).then(() => {
-      navigate(Routes.ONGOING_EXAM);
+      navigate(Routes.ONGOING_EXAM_PANEL);
     });
   };
 
@@ -67,7 +70,7 @@ const BaseTestInfo: React.FC<Props> = observer(({ sx, test, action: button, ...r
           />
         </Box>
 
-        {button ?? (
+        {action ?? (
           <Button
             variant="contained"
             color="secondary"
