@@ -14,6 +14,7 @@ import { QuestionAnswerDto, StudentAnswer } from './dtos/question-answer.dto';
 import { RoomAuthorGuard } from './guards/room-author.guard';
 import { RoomStudentGuard } from './guards/room-student.guard';
 import { KickStudentDto } from './dtos/kick-student.dto';
+import { Student } from './entities/student.entity';
 
 @UseFilters(WsExceptionsFilter)
 @UsePipes(new ValidationPipe())
@@ -34,52 +35,72 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private async handleRole(authenticator: WsExamsAuthenticator, client: Socket) {
     const auth = client.handshake.auth as ExamClientAuthDto;
+    const { test, students } = await this.examsService.getExam(auth.examCode);
+
+    const prepareStudents = (students: Record<string, Student>) =>
+      Object.entries(students).map(([studentId, { name }]) => ({
+        name,
+        studentId,
+      }));
 
     switch (auth.role) {
       case 'author':
         await this.examsService.joinAuthor(auth.examCode, client.id);
-        const exam = await this.examsService.getExam(auth.examCode);
 
         client.join(auth.examCode);
         client.emit('connected', {
           message: 'You are connected to the exam room like an author',
-          test: exam.test,
+          students: prepareStudents(students),
+          test,
         });
+
         break;
       case 'student':
         const [status, studentId] = await authenticator.authorizeStudent(auth);
-        const { author, students, test } = await this.examsService.getExam(auth.examCode);
+        const { students: newStudents } = await this.examsService.getExam(auth.examCode);
         const { testQuestions, ...restTest } = test;
 
-        switch (status) {
-          case 'error':
-            console.error('Error', { payload: { studentId, students, auth } });
-            break;
-          case 'new':
-            if (!students[studentId]) {
+        const connectedData = {
+          test: { ...restTest, questionsAmount: testQuestions.length },
+          students: prepareStudents(newStudents),
+        };
+
+        const map = {
+          error: () => {},
+          new: () => {
+            const newStudent = newStudents[studentId];
+
+            if (!newStudent) {
               throw WebSocketException.ServerError('Student was not created', {
                 payload: { studentId, auth },
               });
             }
 
-            const { studentToken, name } = students[studentId];
+            const { studentToken, name } = newStudent;
 
-            this.server.to(author.clientId!).emit('student-joined', { name, studentId });
+            client.join(auth.examCode);
+            client.broadcast.to(auth.examCode).emit('student-joined', { name, studentId });
             client.emit('connected', {
               message: 'You are connected to the exam room like a student',
               studentId,
-              test: { ...restTest, questionsAmount: testQuestions.length },
               studentToken,
+              ...connectedData,
             });
+          },
+          reconnected: () => {
+            client.join(auth.examCode);
+            client.broadcast
+              .to(auth.examCode)
+              .emit('student-reconnected', { name: newStudents[studentId].name, studentId });
 
-            break;
-          case 'reconnected':
-            client.emit('reconnected');
-            break;
-        }
-        break;
-      default:
-        throw WebSocketException.ServerError('Invalid auth role');
+            client.emit('reconnected', {
+              message: 'You are reconnected to the exam room like a student',
+              ...connectedData,
+            });
+          },
+        };
+
+        map[status]();
     }
   }
 
@@ -96,6 +117,8 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const { examCode } = client.handshake.auth as ExamClientAuthDto;
     const room = await this.server.in(examCode).fetchSockets();
     const exam = await this.examsService.getExam(examCode, true);
+
+    console.log('Disconnect', { examCode, room: room.length, examStatus: exam?.status });
 
     if (exam && room.length === 0 && exam.status !== 'started') {
       await this.examsService.deleteExam(examCode);

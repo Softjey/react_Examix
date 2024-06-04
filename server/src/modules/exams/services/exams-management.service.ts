@@ -66,12 +66,14 @@ export class ExamManagementService extends EventEmitter {
   async updateStudentClientId(
     examCode: string,
     studentId: Student['clientId'],
-    clientId: Student['clientId'],
+    newName: Student['name'],
+    newClientId: Student['clientId'],
   ) {
     const exam = await this.examsCacheService.getExam(examCode);
     const changedId = exam.students[studentId].clientId;
 
-    exam.students[studentId].clientId = clientId;
+    exam.students[studentId].clientId = newClientId;
+    exam.students[studentId].name = newName;
     await this.examsCacheService.setExam(examCode, exam);
 
     const newStudent = exam.students[studentId];
