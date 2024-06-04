@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useContext } from 'react';
 import { Box, BoxProps, CircularProgress, Modal, TextField, Typography } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -6,15 +6,25 @@ import { useFormContext } from 'react-hook-form';
 import Button from '../../components/UI/buttons/Button';
 import { CreateTestForm, isValidImageUrl } from '../../schemas/createTestFormValidationSchemas';
 import { Nullable } from '../../types/utils/Nullable';
+import DisabledContext from '../../hooks/context/DisabledContext';
 
 interface ImageLinkUploaderProps extends BoxProps {}
 
 const ImageLinkUploader: React.FC<ImageLinkUploaderProps> = (props) => {
   const { register, watch, setValue } = useFormContext<CreateTestForm>();
+
   const [imageLink, setImageLink] = useState<Nullable<string>>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Nullable<Error>>(null);
+
+  const disabledContext = useContext(DisabledContext);
+
+  if (!disabledContext) {
+    throw new Error('DisabledContext must be used within a DisabledContext.Provider');
+  }
+
+  const { disabled } = disabledContext;
 
   const handleImageChange = () => {
     setOpen(false);
@@ -60,10 +70,15 @@ const ImageLinkUploader: React.FC<ImageLinkUploaderProps> = (props) => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundImage: imageLink ? `url(${imageLink})` : 'none',
+          opacity: disabled ? 0.5 : 1,
           cursor: 'pointer',
           ...props.sx,
         }}
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          if (!disabled) {
+            setOpen(true);
+          }
+        }}
       >
         {!imageLink && <PhotoCameraIcon sx={{ fontSize: 48, color: 'gray' }} />}
       </Box>

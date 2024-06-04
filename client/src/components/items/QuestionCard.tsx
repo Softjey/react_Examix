@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import QuestionTypeSelect from '../UI/QuestionTypeSelect';
 import TimeLimitInput from '../../dev/components/TimeLimitInput';
 import AddButton from '../UI/buttons/AddButton';
@@ -20,6 +20,7 @@ import QuestionType from '../../types/api/enums/Type';
 import DeleteButton from '../UI/buttons/DeleteButton';
 import AnswersGroup from '../../dev/components/AnswersGroup';
 import CloseButton from '../UI/buttons/CloseButton';
+import DisabledContext from '../../hooks/context/DisabledContext';
 
 interface Props extends CardProps {
   type: QuestionType;
@@ -33,6 +34,14 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
     control,
     formState: { errors },
   } = useFormContext<CreateTestForm>();
+
+  const disabledContext = useContext(DisabledContext);
+
+  if (!disabledContext) {
+    throw new Error('DisabledContext must be used within a DisabledContext.Provider');
+  }
+
+  const { disabled } = disabledContext;
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -64,11 +73,16 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
           sx={{ display: 'flex', gap: 1, flexDirection: 'column', paddingBottom: 0, paddingTop: 0 }}
         >
           <Box display="flex" gap={1} flexWrap="wrap">
-            <QuestionTypeSelect {...register(`questions.${questionIndex}.type`)} ref={null} />
+            <QuestionTypeSelect
+              disabled={disabled}
+              {...register(`questions.${questionIndex}.type`)}
+              ref={null}
+            />
 
             <TimeLimitInput
               {...register(`questions.${questionIndex}.timeLimit`)}
               ref={null}
+              // disabled={disabled}
               disabled
             />
 
@@ -91,6 +105,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
                   maxLength: 3,
                 },
               }}
+              disabled={disabled}
             />
           </Box>
 
@@ -102,6 +117,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
             autoComplete="off"
             type="text"
             placeholder="Question title"
+            disabled={disabled}
           />
 
           <Typography color="text.secondary" variant="body2">
@@ -127,6 +143,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
           sx={{ padding: '16px', paddingTop: '10px', display: 'flex', justifyContent: 'end' }}
         >
           <AddButton
+            disabled={disabled}
             onClick={(e) => {
               e.preventDefault();
               if (fields.length < 6) {
