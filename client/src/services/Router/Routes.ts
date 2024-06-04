@@ -13,6 +13,7 @@ enum Routes {
   SETTINGS = '/settings',
   EXAM = '/exam',
   ONGOING_EXAM = '/ongoing-exam',
+  ONGOING_EXAM_PANEL = '/ongoing-exam/panel',
 }
 
 export default Routes;
