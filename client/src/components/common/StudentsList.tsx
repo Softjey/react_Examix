@@ -1,4 +1,5 @@
-import { CircularProgress, ListItemAvatar, ListItemText, ListProps, Paper } from '@mui/material';
+import { CircularProgress, ListItemAvatar, ListItemText } from '@mui/material';
+import { ListProps, Paper, Stack } from '@mui/material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { IconButton, List, ListItem } from '@mui/material';
 import React from 'react';
@@ -6,6 +7,7 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import UserAvatar from '../UI/UserAvatar';
 import Student from '../../store/ExamStore/types/Student';
+import DottedText from '../../dev/DottedText/DottedText';
 
 interface Props extends ListProps {
   students: Student[];
@@ -19,16 +21,18 @@ const StudentsList: React.FC<Props> = ({ students, variant, onKick, sx, ...rest 
       sx={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, 280px)',
+        gridTemplateRows: 'repeat(auto-fit, 60px)',
         justifyContent: 'center',
         gap: 2,
+        ...sx,
       }}
       {...rest}
     >
       {students.length === 0 && (
-        <ListItem>
-          <ListItemText primary="Waiting for students..." />
-          <CircularProgress />
-        </ListItem>
+        <Stack height="100%" direction="row" spacing={5}>
+          <DottedText variant="h6">Waiting for students</DottedText>
+          <CircularProgress size={30} />
+        </Stack>
       )}
 
       {students.length > 0 &&
