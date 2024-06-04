@@ -27,7 +27,7 @@ const SettingsPage: React.FC = () => (
       <Box sx={{ p: 1 }}>
         <ChangePinCode />
         <Typography marginLeft={2} color="gray" variant="body1">
-          Customize your security settings.
+          Customize your security settings
         </Typography>
       </Box>
 
@@ -38,7 +38,7 @@ const SettingsPage: React.FC = () => (
       <Box sx={{ p: 1 }}>
         <ChangeTheme />
         <Typography marginLeft={2} color="gray" variant="body1">
-          Customize the appearance of the app.
+          Customize the appearance of the app
         </Typography>
       </Box>
 
@@ -49,7 +49,7 @@ const SettingsPage: React.FC = () => (
       <Box sx={{ p: 1 }}>
         <DeleteAccount />
         <Typography marginLeft={2} color="gray" variant="body1">
-          Permanently delete your account.
+          Permanently delete your account
         </Typography>
       </Box>
     </Stack>

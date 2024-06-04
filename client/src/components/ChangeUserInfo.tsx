@@ -59,7 +59,7 @@ const ChangeUserInfo: React.FC = () => {
 
       <Box>
         <Typography marginLeft={2} color="gray" variant="body1">
-          Update your profile information.
+          Update your profile information
         </Typography>
       </Box>
 
@@ -73,7 +73,7 @@ const ChangeUserInfo: React.FC = () => {
 
       <Box>
         <Typography marginLeft={2} color="gray" variant="body1">
-          Change your Password.
+          Change your Password
         </Typography>
       </Box>
 
