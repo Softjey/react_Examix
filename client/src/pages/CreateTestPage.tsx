@@ -11,6 +11,10 @@ import { CreateTestForm, CreateTestSchema } from '../schemas/createTestFormValid
 import QuestionsGroup from '../dev/components/QuestionsGroup';
 import LoadingButton from '../components/UI/buttons/LoadingButton';
 import DisabledContext from '../hooks/context/DisabledContext';
+import ApiClient from '../services/Api/ApiClient';
+import Subject from '../types/api/enums/Subject';
+import { CreateTestDto } from '../services/Api/types/create-test';
+import ApiError from '../services/Api/ApiError';
 
 interface Props {}
 
@@ -29,7 +33,7 @@ const defaultValues: CreateTestForm = {
         { title: '', isCorrect: false },
       ],
       maxScore: 0,
-      timeLimit: 0,
+      timeLimit: 1,
     },
   ],
 };
@@ -61,7 +65,7 @@ const CreateTestPage: React.FC<Props> = () => {
           { title: '', isCorrect: false },
         ],
         maxScore: 0,
-        timeLimit: 0,
+        timeLimit: 1,
       },
       { shouldFocus: false },
     );
@@ -71,21 +75,56 @@ const CreateTestPage: React.FC<Props> = () => {
     [loading, setLoading],
   );
 
+  const onSubmit = methods.handleSubmit(async (data) => {
+    console.log('submitted');
+    setLoading(true);
+    const filteredQuestions = data.questions.map((question) => {
+      const { maxScore, timeLimit, ...rest } = question;
+      return { ...rest, subject: data.subject as Subject };
+    });
+    console.log('data to send', filteredQuestions);
+    try {
+      const createQuestionsResponse = await ApiClient.createQuestions(filteredQuestions);
+
+      console.log('create questions response: ', createQuestionsResponse);
+
+      try {
+        const testQuestions = createQuestionsResponse.questions.map(({ id }, i) => ({
+          questionId: id,
+          maxScore: data.questions[i].maxScore,
+          timeLimit: data.questions[i].timeLimit,
+        }));
+
+        const testData: CreateTestDto = {
+          subject: data.subject as Subject,
+          name: data.testName,
+          description: data.testDescription,
+          image: data.testImageLink,
+          questions: testQuestions,
+        };
+
+        console.log('test data to send: ', testData);
+
+        const createTestResponse = await ApiClient.createTest(testData);
+
+        console.log('create test tesponse: ', createTestResponse);
+      } catch (error) {
+        console.error(ApiError);
+      }
+    } catch (error) {
+      console.error(ApiError);
+    }
+
+    setLoading(false);
+  });
+
   return (
     <DisabledContext.Provider value={contextValue}>
       <FormProvider {...methods}>
         <Box
           component="form"
           noValidate
-          onSubmit={methods.handleSubmit((data) => {
-            setLoading(true);
-            // handle server sending
-            setTimeout(() => {
-              console.log('submitted');
-              console.log(data);
-              setLoading(false);
-            }, 2000);
-          })}
+          onSubmit={onSubmit}
           display="flex"
           flexDirection="column"
           padding="15px 30px"

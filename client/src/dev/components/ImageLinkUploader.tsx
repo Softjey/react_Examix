@@ -71,7 +71,7 @@ const ImageLinkUploader: React.FC<ImageLinkUploaderProps> = (props) => {
           backgroundPosition: 'center',
           backgroundImage: imageLink ? `url(${imageLink})` : 'none',
           opacity: disabled ? 0.5 : 1,
-          cursor: 'pointer',
+          cursor: disabled ? 'unset' : 'pointer',
           ...props.sx,
         }}
         onClick={() => {

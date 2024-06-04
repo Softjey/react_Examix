@@ -154,7 +154,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
               }
             }}
           />
-          <DeleteButton onClick={onDelete} />
+          <DeleteButton disabled={disabled} onClick={onDelete} />
         </CardActions>
       </Card>
       <Snackbar
