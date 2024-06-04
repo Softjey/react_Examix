@@ -1,9 +1,10 @@
-import './DottedText.css';
+import { Typography, TypographyProps } from '@mui/material';
+import classes from './DottedText.module.css';
 
-interface Props {
-  text: string;
-}
+interface Props extends TypographyProps {}
 
-const DottedText: React.FC<Props> = ({ text }) => <span className="dotted-text">{text}</span>;
+const DottedText: React.FC<Props> = (props) => (
+  <Typography className={classes['dotted-text']} {...props} />
+);
 
 export default DottedText;

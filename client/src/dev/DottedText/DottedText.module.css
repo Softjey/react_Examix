@@ -1,11 +1,11 @@
-/* .dotted-text {
+.dotted-text {
   position: relative;
 }
 
 .dotted-text::after {
   content: '';
   position: absolute;
-  padding-left: 10px;
+  padding-left: 2%;
   animation: dots 2s infinite;
 }
 
@@ -29,4 +29,4 @@
   100% {
     content: '...';
   }
-} */
+}
