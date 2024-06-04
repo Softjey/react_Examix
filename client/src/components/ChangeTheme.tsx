@@ -20,7 +20,7 @@ const ChangeTheme: React.FC = () => {
         )}
       </ListItemIcon>
       <ListItemText
-        primary={<Typography variant="h6">Toggle Theme</Typography>}
+        primary={<Typography variant="body1">Toggle Theme</Typography>}
         sx={{ marginRight: 2 }}
       />
       <Switch

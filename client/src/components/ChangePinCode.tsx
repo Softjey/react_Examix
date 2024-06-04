@@ -11,7 +11,6 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import PinIcon from '@mui/icons-material/Pin';
 
 const label = { inputProps: { 'aria-label': 'controlled' } };
 
@@ -37,8 +36,8 @@ const ChangePinCode: React.FC = () => {
     }
   };
 
-  const hadlePasswordConfirm = () => {
-    // Implement a password confirmation logic here
+  const handlePasswordConfirm = () => {
+    // Implement password confirmation logic here
     setIsAlertModalOpen(false);
   };
 
@@ -46,18 +45,17 @@ const ChangePinCode: React.FC = () => {
     <>
       <ListItem>
         <ListItemIcon sx={{ minWidth: 50 }}>
-          <PinIcon sx={{ fontSize: 35 }} />
-        </ListItemIcon>
-        <ListItemText primary={<Typography variant="h6">Change Pin Code</Typography>} />
-        <Button onClick={() => setIsPinModalOpen(true)}>Click</Button>
-      </ListItem>
-      <ListItem>
-        <ListItemIcon sx={{ minWidth: 50 }}>
           <FiberPinIcon sx={{ fontSize: 35 }} />
         </ListItemIcon>
-        <ListItemText primary={<Typography variant="h6">Pin Code Protection</Typography>} />
-        <Switch {...label} defaultChecked={isPinEnabled} onChange={handlePinToggle} />
+        <ListItemText primary={<Typography variant="body1">Pin Code Protection</Typography>} />
+        <Switch {...label} checked={isPinEnabled} onChange={handlePinToggle} />
       </ListItem>
+
+      {isPinEnabled && (
+        <ListItem>
+          <Button onClick={() => setIsPinModalOpen(true)}>Change Pin Code</Button>
+        </ListItem>
+      )}
 
       <Modal
         open={isPinModalOpen}
@@ -127,14 +125,14 @@ const ChangePinCode: React.FC = () => {
           </Typography>
           <TextField
             fullWidth
-            label="Enter a your password"
+            label="Enter your password"
             variant="outlined"
             margin="normal"
             value={alertInput}
             onChange={(e) => setAlertInput(e.target.value)}
           />
           <Box sx={{ mt: 2 }}>
-            <Button fullWidth variant="contained" color="primary" onClick={hadlePasswordConfirm}>
+            <Button fullWidth variant="contained" color="primary" onClick={handlePasswordConfirm}>
               Submit
             </Button>
           </Box>
