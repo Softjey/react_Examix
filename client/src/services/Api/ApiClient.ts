@@ -100,7 +100,7 @@ export class RawApiClient {
   static async createTest(testData: CreateTestDto) {
     const { data } = await axios.post<CreateTestResponse>('/tests', testData);
 
-    return data;
+    return data.test;
   }
 
   static async getExamById(id: Exam['id']) {

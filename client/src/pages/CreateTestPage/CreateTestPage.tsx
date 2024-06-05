@@ -3,6 +3,7 @@
 import { Box, Button, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from 'react-router';
 import TestInfo from '../../components/TestInfo';
 import { CreateTestForm, CreateTestSchema } from '../../schemas/createTestFormValidationSchemas';
 import QuestionsGroup from '../../dev/components/QuestionsGroup';
@@ -16,6 +17,7 @@ import getDefaultQuestion from './utils/getDefaultQuestion';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ErrorSnackBar from '../../components/UI/ErrorSnackBar';
 import LoadingPage from '../LoadingPage';
+import Routes from '../../services/Router/Routes';
 
 interface Props {}
 
@@ -28,6 +30,8 @@ const defaultValues: CreateTestForm = {
 };
 
 const CreateTestPage: React.FC<Props> = () => {
+  const navigate = useNavigate();
+
   const { reset, loading, createQuestionsMutation, createTestMutation, error } = useCreateTest();
   const { createQuestions } = createQuestionsMutation;
   const { createTest } = createTestMutation;
@@ -78,7 +82,10 @@ const CreateTestPage: React.FC<Props> = () => {
           onError: (err) => {
             console.dir(err);
           },
-          onSuccess: (response) => console.log(response),
+          onSuccess: (test) => {
+            console.log(test);
+            navigate(`${Routes.TEST}/${test.id}`);
+          },
         });
       },
     });
