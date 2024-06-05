@@ -34,9 +34,15 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
               {authorExamStore.examCode}
             </Typography>
 
-            <Button variant="contained" color="secondary">
-              Start exam
-            </Button>
+            {students?.length !== 0 && (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => authorExamStore.startExam()}
+              >
+                Start exam
+              </Button>
+            )}
           </Stack>
         }
       />

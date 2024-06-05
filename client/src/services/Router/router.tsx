@@ -13,7 +13,7 @@ import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
 import TestPage from '../../pages/TestPage';
 import ExamPage from '../../pages/ExamPage';
-import OngoingExamPage from '../../pages/OngoingExamPage';
+import OngoingExamPage from '../../pages/OngoingExamPage/OngoingExamPage';
 import LoginPage from '../../pages/LoginPage';
 import JoinPage from '../../pages/JoinPage';
 import OngoingExamPanelPage from '../../pages/OngoingExamPanelPage';
