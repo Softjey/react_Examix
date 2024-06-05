@@ -9,8 +9,9 @@ import { AuthorConnectedResponse } from './ws/types/responses/ConnectedResponse'
 import { DetailedTest } from '../../types/api/entities/detailedTest';
 import { AuthorAuth } from './types/auth';
 import Student from './types/Student';
+import { AuthorEmitter } from './types/Emitter';
 
-class TeacherExamStore {
+class AuthorExamStore {
   private EXAM_CODE_KEY = 'examCode';
   private AUTHOR_TOKEN_KEY = 'authorToken';
   private socket: Socket | null = null;
@@ -92,8 +93,14 @@ class TeacherExamStore {
       this.socket.connect();
     });
   }
+
+  startExam() {
+    if (!this.socket) return;
+
+    this.socket.emit(AuthorEmitter.START_EXAM);
+  }
 }
 
-const teacherExamStore = new TeacherExamStore();
+const teacherExamStore = new AuthorExamStore();
 
 export default teacherExamStore;

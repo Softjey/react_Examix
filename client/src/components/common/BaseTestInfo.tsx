@@ -7,7 +7,7 @@ import SubjectItem from '../UI/SubjectItem/SubjectItem';
 import TestAvatar from '../UI/TestAvatar';
 import { DetailedTest } from '../../types/api/entities/detailedTest';
 import UserAvatar from '../UI/UserAvatar';
-import teacherExamStore from '../../store/ExamStore/TeacherExamStore';
+import authorExamStore from '../../store/ExamStore/AuthorExamStore';
 import Button from '../UI/buttons/Button';
 import Routes from '../../services/Router/Routes';
 
@@ -25,7 +25,7 @@ const BaseTestInfo: React.FC<Props> = observer(({ sx, test, action, ...rest }) =
   const date = dayjs(createdAt).format('DD/MM/YYYY');
 
   const createExam = async () => {
-    teacherExamStore.createExam(id).then(() => {
+    authorExamStore.createExam(id).then(() => {
       navigate(Routes.ONGOING_EXAM_PANEL);
     });
   };
@@ -74,10 +74,10 @@ const BaseTestInfo: React.FC<Props> = observer(({ sx, test, action, ...rest }) =
           <Button
             variant="contained"
             color="secondary"
-            disabled={teacherExamStore.status !== 'idle'}
+            disabled={authorExamStore.status !== 'idle'}
             onClick={createExam}
           >
-            {teacherExamStore.status !== 'idle'
+            {authorExamStore.status !== 'idle'
               ? 'You have already started the exam'
               : 'Create Exam with this Test'}
           </Button>

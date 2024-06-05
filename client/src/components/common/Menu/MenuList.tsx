@@ -4,12 +4,12 @@ import { List, ListProps } from '@mui/material';
 import { ClassNames } from '@emotion/react';
 import { getItems } from './items';
 import LinkListOption from '../../UI/LinkListOption';
-import teacherExamStore from '../../../store/ExamStore/TeacherExamStore';
+import authorExamStore from '../../../store/ExamStore/AuthorExamStore';
 
 interface Props extends ListProps {}
 
 const MenuList: React.FC<Props> = observer(({ sx, ...rest }) => {
-  const items = getItems({ ongoingExam: teacherExamStore.status !== 'idle' });
+  const items = getItems({ ongoingExam: authorExamStore.status !== 'idle' });
 
   return (
     <List sx={{ display: 'flex', flexDirection: 'column', ...sx }} {...rest}>

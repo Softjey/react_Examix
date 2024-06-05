@@ -7,14 +7,14 @@ import BaseTestInfo from '../components/common/BaseTestInfo';
 import QuestionsList from '../components/common/QuestionsList';
 import StudentsList from '../components/common/StudentsList';
 import Button from '../components/UI/buttons/Button';
-import teacherExamStore from '../store/ExamStore/TeacherExamStore';
+import authorExamStore from '../store/ExamStore/AuthorExamStore';
 import Routes from '../services/Router/Routes';
 import LoadingPage from './LoadingPage';
 
 interface Props extends HomeLayoutProps {}
 
 const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
-  const { test, students, status, isLoading } = teacherExamStore;
+  const { test, students, status, isLoading } = authorExamStore;
 
   if (status === 'idle') {
     return <Navigate to={Routes.HOME} />;
@@ -31,7 +31,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
         action={
           <Stack direction="row" justifyContent="space-around">
             <Typography align="center" variant="h4" color={(theme) => theme.palette.secondary.dark}>
-              {teacherExamStore.examCode}
+              {authorExamStore.examCode}
             </Typography>
 
             <Button variant="contained" color="secondary">
