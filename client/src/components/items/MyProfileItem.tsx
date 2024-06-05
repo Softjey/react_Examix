@@ -1,6 +1,4 @@
 import React, { useState, useRef } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import CreateIcon from '@mui/icons-material/Create';
@@ -9,17 +7,15 @@ import Button from '@mui/material/Button';
 import useAuth from '../../hooks/queries/useAuth';
 import UserAvatar from '../UI/UserAvatar';
 
-// Assuming User type from useAuth hook
 interface User {
   id: number;
   name: string;
   email: string;
   photo: string | null;
-  role: string; // Replace with actual type if different
+  role: string;
   createdAt: string;
 }
 
-// Extending the User type to include avatar property locally
 interface UserWithAvatar extends User {
   avatar?: string;
 }
@@ -52,7 +48,6 @@ const MyProfileItem: React.FC = () => {
   };
 
   const handleSave = () => {
-    // Add code to save the updated name and avatar
     setEditMode(false);
   };
 
@@ -76,65 +71,67 @@ const MyProfileItem: React.FC = () => {
   const userWithAvatar: UserWithAvatar = { ...user, avatar };
 
   return (
-    <Box>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            My Profile
-          </Typography>
-        </Toolbar>
-      </AppBar>
-
-      <Box gap={2} p={2} sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
-        <input
-          type="file"
-          accept="image/*"
-          ref={fileInputRef}
-          style={{ display: 'none' }}
-          onChange={handleAvatarChange}
-        />
-        <Box onClick={handleAvatarClick} sx={{ cursor: 'pointer' }}>
-          <UserAvatar user={userWithAvatar} />
-        </Box>
-
-        {editMode ? (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexGrow: 1 }}>
-            <TextField
-              value={name}
-              onChange={handleNameChange}
-              variant="outlined"
-              size="small"
-              sx={{ width: 150 }}
-            />
-          </Box>
-        ) : (
-          <Typography variant="h6" color="text.primary">
-            {name}
-          </Typography>
-        )}
-
-        {editMode ? (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Button variant="contained" size="small" onClick={handleSave}>
-              OK
-            </Button>
-            <Button variant="outlined" size="small" onClick={handleCancel}>
-              Cancel
-            </Button>
-          </Box>
-        ) : (
-          <CreateIcon
-            color="disabled"
-            sx={{
-              cursor: 'pointer',
-              '&:hover': {
-                color: 'primary.main',
-              },
-            }}
-            onClick={handleEditClick}
-          />
-        )}
+    <Box gap={2} p={2} sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleAvatarChange}
+      />
+      <Box onClick={handleAvatarClick} sx={{ cursor: 'pointer', width: 80, height: 80 }}>
+        <UserAvatar user={userWithAvatar} sx={{ width: '100%', height: '100%' }} />
       </Box>
+
+      {editMode ? (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexGrow: 1 }}>
+          <TextField
+            value={name}
+            onChange={handleNameChange}
+            variant="outlined"
+            size="small"
+            sx={{ width: 200 }}
+          />
+        </Box>
+      ) : (
+        <Typography
+          variant="h6"
+          color="text.primary"
+          sx={{
+            backgroundColor: '#f0f0f0',
+            borderRadius: 1,
+            padding: '8px 16px',
+            width: 200,
+            height: 40,
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          {name}
+        </Typography>
+      )}
+
+      {editMode ? (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Button variant="contained" size="small" onClick={handleSave}>
+            OK
+          </Button>
+          <Button variant="outlined" size="small" onClick={handleCancel}>
+            Cancel
+          </Button>
+        </Box>
+      ) : (
+        <CreateIcon
+          color="disabled"
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              color: 'primary.main',
+            },
+          }}
+          onClick={handleEditClick}
+        />
+      )}
     </Box>
   );
 };
