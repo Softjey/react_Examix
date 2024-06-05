@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router';
 import StartLayout from '../components/layouts/StartLayout';
-import QuizCard from './QuizCard';
+import ExamQuestionCard from '../components/items/ExamQuestionCard';
 import Timer from '../components/UI/Timer';
 import { Question, StudentAnswer } from './questions';
 import log from './log';
@@ -34,10 +34,10 @@ const QuizPage: React.FC = () => {
       ) : (
         <>
           <Timer question={currQuestion} onEnd={() => setIsLoading(true)} />
-          <QuizCard
+          <ExamQuestionCard
             questionsAmount={testInfo?.questionsAmount}
             question={currQuestion}
-            sendAnswer={(answers: StudentAnswer[]) => {
+            onAnswer={(answers: StudentAnswer[]) => {
               studentExamSocket.sendAnswer(currQuestion!.id, answers);
             }}
           />
