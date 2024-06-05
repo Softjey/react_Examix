@@ -1,11 +1,10 @@
 import { useFormContext } from 'react-hook-form';
 import { Box, TextField } from '@mui/material';
-import { useContext } from 'react';
 import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
 import QuestionType from '../../types/api/enums/Type';
 import CloseButton from '../UI/buttons/CloseButton';
 import RadioCheckBox from '../UI/RadioCheckBox';
-import { CreateTestContext } from '../../hooks/context/CreateTestContext';
+import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
 
 interface Props {
   answerIndex: number;
@@ -29,13 +28,7 @@ const FormAnswerItem: React.FC<Props> = ({
     formState: { errors },
   } = useFormContext<CreateTestForm>();
 
-  const createTestContext = useContext(CreateTestContext);
-
-  if (!createTestContext) {
-    throw new Error('DisabledContext must be used within a DisabledContext.Provider');
-  }
-
-  const { loading } = createTestContext;
+  const { loading } = useCreateTest();
 
   return (
     <Box sx={{ display: 'flex', gap: '2px', alignItems: 'start' }}>

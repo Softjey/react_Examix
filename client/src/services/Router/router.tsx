@@ -10,12 +10,12 @@ import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
-import CreateTestPage from '../../pages/CreateTestPage';
+import CreateTestPage from '../../pages/CreateTestPage/CreateTestPage';
 import TestPage from '../../pages/TestPage';
 import LoginPage from '../../pages/Login/LoginPage';
 import JoinPage from '../../pages/Login/JoinPage';
 import ExamPage from '../../pages/ExamPage';
-import CreateTestProvider from '../../hooks/context/CreateTestContext';
+import CreateTestProvider from '../../pages/CreateTestPage/CreateTestContext';
 
 const router = createRouter([
   {
@@ -82,11 +82,9 @@ const router = createRouter([
     path: Routes.CREATE_TEST,
     element: (
       <Authenticated>
-        <HomeLayout>
-          <CreateTestProvider>
-            <CreateTestPage />
-          </CreateTestProvider>
-        </HomeLayout>
+        <CreateTestProvider>
+          <CreateTestPage />
+        </CreateTestProvider>
       </Authenticated>
     ),
   },

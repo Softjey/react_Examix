@@ -3,10 +3,9 @@ import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 interface Props extends BoxProps {}
 
-const DragBar: React.FC<Props> = (props) => {
+const DragBar: React.FC<Props> = ({ sx, ...props }) => {
   return (
     <Box
-      {...props}
       className="drag-bar"
       sx={{
         color: 'text.secondary',
@@ -16,7 +15,9 @@ const DragBar: React.FC<Props> = (props) => {
         opacity: 0,
         cursor: 'grab',
         visibility: 'hidden',
+        ...sx,
       }}
+      {...props}
     >
       <DragIndicatorIcon sx={{ transform: 'rotate(90deg)' }} />
     </Box>

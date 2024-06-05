@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import QuestionTypeSelect from '../UI/QuestionTypeSelect';
 import TimeLimitInput from '../../dev/components/TimeLimitInput';
 import AddButton from '../UI/buttons/AddButton';
@@ -20,7 +20,7 @@ import QuestionType from '../../types/api/enums/Type';
 import DeleteButton from '../UI/buttons/DeleteButton';
 import AnswersGroup from '../../dev/components/AnswersGroup';
 import CloseButton from '../UI/buttons/CloseButton';
-import { CreateTestContext } from '../../hooks/context/CreateTestContext';
+import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
 
 interface Props extends CardProps {
   type: QuestionType;
@@ -35,13 +35,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
     formState: { errors },
   } = useFormContext<CreateTestForm>();
 
-  const createTestContext = useContext(CreateTestContext);
-
-  if (!createTestContext) {
-    throw new Error('DisabledContext must be used within a DisabledContext.Provider');
-  }
-
-  const { loading } = createTestContext;
+  const { loading } = useCreateTest();
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -58,7 +52,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
         elevation={2}
         sx={{
           pointerEvents: 'auto',
-          maxWidth: '460px',
+          // maxWidth: '460px',
           borderRadius: '12px',
           '&:hover .drag-bar': {
             opacity: 0.7,
@@ -67,7 +61,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
         }}
         {...props}
       >
-        <DragBar />
+        <DragBar sx={{ cursor: 'not-allowed' }} title="This feature is not available" />
 
         <CardContent
           sx={{ display: 'flex', gap: 1, flexDirection: 'column', paddingBottom: 0, paddingTop: 0 }}

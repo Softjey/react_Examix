@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useContext } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { Box, BoxProps, CircularProgress, Modal, TextField, Typography } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -6,7 +6,7 @@ import { useFormContext } from 'react-hook-form';
 import Button from '../../components/UI/buttons/Button';
 import { CreateTestForm, isValidImageUrl } from '../../schemas/createTestFormValidationSchemas';
 import { Nullable } from '../../types/utils/Nullable';
-import { CreateTestContext } from '../../hooks/context/CreateTestContext';
+import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
 
 interface ImageLinkUploaderProps extends BoxProps {}
 
@@ -18,13 +18,7 @@ const ImageLinkUploader: React.FC<ImageLinkUploaderProps> = (props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Nullable<Error>>(null);
 
-  const createTestContext = useContext(CreateTestContext);
-
-  if (!createTestContext) {
-    throw new Error('DisabledContext must be used within a DisabledContext.Provider');
-  }
-
-  const { loading: disabled } = createTestContext;
+  const { loading: disabled } = useCreateTest();
 
   const handleImageChange = () => {
     setOpen(false);

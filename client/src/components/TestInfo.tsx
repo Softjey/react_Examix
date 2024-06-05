@@ -1,10 +1,9 @@
 import { Box, BoxProps, MenuItem, TextField } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
-import { useContext } from 'react';
 import { CreateTestForm } from '../schemas/createTestFormValidationSchemas';
 import SubjectSelect from './UI/SubjectSelect';
 import ImageLinkUploader from '../dev/components/ImageLinkUploader';
-import { CreateTestContext } from '../hooks/context/CreateTestContext';
+import { useCreateTest } from '../pages/CreateTestPage/CreateTestContext';
 
 interface Props extends BoxProps {}
 
@@ -14,21 +13,15 @@ const TestInfo: React.FC<Props> = ({ sx, ...rest }) => {
     formState: { errors },
   } = useFormContext<CreateTestForm>();
 
-  const createTestContext = useContext(CreateTestContext);
-
-  if (!createTestContext) {
-    throw new Error('DisabledContext must be used within a DisabledContext.Provider');
-  }
-
-  const { loading } = createTestContext;
+  const { loading } = useCreateTest();
 
   return (
     <Box {...rest} display="flex" flexDirection="column" gap="24px" sx={{ width: '100%', ...sx }}>
       <ImageLinkUploader
         sx={{
           alignSelf: 'start',
-          maxHeight: '150px',
-          maxWidth: '200px',
+          maxHeight: '225px',
+          maxWidth: '300px',
         }}
       />
       <TextField
