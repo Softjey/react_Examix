@@ -9,10 +9,6 @@ import { StudentTest } from './ws/types/StudentTest';
 import Student from './types/Student';
 
 class StudentExamStore {
-  // private EXAM_CODE_KEY = 'examCode';
-  private STUDENT_TOKEN_KEY = 'studentToken';
-  private STUDENT_ID_KEY = 'studentId';
-  // private STUDENT_NAME_KEY = 'studentName';
   private socket: Socket | null = null;
   examCode: string | null = null;
   test: StudentTest | null = null;
@@ -35,8 +31,8 @@ class StudentExamStore {
           role: 'student',
           examCode,
           studentName,
-          studentToken: sessionStorage.getItem(this.STUDENT_TOKEN_KEY),
-          studentId: sessionStorage.getItem(this.STUDENT_ID_KEY),
+          studentToken: undefined, // will be loaded from local storage
+          studentId: undefined,
         } as StudentAuth,
         autoConnect: false,
       });
@@ -57,13 +53,9 @@ class StudentExamStore {
         resolve();
       };
 
-      this.socket.on(
-        Message.CONNECTED,
-        ({ test, students, studentToken, studentId }: StudentConnectedResponse) => {
-          this.saveCredentials(studentToken, studentId);
-          setExam({ test, students });
-        },
-      );
+      this.socket.on(Message.CONNECTED, ({ test, students }: StudentConnectedResponse) => {
+        setExam({ test, students });
+      });
 
       this.socket.on(Message.RECONNECTED, setExam);
       this.socket.on(Message.STUDENT_JOINED, (student: Student) => {
@@ -85,21 +77,6 @@ class StudentExamStore {
 
       this.socket.connect();
     });
-  }
-
-  saveCredentials(studentToken: string, studentId: string) {
-    if (studentToken) {
-      sessionStorage.setItem(this.STUDENT_TOKEN_KEY, studentToken);
-    }
-
-    if (studentId) {
-      sessionStorage.setItem(this.STUDENT_ID_KEY, studentId);
-    }
-  }
-
-  removeCredentials() {
-    sessionStorage.removeItem(this.STUDENT_TOKEN_KEY);
-    sessionStorage.removeItem(this.STUDENT_ID_KEY);
   }
 }
 

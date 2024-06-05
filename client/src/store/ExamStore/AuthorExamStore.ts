@@ -12,8 +12,6 @@ import Student from './types/Student';
 import { AuthorEmitter } from './types/Emitter';
 
 class AuthorExamStore {
-  private EXAM_CODE_KEY = 'examCode';
-  private AUTHOR_TOKEN_KEY = 'authorToken';
   private socket: Socket | null = null;
   examCode: string | null = null;
   test: DetailedTest | null = null;
@@ -24,26 +22,12 @@ class AuthorExamStore {
 
   constructor() {
     makeAutoObservable(this);
-
-    const examCode = sessionStorage.getItem(this.EXAM_CODE_KEY);
-    const authorToken = sessionStorage.getItem(this.AUTHOR_TOKEN_KEY);
-
-    if (examCode && authorToken) {
-      this.connectToExam(authorToken, examCode).catch(() => {
-        this.socket = null;
-        sessionStorage.removeItem(this.EXAM_CODE_KEY);
-        sessionStorage.removeItem(this.AUTHOR_TOKEN_KEY);
-      });
-    }
   }
 
   async createExam(testId: Test['id']) {
     if (this.socket) return;
 
     const { authorToken, examCode } = await ApiClient.createExam(testId);
-
-    sessionStorage.setItem(this.EXAM_CODE_KEY, examCode);
-    sessionStorage.setItem(this.AUTHOR_TOKEN_KEY, authorToken);
 
     await this.connectToExam(authorToken, examCode);
   }
