@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
-import { Button, MenuItem, Stack, StackProps, TextField } from '@mui/material';
+import { Box, Button, MenuItem, StackProps, TextField } from '@mui/material';
 import { TestsFilters as ITestsFilters } from '../../services/Api/types/tests';
 import SubjectSelect from '../UI/SubjectSelect';
 import useDebouncedCallback from '../../hooks/useDebouncedCallback';
@@ -49,7 +49,14 @@ const TestsFilters: React.FC<Props> = (props) => {
   };
 
   return (
-    <Stack direction="row" spacing={5} flexWrap="wrap" paddingInline={1} component="form" {...rest}>
+    <Box
+      display="grid"
+      gridTemplateColumns={{ sm: '1fr', md: '9fr 3fr' }}
+      gap={3}
+      paddingInline={1}
+      component="form"
+      {...rest}
+    >
       <TextField
         label="Search..."
         value={search}
@@ -62,17 +69,15 @@ const TestsFilters: React.FC<Props> = (props) => {
           ),
         }}
         autoComplete="off"
-        sx={{ minWidth: 300, flexGrow: 1 }}
       />
 
       <SubjectSelect
-        sx={{ minWidth: 200 }}
         maxHeight={500}
         value={defaultValues?.subject ?? 'all'}
         otherMenuItems={<MenuItem value="all">All</MenuItem>}
         onChange={handleSubjectChange}
       />
-    </Stack>
+    </Box>
   );
 };
 
