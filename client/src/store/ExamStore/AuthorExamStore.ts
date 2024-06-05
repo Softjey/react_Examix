@@ -17,7 +17,7 @@ class AuthorExamStore {
   test: DetailedTest | null = null;
   students: Student[] | null = null;
   error: WsException | null = null;
-  status: 'idle' | 'ongoing' = 'idle';
+  status: 'idle' | 'created' | 'started' = 'idle';
   isLoading = false;
 
   constructor() {
@@ -37,51 +37,72 @@ class AuthorExamStore {
     this.error = null;
 
     return new Promise<void>((resolve, reject) => {
-      this.socket = io(`${import.meta.env.VITE_SERVER_WS_URL}/join-exam`, {
+      const socket = io(`${import.meta.env.VITE_SERVER_WS_URL}/join-exam`, {
         auth: { role: 'author', authorToken, examCode } as AuthorAuth,
         autoConnect: false,
       });
 
-      this.socket.on(Message.EXCEPTION, (error: WsException) => {
+      socket.on(Message.EXCEPTION, (error: WsException) => {
         reject(new WsApiError(error));
         this.isLoading = false;
         this.error = error;
       });
 
-      this.socket.on(Message.CONNECTED, ({ test, students }: AuthorConnectedResponse) => {
+      socket.on(Message.CONNECTED, ({ test, students }: AuthorConnectedResponse) => {
         this.isLoading = false;
-        this.status = 'ongoing';
+        this.status = 'created';
         this.test = test;
         this.examCode = examCode;
         this.students = students;
+        this.socket = socket;
         resolve();
       });
 
-      this.socket.on(Message.STUDENT_JOINED, (student: Student) => {
-        if (!this.students) return;
-        this.students = [...this.students, student];
-      });
-
-      this.socket.on(Message.STUDENT_RECONNECTED, (student: Student) => {
-        if (!this.students) return;
-        this.students = this.students.map((s) => (s.studentId === student.studentId ? student : s));
-      });
+      this.addListeners(socket);
 
       Object.values(Message).forEach((message) => {
-        this.socket?.on(message, (data: unknown) => {
+        socket.on(message, (data: unknown) => {
           // eslint-disable-next-line no-console
           console.log(message, data);
         });
       });
 
-      this.socket.connect();
+      socket.connect();
     });
   }
 
   startExam() {
     if (!this.socket) return;
 
+    this.isLoading = true;
     this.socket.emit(AuthorEmitter.START_EXAM);
+  }
+
+  addListeners(socket: Socket) {
+    this.onExamStart(socket);
+    this.onStudentJoined(socket);
+    this.onStudentReconnected(socket);
+  }
+
+  onExamStart(socket: Socket) {
+    socket.on(Message.EXAM_STARTED, () => {
+      this.status = 'started';
+      this.isLoading = false;
+    });
+  }
+
+  onStudentJoined(socket: Socket) {
+    socket.on(Message.STUDENT_JOINED, (student: Student) => {
+      if (!this.students) return;
+      this.students = [...this.students, student];
+    });
+  }
+
+  onStudentReconnected(socket: Socket) {
+    socket.on(Message.STUDENT_RECONNECTED, (student: Student) => {
+      if (!this.students) return;
+      this.students = this.students.map((s) => (s.studentId === student.studentId ? student : s));
+    });
   }
 }
 

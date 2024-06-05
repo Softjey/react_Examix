@@ -13,7 +13,7 @@ interface Props {}
 const OngoingExamPage: React.FC<Props> = observer(() => {
   const { status, students, test } = studentExamStore;
 
-  if (status !== 'ongoing') {
+  if (status === 'idle') {
     return <Navigate to={Routes.JOIN} />;
   }
 

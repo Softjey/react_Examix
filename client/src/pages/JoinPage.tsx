@@ -30,7 +30,7 @@ const JoinPage: React.FC = observer(() => {
     defaultValues,
   });
 
-  if (studentExamStore.status === 'ongoing') {
+  if (studentExamStore.status !== 'idle') {
     return <Navigate to={Routes.ONGOING_EXAM} />;
   }
 
@@ -45,7 +45,6 @@ const JoinPage: React.FC = observer(() => {
         .catch((error) => {
           if (error.message !== 'New client connected with that studentId') {
             setServerErrorMessage(error.message);
-            studentExamStore.removeCredentials();
           }
         })
         .finally(() => setIsLoading(false));
