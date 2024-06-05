@@ -14,6 +14,8 @@ import getFilteredQuestions from './utils/getFilteredQuestions';
 import getPreparedTestQuestions from './utils/getPreparedTestQuestions';
 import getDefaultQuestion from './utils/getDefaultQuestion';
 import HomeLayout from '../../components/layouts/HomeLayout';
+import ErrorSnackBar from '../../components/UI/ErrorSnackBar';
+import LoadingPage from '../LoadingPage';
 
 interface Props {}
 
@@ -26,7 +28,7 @@ const defaultValues: CreateTestForm = {
 };
 
 const CreateTestPage: React.FC<Props> = () => {
-  const { loading, createQuestionsMutation, createTestMutation } = useCreateTest();
+  const { reset, loading, createQuestionsMutation, createTestMutation, error } = useCreateTest();
   const { createQuestions } = createQuestionsMutation;
   const { createTest } = createTestMutation;
 
@@ -41,6 +43,9 @@ const CreateTestPage: React.FC<Props> = () => {
     name: 'questions',
   });
 
+  if (loading) {
+    return <LoadingPage layout="home" />;
+  }
   const addQuestionCard = () => append(getDefaultQuestion(), { shouldFocus: false });
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -51,7 +56,9 @@ const CreateTestPage: React.FC<Props> = () => {
     console.log('data to send', filteredQuestions);
 
     createQuestions(filteredQuestions, {
-      onError: (error) => console.dir(error),
+      onError: (err) => {
+        console.dir(err);
+      },
       onSuccess: (createQuestionsResponse) => {
         console.log('create questions response: ', createQuestionsResponse);
 
@@ -63,13 +70,14 @@ const CreateTestPage: React.FC<Props> = () => {
         };
 
         if (data.subject) {
-          console.log('subject: ', data.subject);
           testData.subject = data.subject as Subject;
         }
 
         console.log('test data to send: ', testData);
         createTest(testData, {
-          onError: (error) => console.dir(error),
+          onError: (err) => {
+            console.dir(err);
+          },
           onSuccess: (response) => console.log(response),
         });
       },
@@ -103,6 +111,11 @@ const CreateTestPage: React.FC<Props> = () => {
           </LoadingButton>
         </Box>
       </HomeLayout>
+      <ErrorSnackBar
+        open={!!error}
+        close={() => reset()}
+        errorMessage={error?.message || 'Error occurred'}
+      />
     </FormProvider>
   );
 };
