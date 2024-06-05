@@ -35,13 +35,13 @@ export class QuestionController {
     )
     createQuestionDto: CreateQuestionDto[],
   ) {
-    const questionsCount = await this.questionService.createMany(
+    const questions = await this.questionService.createMany(
       createQuestionDto.map((question) => ({ ...question, authorId })),
     );
 
     return {
       message: 'Questions were created successfully',
-      questionsCount,
+      questions,
     };
   }
 
