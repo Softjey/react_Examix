@@ -7,6 +7,7 @@ import { StudentConnectedResponse } from './ws/types/responses/ConnectedResponse
 import { StudentAuth } from './types/auth';
 import { StudentTest } from './ws/types/StudentTest';
 import Student from './types/Student';
+import { StudentQuestion } from '../../types/api/entities/testQuestion';
 
 class StudentExamStore {
   private socket: Socket | null = null;
@@ -16,6 +17,7 @@ class StudentExamStore {
   error: WsException | null = null;
   status: 'idle' | 'created' | 'started' = 'idle';
   isLoading = false;
+  currentQuestion: StudentQuestion | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -69,26 +71,33 @@ class StudentExamStore {
     });
   }
 
-  addListeners(socket: Socket) {
+  private addListeners(socket: Socket) {
     this.onExamStart(socket);
     this.onStudentJoined(socket);
     this.onStudentReconnected(socket);
+    this.onQuestion(socket);
   }
 
-  onExamStart(socket: Socket) {
+  private onExamStart(socket: Socket) {
     socket.on(Message.EXAM_STARTED, () => {
       this.status = 'started';
     });
   }
 
-  onStudentJoined(socket: Socket) {
+  private onQuestion(socket: Socket) {
+    socket.on(Message.QUESTION, (question: StudentQuestion) => {
+      this.currentQuestion = question;
+    });
+  }
+
+  private onStudentJoined(socket: Socket) {
     socket.on(Message.STUDENT_JOINED, (student: Student) => {
       if (!this.students) return;
       this.students = [...this.students, student];
     });
   }
 
-  onStudentReconnected(socket: Socket) {
+  private onStudentReconnected(socket: Socket) {
     socket.on(Message.STUDENT_RECONNECTED, (student: Student) => {
       if (!this.students) return;
       this.students = this.students.map((s) => (s.studentId === student.studentId ? student : s));

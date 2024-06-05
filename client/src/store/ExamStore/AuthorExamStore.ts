@@ -32,7 +32,7 @@ class AuthorExamStore {
     await this.connectToExam(authorToken, examCode);
   }
 
-  connectToExam(authorToken: string, examCode: string) {
+  private connectToExam(authorToken: string, examCode: string) {
     this.isLoading = true;
     this.error = null;
 
@@ -78,27 +78,27 @@ class AuthorExamStore {
     this.socket.emit(AuthorEmitter.START_EXAM);
   }
 
-  addListeners(socket: Socket) {
+  private addListeners(socket: Socket) {
     this.onExamStart(socket);
     this.onStudentJoined(socket);
     this.onStudentReconnected(socket);
   }
 
-  onExamStart(socket: Socket) {
+  private onExamStart(socket: Socket) {
     socket.on(Message.EXAM_STARTED, () => {
       this.status = 'started';
       this.isLoading = false;
     });
   }
 
-  onStudentJoined(socket: Socket) {
+  private onStudentJoined(socket: Socket) {
     socket.on(Message.STUDENT_JOINED, (student: Student) => {
       if (!this.students) return;
       this.students = [...this.students, student];
     });
   }
 
-  onStudentReconnected(socket: Socket) {
+  private onStudentReconnected(socket: Socket) {
     socket.on(Message.STUDENT_RECONNECTED, (student: Student) => {
       if (!this.students) return;
       this.students = this.students.map((s) => (s.studentId === student.studentId ? student : s));
@@ -106,6 +106,6 @@ class AuthorExamStore {
   }
 }
 
-const teacherExamStore = new AuthorExamStore();
+const authorExamStore = new AuthorExamStore();
 
-export default teacherExamStore;
+export default authorExamStore;
