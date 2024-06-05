@@ -15,6 +15,7 @@ import TestPage from '../../pages/TestPage';
 import LoginPage from '../../pages/Login/LoginPage';
 import JoinPage from '../../pages/Login/JoinPage';
 import ExamPage from '../../pages/ExamPage';
+import CreateTestProvider from '../../hooks/context/CreateTestContext';
 
 const router = createRouter([
   {
@@ -82,7 +83,9 @@ const router = createRouter([
     element: (
       <Authenticated>
         <HomeLayout>
-          <CreateTestPage />
+          <CreateTestProvider>
+            <CreateTestPage />
+          </CreateTestProvider>
         </HomeLayout>
       </Authenticated>
     ),

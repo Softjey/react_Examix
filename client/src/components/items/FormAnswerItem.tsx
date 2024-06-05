@@ -5,7 +5,7 @@ import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
 import QuestionType from '../../types/api/enums/Type';
 import CloseButton from '../UI/buttons/CloseButton';
 import RadioCheckBox from '../UI/RadioCheckBox';
-import DisabledContext from '../../hooks/context/DisabledContext';
+import { CreateTestContext } from '../../hooks/context/CreateTestContext';
 
 interface Props {
   answerIndex: number;
@@ -29,13 +29,13 @@ const FormAnswerItem: React.FC<Props> = ({
     formState: { errors },
   } = useFormContext<CreateTestForm>();
 
-  const disabledContext = useContext(DisabledContext);
+  const createTestContext = useContext(CreateTestContext);
 
-  if (!disabledContext) {
+  if (!createTestContext) {
     throw new Error('DisabledContext must be used within a DisabledContext.Provider');
   }
 
-  const { disabled } = disabledContext;
+  const { loading } = createTestContext;
 
   return (
     <Box sx={{ display: 'flex', gap: '2px', alignItems: 'start' }}>
@@ -50,7 +50,7 @@ const FormAnswerItem: React.FC<Props> = ({
           onCheckBoxClick();
           setValue(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`, e.target.checked);
         }}
-        disabled={disabled}
+        disabled={loading}
       />
       <TextField
         {...register(`questions.${questionIndex}.answers.${answerIndex}.title`)}
@@ -86,7 +86,7 @@ const FormAnswerItem: React.FC<Props> = ({
             />
           ),
         }}
-        disabled={disabled}
+        disabled={loading}
       />
     </Box>
   );

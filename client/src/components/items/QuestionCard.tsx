@@ -20,7 +20,7 @@ import QuestionType from '../../types/api/enums/Type';
 import DeleteButton from '../UI/buttons/DeleteButton';
 import AnswersGroup from '../../dev/components/AnswersGroup';
 import CloseButton from '../UI/buttons/CloseButton';
-import DisabledContext from '../../hooks/context/DisabledContext';
+import { CreateTestContext } from '../../hooks/context/CreateTestContext';
 
 interface Props extends CardProps {
   type: QuestionType;
@@ -35,13 +35,13 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
     formState: { errors },
   } = useFormContext<CreateTestForm>();
 
-  const disabledContext = useContext(DisabledContext);
+  const createTestContext = useContext(CreateTestContext);
 
-  if (!disabledContext) {
+  if (!createTestContext) {
     throw new Error('DisabledContext must be used within a DisabledContext.Provider');
   }
 
-  const { disabled } = disabledContext;
+  const { loading } = createTestContext;
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -74,7 +74,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
         >
           <Box display="flex" gap={1} flexWrap="wrap">
             <QuestionTypeSelect
-              disabled={disabled}
+              disabled={loading}
               {...register(`questions.${questionIndex}.type`)}
               ref={null}
             />
@@ -105,7 +105,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
                   maxLength: 3,
                 },
               }}
-              disabled={disabled}
+              disabled={loading}
             />
           </Box>
 
@@ -117,7 +117,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
             autoComplete="off"
             type="text"
             placeholder="Question title"
-            disabled={disabled}
+            disabled={loading}
           />
 
           <Typography color="text.secondary" variant="body2">
@@ -143,7 +143,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
           sx={{ padding: '16px', paddingTop: '10px', display: 'flex', justifyContent: 'end' }}
         >
           <AddButton
-            disabled={disabled}
+            disabled={loading}
             onClick={(e) => {
               e.preventDefault();
               if (fields.length < 6) {
@@ -154,7 +154,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
               }
             }}
           />
-          <DeleteButton disabled={disabled} onClick={onDelete} />
+          <DeleteButton disabled={loading} onClick={onDelete} />
         </CardActions>
       </Card>
       <Snackbar
