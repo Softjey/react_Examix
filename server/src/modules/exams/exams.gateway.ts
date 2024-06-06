@@ -127,10 +127,10 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @UseGuards(RoomAuthorGuard)
   @SubscribeMessage('get-results')
-  sendResults(client: Socket, examCode: string) {
-    this.examsService.getResults(examCode).then((results) => {
-      client.emit('results', results);
-    });
+  async sendResults(@ConnectedSocket() client: Socket, examCode: string) {
+    const results = await this.examsService.getResults(examCode);
+
+    client.emit('results', results);
   }
 
   @UseGuards(RoomAuthorGuard)
