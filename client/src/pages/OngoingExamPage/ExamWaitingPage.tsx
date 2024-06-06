@@ -10,25 +10,25 @@ import studentExamStore from '../../store/ExamStore/StudentExamStore';
 interface Props {}
 
 const ExamWaitingPage: React.FC<Props> = observer(() => {
-  const { students, test } = studentExamStore;
+  const { exam } = studentExamStore;
 
   return (
     <QuizLayout>
-      {test && (
+      {exam?.test && (
         <BaseTestInfo
-          test={test}
+          test={exam.test}
           action={<DottedText variant="h6">Waiting for the exam to start</DottedText>}
         />
       )}
 
       <Paper component={Stack} variant="outlined" spacing={4} padding={4}>
-        {students?.length !== 0 && (
+        {exam?.students?.length !== 0 && (
           <Typography variant="h4" textAlign="center">
             Connected students:
           </Typography>
         )}
 
-        <StudentsList students={students ?? []} />
+        <StudentsList students={exam?.students ?? []} />
       </Paper>
     </QuizLayout>
   );

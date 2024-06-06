@@ -5,19 +5,19 @@ import WsException from './ws/types/WsException';
 import WsApiError from './ws/WsApiError';
 import { StudentConnectedResponse } from './ws/types/responses/ConnectedResponse';
 import { StudentAuth } from './types/auth';
-import { StudentTest } from './ws/types/StudentTest';
 import Student from './types/Student';
 import { StudentQuestion } from '../../types/api/entities/testQuestion';
+import { StudentAnswer } from '../../types/api/entities/question';
+import { StudentEmitter } from './types/Emitter';
+import { StudentStoresExam } from './types/StoresExam';
 
 class StudentExamStore {
+  private auth: Required<StudentAuth> | null = null;
   private socket: Socket | null = null;
-  examCode: string | null = null;
-  test: StudentTest | null = null;
-  students: Student[] | null = null;
+  exam: StudentStoresExam | null = null;
   error: WsException | null = null;
   status: 'idle' | 'created' | 'started' = 'idle';
   isLoading = false;
-  currentQuestion: StudentQuestion | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -41,9 +41,7 @@ class StudentExamStore {
 
       const setExam = ({ test, students }: Pick<StudentConnectedResponse, 'test' | 'students'>) => {
         this.isLoading = false;
-        this.test = test;
-        this.students = students;
-        this.examCode = examCode;
+        this.exam = { test, students, currentQuestion: null };
         this.status = 'created';
         this.socket = socket;
 
@@ -56,7 +54,19 @@ class StudentExamStore {
         this.error = error;
       });
 
-      socket.on(Message.CONNECTED, setExam);
+      socket.on(Message.CONNECTED, (data: StudentConnectedResponse) => {
+        const { studentId, studentToken, students, test } = data;
+
+        this.auth = {
+          role: 'student',
+          studentId,
+          studentToken,
+          examCode,
+          studentName,
+        };
+
+        setExam({ students, test });
+      });
       socket.on(Message.RECONNECTED, setExam);
       this.addListeners(socket);
 
@@ -84,23 +94,41 @@ class StudentExamStore {
     });
   }
 
+  sendAnswer(answers: StudentAnswer[]) {
+    if (!this.socket || !this.auth || !this.exam?.currentQuestion) return;
+    const { studentId, studentToken } = this.auth;
+
+    this.socket.emit(StudentEmitter.ANSWER, {
+      studentId,
+      studentToken,
+      questionIndex: this.exam.currentQuestion.index,
+      answers,
+    });
+  }
+
   private onQuestion(socket: Socket) {
     socket.on(Message.QUESTION, (question: StudentQuestion) => {
-      this.currentQuestion = question;
+      if (!this.exam) return;
+
+      this.exam.currentQuestion = question;
     });
   }
 
   private onStudentJoined(socket: Socket) {
     socket.on(Message.STUDENT_JOINED, (student: Student) => {
-      if (!this.students) return;
-      this.students = [...this.students, student];
+      if (!this.exam) return;
+
+      this.exam.students = [...this.exam.students, student];
     });
   }
 
   private onStudentReconnected(socket: Socket) {
     socket.on(Message.STUDENT_RECONNECTED, (student: Student) => {
-      if (!this.students) return;
-      this.students = this.students.map((s) => (s.studentId === student.studentId ? student : s));
+      if (!this.exam) return;
+
+      this.exam.students = this.exam.students.map((currStudent) => {
+        return currStudent.studentId === student.studentId ? student : currStudent;
+      });
     });
   }
 }

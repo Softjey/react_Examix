@@ -8,15 +8,21 @@ import LoadingPage from '../LoadingPage';
 interface Props {}
 
 const ExamProcessPage: React.FC<Props> = observer(() => {
-  const { currentQuestion, test } = studentExamStore;
+  const { exam } = studentExamStore;
 
-  if (!currentQuestion || !test) {
+  if (!exam || !exam.currentQuestion) {
     return <LoadingPage layout="start" />;
   }
 
+  const { currentQuestion, test } = exam;
+
   return (
     <QuizLayout>
-      <ExamQuestionCard onAnswer={() => {}} question={currentQuestion} questionsAmount={15} />
+      <ExamQuestionCard
+        onAnswer={(answers) => studentExamStore.sendAnswer(answers)}
+        question={currentQuestion}
+        questionsAmount={test.questionsAmount}
+      />
     </QuizLayout>
   );
 });
