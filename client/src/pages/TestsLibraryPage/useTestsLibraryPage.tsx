@@ -5,22 +5,24 @@ import { TestsFiltersValues } from '../../components/common/TestsFilters';
 
 const mapSearchParams = (searchParams: URLSearchParams) => {
   const subject = searchParams.get('subject');
+  const page = searchParams.get('page');
   const paramIsSubject = isSubject(subject);
 
   return {
     subject: paramIsSubject ? subject : undefined,
     search: searchParams.get('search') ?? undefined,
     subjects: paramIsSubject ? [subject] : undefined,
+    page: page ? +page : undefined,
   };
 };
 
 export default function useTestsLibraryPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { search, subject, subjects } = mapSearchParams(searchParams);
-  const { tests, isLoading, error } = useTests({ limit: 10, search, subjects });
+  const { search, subject, subjects, page } = mapSearchParams(searchParams);
+  const { tests, pagesAmount, isLoading, error } = useTests({ limit: 30, search, subjects, page });
 
   const handleFiltersChange = (filters: TestsFiltersValues) => {
-    const newSearchParams = new URLSearchParams();
+    const newSearchParams = new URLSearchParams(searchParams);
 
     if (filters.search) {
       newSearchParams.set('search', filters.search);
@@ -37,12 +39,18 @@ export default function useTestsLibraryPage() {
     setSearchParams(newSearchParams);
   };
 
+  const handlePageChange = (_: React.ChangeEvent<unknown>, newPage: number) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+
+    newSearchParams.set('page', `${newPage}`);
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setSearchParams(newSearchParams);
+  };
+
   return {
-    tests,
-    isLoading,
-    error,
-    search,
-    subject,
-    handleFiltersChange,
+    filters: { search, subject, handleFiltersChange },
+    pagination: { page, pagesAmount, handlePageChange },
+    query: { tests, isLoading, error },
   };
 }
