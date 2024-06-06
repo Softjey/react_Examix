@@ -10,9 +10,10 @@ import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
-import TestPage from '../../pages/TestPage';
 import LoginPage from '../../pages/Login/LoginPage';
 import JoinPage from '../../pages/Login/JoinPage';
+import SettingsPage from '../../pages/SettingsPage';
+import TestPage from '../../pages/TestPage';
 import ExamPage from '../../pages/ExamPage';
 
 const router = createRouter([
@@ -96,7 +97,7 @@ const router = createRouter([
     path: Routes.SETTINGS,
     element: (
       <Authenticated>
-        <HomeLayout>Settings page</HomeLayout>
+        <SettingsPage />
       </Authenticated>
     ),
   },
