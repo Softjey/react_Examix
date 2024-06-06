@@ -6,15 +6,13 @@ import Button from '@mui/material/Button';
 import { Stack } from '@mui/material';
 import useAuth from '../../hooks/queries/useAuth';
 import UserAvatar from '../UI/UserAvatar';
-// import { User } from '../../types/api/entities/user';
+import useUpdateMe from '../../hooks/queries/useUpdateMe';
 
 const MyProfileItem: React.FC = () => {
   const { data: user } = useAuth();
+  const { updateMe } = useUpdateMe();
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState(user ? user.name : '');
-  // const [avatar, setAvatar] = useState<string | undefined>(
-  //   user ? user.photo ?? undefined : undefined,
-  // );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textFieldRef = useRef<HTMLInputElement>(null);
 
@@ -35,24 +33,13 @@ const MyProfileItem: React.FC = () => {
 
   const handleCancel = () => {
     setName(user.name);
-    // setAvatar(user.photo ?? undefined);
     setEditMode(false);
   };
 
   const handleSave = () => {
+    updateMe({ name });
     setEditMode(false);
   };
-
-  // const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.files && event.target.files[0]) {
-  //     const file = event.target.files[0];
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       setAvatar(reader.result as string);
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
 
   const handleAvatarClick = () => {
     if (fileInputRef.current) {
@@ -70,6 +57,7 @@ const MyProfileItem: React.FC = () => {
           value={name}
           onChange={handleNameChange}
           variant="outlined"
+          autoComplete="off"
           size="small"
           inputRef={textFieldRef}
           sx={{
