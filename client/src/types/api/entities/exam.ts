@@ -1,5 +1,5 @@
 import { Test } from './test';
-import { Result } from './testQuestion';
+import { Result } from './Result';
 import { User } from './user';
 
 export interface Exam {
