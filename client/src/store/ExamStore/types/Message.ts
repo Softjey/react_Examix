@@ -8,11 +8,13 @@ enum Message {
 
   EXCEPTION = 'exception',
 
-  EXAM_STARTED = 'exam-started',
-  EXAM_FINISHED = 'exam-finished',
-  QUESTION = 'question',
-  STUDENT_KICKED = 'student-kicked',
   RESULTS = 'results',
+
+  EXAM_STARTED = 'exam-started',
+  QUESTION = 'question',
+
+  EXAM_FINISHED = 'exam-finished',
+  STUDENT_KICKED = 'student-kicked',
 }
 
 export default Message;
