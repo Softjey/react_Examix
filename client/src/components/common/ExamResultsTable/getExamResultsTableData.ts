@@ -25,7 +25,7 @@ export default function getExamResultsTableData(questions: TestQuestionWithResul
           answers: [...results.answers, answers],
           scores: [...results.scores, score],
           scoreSum: results.scoreSum + score,
-          percentage: (results.scoreSum + score) / question.maxScore,
+          percentage: (results.scoreSum + score) / testMaxScore,
         });
       } else {
         resultsMap.set(studentName, {

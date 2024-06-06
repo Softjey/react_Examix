@@ -1,4 +1,5 @@
-import { Result, TestQuestionWithResults } from '../types/api/entities/testQuestion';
+import { Result } from '../types/api/entities/Result';
+import { TestQuestionWithResults } from '../types/api/entities/testQuestion';
 import QuestionType from '../types/api/enums/Type';
 
 export default function getScore(
