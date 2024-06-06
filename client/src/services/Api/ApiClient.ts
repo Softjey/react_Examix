@@ -13,6 +13,7 @@ import { DetailedExam } from '../../types/api/entities/detailedExam';
 import ApiError from './ApiError';
 import { CreateQuestionDto, CreateQuestionsResponse } from './types/create-questions';
 import { CreateTestDto, CreateTestResponse } from './types/create-test';
+import { QuestionsParams, QuestionsRepsonse } from './types/questions';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
@@ -105,6 +106,14 @@ export class RawApiClient {
 
   static async getExamById(id: Exam['id']) {
     const { data } = await axios.get<DetailedExam>(`/exams/${id}`);
+
+    return data;
+  }
+
+  static async getQuestions(params: QuestionsParams = {}) {
+    const { data } = await axios.get<QuestionsRepsonse>('/questions', {
+      params,
+    });
 
     return data;
   }
