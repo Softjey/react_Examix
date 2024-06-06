@@ -6,16 +6,16 @@ import Message from './types/Message';
 import WsException from './ws/types/WsException';
 import WsApiError from './ws/WsApiError';
 import { AuthorConnectedResponse } from './ws/types/responses/ConnectedResponse';
-import { DetailedTest } from '../../types/api/entities/detailedTest';
 import { AuthorAuth } from './types/auth';
 import Student from './types/Student';
 import { AuthorEmitter } from './types/Emitter';
+import { AuthorStoresExam, TempResults } from './types/StoresExam';
+import parseTempResultsIntoTestQuestionWithResults from '../../utils/parseTempResultsIntoTestQuestionWithResults';
 
 class AuthorExamStore {
   private socket: Socket | null = null;
-  examCode: string | null = null;
-  test: DetailedTest | null = null;
-  students: Student[] | null = null;
+  auth: Required<AuthorAuth> | null = null;
+  exam: AuthorStoresExam | null = null;
   error: WsException | null = null;
   status: 'idle' | 'created' | 'started' = 'idle';
   isLoading = false;
@@ -51,9 +51,8 @@ class AuthorExamStore {
       socket.on(Message.CONNECTED, ({ test, students }: AuthorConnectedResponse) => {
         this.isLoading = false;
         this.status = 'created';
-        this.test = test;
-        this.examCode = examCode;
-        this.students = students;
+        this.exam = { test, students, currentQuestion: null, results: null };
+        this.auth = { role: 'author', authorToken, examCode };
         this.socket = socket;
         resolve();
       });
@@ -82,6 +81,7 @@ class AuthorExamStore {
     this.onExamStart(socket);
     this.onStudentJoined(socket);
     this.onStudentReconnected(socket);
+    this.onResults(socket);
   }
 
   private onExamStart(socket: Socket) {
@@ -93,15 +93,30 @@ class AuthorExamStore {
 
   private onStudentJoined(socket: Socket) {
     socket.on(Message.STUDENT_JOINED, (student: Student) => {
-      if (!this.students) return;
-      this.students = [...this.students, student];
+      if (!this.exam) return;
+      this.exam.students = [...this.exam.students, student];
     });
   }
 
   private onStudentReconnected(socket: Socket) {
     socket.on(Message.STUDENT_RECONNECTED, (student: Student) => {
-      if (!this.students) return;
-      this.students = this.students.map((s) => (s.studentId === student.studentId ? student : s));
+      if (!this.exam) return;
+
+      this.exam.students = this.exam.students.map((currStudent) => {
+        return currStudent.studentId === student.studentId ? student : currStudent;
+      });
+    });
+  }
+
+  private onResults(socket: Socket) {
+    socket.on(Message.RESULTS, (results: TempResults) => {
+      if (!this.exam) return;
+      const testQuestionsResults = parseTempResultsIntoTestQuestionWithResults(
+        this.exam.test,
+        results,
+      );
+
+      this.exam.results = testQuestionsResults;
     });
   }
 }

@@ -10,19 +10,22 @@ import Button from '../components/UI/buttons/Button';
 import authorExamStore from '../store/ExamStore/AuthorExamStore';
 import Routes from '../services/Router/Routes';
 import LoadingPage from './LoadingPage';
+import ExamResultsTable from '../components/common/ExamResultsTable/ExamResultsTable';
 
 interface Props extends HomeLayoutProps {}
 
 const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
-  const { test, students, status, isLoading } = authorExamStore;
+  const { exam, status, auth, isLoading } = authorExamStore;
 
   if (status === 'idle') {
     return <Navigate to={Routes.HOME} />;
   }
 
-  if (isLoading || !test) {
+  if (isLoading || !exam || !auth) {
     return <LoadingPage layout="home" />;
   }
+
+  const { test, students, results } = exam;
 
   return (
     <HomeLayout centered {...rest}>
@@ -31,7 +34,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
         action={
           <Stack direction="row" justifyContent="space-around">
             <Typography align="center" variant="h4" color={(theme) => theme.palette.secondary.dark}>
-              {authorExamStore.examCode}
+              {auth.examCode}
             </Typography>
 
             {students?.length !== 0 && (
@@ -50,6 +53,8 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
       <QuestionsList variant="accordion" questions={test.testQuestions} />
 
       <StudentsList variant="accordion" students={students ?? []} />
+
+      {results && <ExamResultsTable questions={results} />}
     </HomeLayout>
   );
 });
