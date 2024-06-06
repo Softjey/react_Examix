@@ -2,7 +2,7 @@ import { Typography, Stack, Box, StackProps } from '@mui/material';
 import React from 'react';
 import { TestQuestion } from '../../types/api/entities/testQuestion';
 import SubjectItem from './SubjectItem/SubjectItem';
-import prettifyDuration from '../../utils/prettifyDuration';
+import prettifyDuration from '../../utils/time/prettifyDuration';
 import RectChip from './RectChip';
 import { Answer, Question } from '../../types/api/entities/question';
 import AnswerItem from '../items/AnswerItem';
