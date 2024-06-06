@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { ListItem, Modal, TextField, Typography, Box } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Modal, TextField, Typography, Box, Stack } from '@mui/material';
 import Button from './UI/buttons/Button';
 
 const DeleteAccount: React.FC = () => {
@@ -17,17 +16,10 @@ const DeleteAccount: React.FC = () => {
   };
 
   return (
-    <>
-      <ListItem>
-        <Button
-          variant="contained"
-          color="error"
-          startIcon={<DeleteIcon />}
-          onClick={handleDeleteClick}
-        >
-          Delete Account
-        </Button>
-      </ListItem>
+    <Stack>
+      <Button variant="contained" color="error" onClick={handleDeleteClick}>
+        Delete Account
+      </Button>
 
       <Modal
         open={isModalOpen}
@@ -64,7 +56,7 @@ const DeleteAccount: React.FC = () => {
           </Box>
         </Box>
       </Modal>
-    </>
+    </Stack>
   );
 };
 
