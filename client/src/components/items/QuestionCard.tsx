@@ -12,7 +12,6 @@ import {
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useState } from 'react';
 import QuestionTypeSelect from '../UI/QuestionTypeSelect';
-import TimeLimitInput from '../../dev/components/TimeLimitInput';
 import AddButton from '../UI/buttons/AddButton';
 import DragBar from '../../dev/components/DragBar';
 import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
@@ -21,6 +20,9 @@ import DeleteButton from '../UI/buttons/DeleteButton';
 import AnswersGroup from '../../dev/components/AnswersGroup';
 import CloseButton from '../UI/buttons/CloseButton';
 import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
+import TimeLimitPicker from '../../dev/components/TimeLimitPicker';
+import MaxScoreInput from '../UI/MaxScoreInput';
+import ErrorPopover from '../../dev/components/ErrorPopover';
 
 interface Props extends CardProps {
   type: QuestionType;
@@ -52,7 +54,6 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
         elevation={2}
         sx={{
           pointerEvents: 'auto',
-          // maxWidth: '460px',
           borderRadius: '12px',
           '&:hover .drag-bar': {
             opacity: 0.7,
@@ -61,7 +62,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
         }}
         {...props}
       >
-        <DragBar sx={{ cursor: 'not-allowed' }} title="This feature is not available" />
+        <DragBar sx={{ cursor: 'not-allowed' }} title="This feature is unavailable" />
 
         <CardContent
           sx={{ display: 'flex', gap: 1, flexDirection: 'column', paddingBottom: 0, paddingTop: 0 }}
@@ -73,34 +74,27 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
               ref={null}
             />
 
-            <TimeLimitInput
-              {...register(`questions.${questionIndex}.timeLimit`)}
-              ref={null}
-              // disabled={disabled}
-              disabled
-            />
+            <ErrorPopover
+              isError={!!errors.questions?.[questionIndex]?.timeLimit}
+              errorMessage={errors.questions?.[questionIndex]?.timeLimit?.message}
+            >
+              <TimeLimitPicker
+                questionIndex={questionIndex}
+                error={!!errors.questions?.[questionIndex]?.timeLimit}
+                disabled={loading}
+              />
+            </ErrorPopover>
 
-            <TextField
-              error={!!errors.questions?.[questionIndex]?.maxScore}
-              helperText={errors.questions?.[questionIndex]?.maxScore?.message?.toString()}
-              {...register(`questions.${questionIndex}.maxScore`, { valueAsNumber: true })}
-              type="text"
-              size="small"
-              sx={{ maxWidth: '80px' }}
-              inputMode="numeric"
-              autoComplete="off"
-              InputProps={{
-                endAdornment: (
-                  <Typography color="text.secondary" sx={{ marginRight: '-4px' }} variant="body2">
-                    pts
-                  </Typography>
-                ),
-                inputProps: {
-                  maxLength: 3,
-                },
-              }}
-              disabled={loading}
-            />
+            <ErrorPopover
+              isError={!!errors.questions?.[questionIndex]?.maxScore}
+              errorMessage={errors.questions?.[questionIndex]?.maxScore?.message}
+            >
+              <MaxScoreInput
+                {...register(`questions.${questionIndex}.maxScore`, { valueAsNumber: true })}
+                error={!!errors.questions?.[questionIndex]?.maxScore}
+                disabled={loading}
+              />
+            </ErrorPopover>
           </Box>
 
           <TextField

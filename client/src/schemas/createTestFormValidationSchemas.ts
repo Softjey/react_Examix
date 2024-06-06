@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import dayjs, { Dayjs } from 'dayjs';
 import Subject from '../types/api/enums/Subject';
 import QuestionType from '../types/api/enums/Type';
 
@@ -31,23 +32,20 @@ const QuestionSchema = z.object({
     .refine((answers) => answers.some((answer) => answer.isCorrect), {
       message: 'At least one answer must be correct',
     }),
-  maxScore: z.number().min(0),
-  timeLimit: z.number().min(0),
+  maxScore: z.number({ message: 'Max score must be a number' }).min(0, 'Max score is required'),
+  timeLimit: z
+    .instanceof(dayjs as unknown as typeof Dayjs)
+    .refine((value) => value.minute() * 60 + value.second() > 0, {
+      message: 'Time limit must be greater than 0',
+    })
+    .refine((value) => value.minute() * 60 + value.second() <= 10 * 60, {
+      message: 'Time limit cannot be more than 10 minutes',
+    }),
 });
 
 export const CreateTestSchema = z.object({
   testImageLink: z.string().nullable(),
-  /* .url('Test image link must be a valid URL') */
-  /* .refine(
-      async (url) => {
-        if (!url) return true;
-        const isValid = await isValidImageUrl(url);
-        return isValid;
-      },
-      {
-        message: 'Test image link must be a valid and accessible image URL',
-      },
-    ), */
+  // .url('Test image link must be a valid URL')
   testName: z.string().min(1, 'Test name is required'),
   testDescription: z.string().min(1, 'Test description is required'),
   subject: z.union([z.nativeEnum(Subject), z.string().length(0)]),

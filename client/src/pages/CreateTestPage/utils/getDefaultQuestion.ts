@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import QuestionType from '../../../types/api/enums/Type';
 
 const getDefaultQuestion = () => ({
@@ -9,7 +10,7 @@ const getDefaultQuestion = () => ({
     { title: '', isCorrect: false },
   ],
   maxScore: 0,
-  timeLimit: 1,
+  timeLimit: dayjs().startOf('hour'),
 });
 
 export default getDefaultQuestion;
