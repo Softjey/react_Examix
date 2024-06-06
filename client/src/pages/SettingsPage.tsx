@@ -1,48 +1,48 @@
 import React from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Paper } from '@mui/material';
 import HomeLayout from '../components/layouts/HomeLayout';
-import ChangePinCode from '../components/ChangePinCode';
-import ChangeTheme from '../components/ChangeTheme';
-import ChangeUserInfo from '../components/ChangeUserInfo';
-import DeleteAccount from '../components/DeleteAccount';
+import SettingsSection from '../components/SettingsSection';
+import SettingsOption from '../components/SettingsOption';
+import ChangeThemeSwitch from '../components/ChangeThemeSwitch';
+import ChangePinCodeButton from '../components/ChangePinCodeButton';
+import DeleteAccountButton from '../components/DeleteAccountButton';
+import ChangePasswordButton from '../components/ChangePassword';
+import MyProfileItem from '../components/items/MyProfileItem';
 
-const sx = {
-  padding: '25px',
-};
+const SettingsPage: React.FC = () => (
+  <HomeLayout centered centeredSx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+    <SettingsSection name="Profile">
+      <MyProfileItem />
+    </SettingsSection>
 
-const SettingsPage: React.FC = () => {
-  return (
-    <HomeLayout>
-      <Box sx={sx}>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="settings table">
-            <TableBody>
-              <TableRow>
-                <TableCell>
-                  <ChangeUserInfo />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <ChangePinCode />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <ChangeTheme />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <DeleteAccount />
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
-    </HomeLayout>
-  );
-};
+    <SettingsSection name="Security">
+      <SettingsOption
+        name="Pin Code Protection"
+        description="Security features help keep your Tests/Exams secure and updated."
+        action={<ChangePinCodeButton />}
+      />
+      <SettingsOption
+        name="Change Password"
+        description="Ensure your account's safety by changing your password"
+        action={<ChangePasswordButton />}
+      />
+    </SettingsSection>
+
+    <SettingsSection name="Appearance">
+      <SettingsOption
+        name="Change Theme"
+        description="Select a single theme and switch between your day and night themes."
+        action={<ChangeThemeSwitch />}
+      />
+    </SettingsSection>
+
+    <SettingsSection name="Delete Account">
+      <SettingsOption
+        name="Delete Account"
+        description="Once you delete your account, there is no going back."
+        action={<DeleteAccountButton />}
+      />
+    </SettingsSection>
+  </HomeLayout>
+);
 
 export default SettingsPage;
