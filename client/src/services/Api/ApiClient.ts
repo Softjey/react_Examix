@@ -11,6 +11,7 @@ import { Exam } from '../../types/api/entities/exam';
 import { Test } from '../../types/api/entities/test';
 import { DetailedExam } from '../../types/api/entities/detailedExam';
 import ApiError from './ApiError';
+import { UpdateMeDto, UpdateMeResponse } from './types/update-me';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
@@ -92,6 +93,12 @@ export class RawApiClient {
     const { data } = await axios.get<DetailedExam>(`/exams/${id}`);
 
     return data;
+  }
+
+  static async updateMe(dto: UpdateMeDto) {
+    const { data } = await axios.patch<UpdateMeResponse>('/users/me', dto);
+
+    return data.user;
   }
 }
 
