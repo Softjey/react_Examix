@@ -1,4 +1,5 @@
 import { Card, CardHeader, CardContent } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { Typography, CardActions, Stack, CardProps } from '@mui/material';
 import CircularProgressWithLabel from '../../dev/CircularProgressWithLabel';
 import { StudentQuestion } from '../../types/api/entities/testQuestion';
@@ -18,11 +19,21 @@ const ExamQuestionCard: React.FC<Props> = ({
   sx,
   ...rest
 }) => {
+  const [answered, setAnswered] = useState(false);
   const { title, answers, maxScore, type, index } = question;
   const questionIndex = index + 1;
 
+  const handleAnswer = (newAnswers: StudentAnswer[]) => {
+    onAnswer(newAnswers);
+    setAnswered(true);
+  };
+
+  useEffect(() => {
+    setAnswered(false);
+  }, [questionIndex]);
+
   return (
-    <Card elevation={3} sx={{ p: 2, ...sx }} {...rest}>
+    <Card elevation={3} sx={{ p: 2, userSelect: 'none', ...sx }} {...rest}>
       <CardHeader title={title} sx={{ paddingBlock: 1 }} />
 
       <CardContent
@@ -47,8 +58,18 @@ const ExamQuestionCard: React.FC<Props> = ({
       </CardContent>
 
       <CardActions sx={{ pl: 2 }}>
-        <AnswerGroup answers={answers} onAnswer={onAnswer} questionType={type} />
+        <AnswerGroup
+          disabled={answered}
+          answers={answers}
+          onAnswer={handleAnswer}
+          questionType={type}
+        />
       </CardActions>
+      {answered && (
+        <Typography variant="body2" color={(t) => t.palette.warning.light}>
+          You already answered this question.
+        </Typography>
+      )}
     </Card>
   );
 };

@@ -4,15 +4,25 @@ import AnswersGroupProps from './AnswersGroupProps';
 
 interface Props extends AnswersGroupProps, RadioGroupProps {}
 
-const SingleChoice: React.FC<Props> = ({ answers, onAnswer, ...rest }) => {
+const SingleChoice: React.FC<Props> = ({ answers, disabled, onAnswer, sx, ...rest }) => {
   const handleChange = (_: unknown, newValue: string) => {
     onAnswer([{ title: newValue }]);
   };
 
   return (
-    <RadioGroup onChange={handleChange} {...rest}>
+    <RadioGroup
+      sx={{ display: 'flex', flexDirection: 'column', gap: 1, ...sx }}
+      onChange={handleChange}
+      {...rest}
+    >
       {answers.map(({ title }) => (
-        <FormControlLabel key={title} value={title} control={<Radio />} label={title} />
+        <FormControlLabel
+          key={title}
+          disabled={disabled}
+          value={title}
+          control={<Radio />}
+          label={title}
+        />
       ))}
     </RadioGroup>
   );

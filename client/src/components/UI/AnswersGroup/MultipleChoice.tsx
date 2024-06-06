@@ -5,11 +5,11 @@ import { StudentAnswer } from '../../../types/api/entities/question';
 
 interface Props extends AnswersGroupProps, FormGroupProps {}
 
-const MultipleChoice: React.FC<Props> = ({ answers, onAnswer, ...rest }) => {
+const MultipleChoice: React.FC<Props> = ({ answers, disabled, onAnswer, sx, ...rest }) => {
   const [selectedAnswers, setSelectedAnswers] = useState<StudentAnswer[]>([]);
 
   return (
-    <FormGroup {...rest}>
+    <FormGroup sx={{ display: 'flex', flexDirection: 'column', gap: 1, ...sx }} {...rest}>
       {answers.map(({ title }) => (
         <FormControlLabel
           key={title}
@@ -24,6 +24,7 @@ const MultipleChoice: React.FC<Props> = ({ answers, onAnswer, ...rest }) => {
               return newAnswers;
             });
           }}
+          disabled={disabled}
           control={<Checkbox />}
           checked={selectedAnswers.some((answer) => answer.title === title)}
           label={title}

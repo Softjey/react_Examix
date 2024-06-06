@@ -14,6 +14,7 @@ interface Props extends AnswersGroupProps, ComponentProps<'form'> {
 
 const AnswersGroupComponent: React.FC<Props> = ({
   answers,
+  disabled,
   onAnswer,
   questionType,
   css,
@@ -38,8 +39,12 @@ const AnswersGroupComponent: React.FC<Props> = ({
   };
 
   const answersComponent = {
-    [QuestionType.SINGLE_CHOICE]: <SingleChoice onAnswer={onAnswerChange} answers={answers} />,
-    [QuestionType.MULTIPLE_CHOICE]: <MultipleChoice onAnswer={onAnswerChange} answers={answers} />,
+    [QuestionType.SINGLE_CHOICE]: (
+      <SingleChoice disabled={disabled} onAnswer={onAnswerChange} answers={answers} />
+    ),
+    [QuestionType.MULTIPLE_CHOICE]: (
+      <MultipleChoice disabled={disabled} onAnswer={onAnswerChange} answers={answers} />
+    ),
   }[questionType];
 
   return (
@@ -50,7 +55,12 @@ const AnswersGroupComponent: React.FC<Props> = ({
     >
       <Box>{answersComponent}</Box>
 
-      <Button sx={{ alignSelf: 'flex-end' }} variant="contained">
+      <Button
+        type="submit"
+        sx={{ alignSelf: 'flex-end', mt: 2 }}
+        disabled={disabled}
+        variant="contained"
+      >
         Submit
       </Button>
     </form>
