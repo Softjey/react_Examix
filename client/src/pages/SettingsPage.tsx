@@ -1,58 +1,47 @@
 import React from 'react';
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { Divider } from '@mui/material';
 import HomeLayout from '../components/layouts/HomeLayout';
-import ChangePinCode from '../components/ChangePinCode';
-import ChangeTheme from '../components/ChangeTheme';
-import ChangeUserInfo from '../components/ChangeUserInfo';
-import DeleteAccount from '../components/DeleteAccount';
+import SettingsSection from '../components/SettingsSection';
+import SettingsOption from '../components/SettingsOption';
+import ChangeThemeSwitch from '../components/ChangeThemeSwitch';
+import ChangePinCodeButton from '../components/ChangePinCodeButton';
+import DeleteAccountButton from '../components/DeleteAccountButton';
+import ChangePasswordButton from '../components/ChangePassword';
+import MyProfileItem from '../components/items/MyProfileItem';
 
 const SettingsPage: React.FC = () => (
-  <HomeLayout centered>
-    <Stack spacing={2}>
-      <Typography variant="h6" color="black" paddingLeft="15px">
-        My Profile
-      </Typography>
-      <Divider />
-      <Box sx={{ p: 1 }}>
-        <ChangeUserInfo />
-      </Box>
+  <HomeLayout centered centeredSx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+    <SettingsSection name="Profile">
+      <MyProfileItem />
+    </SettingsSection>
 
-      <Typography variant="h6" color="black" paddingLeft="15px">
-        Security
-      </Typography>
-      <Divider />
-      <Box sx={{ p: 1 }}>
-        <ChangePinCode />
-        <Typography marginLeft={2} color="gray" variant="body1">
-          Customize your security settings
-        </Typography>
-      </Box>
+    <SettingsSection name="Security">
+      <SettingsOption
+        name="Pin Code Protection"
+        description="Security features help keep your Tests/Exams secure and updated."
+        action={<ChangePinCodeButton />}
+      />
+      <SettingsOption
+        name="Change Password"
+        description="Ensure your account's safety by changing your password"
+        action={<ChangePasswordButton />}
+      />
+    </SettingsSection>
 
-      <Typography variant="h6" color="black" paddingLeft="15px">
-        Appearance
-      </Typography>
-      <Divider />
-      <Box sx={{ p: 1 }}>
-        <ChangeTheme />
-        <Typography marginLeft={2} color="gray" variant="body1">
-          Customize the appearance of the app
-        </Typography>
-      </Box>
+    <SettingsSection name="Appearance">
+      <SettingsOption
+        name="Change Theme"
+        description="Select a single theme and switch between your day and night themes."
+        action={<ChangeThemeSwitch />}
+      />
+    </SettingsSection>
 
-      <Typography variant="h6" color="black" paddingLeft="15px">
-        Delete Account
-      </Typography>
-      <Divider />
-      <Box sx={{ p: 1 }}>
-        <DeleteAccount />
-        <Typography marginLeft={2} color="gray" variant="body1">
-          Permanently delete your account
-        </Typography>
-      </Box>
-    </Stack>
+    <SettingsSection name="Delete Account">
+      <SettingsOption
+        name="Delete Account"
+        description="Once you delete your account, there is no going back."
+        action={<DeleteAccountButton />}
+      />
+    </SettingsSection>
   </HomeLayout>
 );
 
