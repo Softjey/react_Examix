@@ -60,9 +60,12 @@ const ExamQuestionCard: React.FC<Props> = (props) => {
             }}
           >
             <CircularProgress size={60} />
-            <DottedText align="center" variant="body1">
-              New question is loading
-            </DottedText>
+            <Stack direction="row" spacing={2.5}>
+              <DottedText align="center" variant="body1">
+                Please hold on, something wonderful is coming
+              </DottedText>
+              <Typography variant="body1">😊</Typography>
+            </Stack>
           </Stack>
         )}
 
