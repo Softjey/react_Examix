@@ -5,6 +5,7 @@ import studentExamStore from '../../store/ExamStore/StudentExamStore';
 import Routes from '../../services/Router/Routes';
 import ExamWaitingPage from './ExamWaitingPage';
 import ExamProcessPage from './ExamProcessPage';
+import ExamFinishedPage from './ExamFinishedPage';
 
 interface Props {}
 
@@ -18,6 +19,8 @@ const OngoingExamPage: React.FC<Props> = observer(() => {
       return <ExamWaitingPage />;
     case 'started':
       return <ExamProcessPage />;
+    case 'finished':
+      return <ExamFinishedPage />;
     default:
       throw new Error('Invalid status');
   }
