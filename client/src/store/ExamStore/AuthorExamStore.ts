@@ -11,13 +11,14 @@ import Student from './types/Student';
 import { AuthorEmitter } from './types/Emitter';
 import { AuthorStoresExam, TempResults } from './types/StoresExam';
 import parseTempResultsIntoTestQuestionWithResults from '../../utils/parseTempResultsIntoTestQuestionWithResults';
+import { DetailedExam } from '../../types/api/entities/detailedExam';
 
 class AuthorExamStore {
   private socket: Socket | null = null;
   auth: Required<AuthorAuth> | null = null;
   exam: AuthorStoresExam | null = null;
   error: WsException | null = null;
-  status: 'idle' | 'created' | 'started' = 'idle';
+  status: 'idle' | 'created' | 'started' | 'finished' = 'idle';
   isLoading = false;
 
   constructor() {
@@ -51,7 +52,7 @@ class AuthorExamStore {
       socket.on(Message.CONNECTED, ({ test, students }: AuthorConnectedResponse) => {
         this.isLoading = false;
         this.status = 'created';
-        this.exam = { test, students, currentQuestion: null, results: null };
+        this.exam = { test, students, currentQuestion: null, results: null, id: null };
         this.auth = { role: 'author', authorToken, examCode };
         this.socket = socket;
         resolve();
@@ -82,6 +83,7 @@ class AuthorExamStore {
     this.onStudentJoined(socket);
     this.onStudentReconnected(socket);
     this.onResults(socket);
+    this.onExamFinished(socket);
   }
 
   private onExamStart(socket: Socket) {
@@ -118,6 +120,26 @@ class AuthorExamStore {
 
       this.exam.results = testQuestionsResults;
     });
+  }
+
+  private onExamFinished(socket: Socket) {
+    socket.on(Message.EXAM_FINISHED, (detailedExam: DetailedExam) => {
+      if (!this.exam) return;
+
+      this.exam.id = detailedExam.id;
+      this.status = 'finished';
+      this.exam.currentQuestion = null;
+    });
+  }
+
+  resetExam() {
+    this.socket?.disconnect();
+    this.socket = null;
+    this.auth = null;
+    this.exam = null;
+    this.error = null;
+    this.status = 'idle';
+    this.isLoading = false;
   }
 }
 

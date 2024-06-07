@@ -16,7 +16,7 @@ class StudentExamStore {
   private socket: Socket | null = null;
   exam: StudentStoresExam | null = null;
   error: WsException | null = null;
-  status: 'idle' | 'created' | 'started' = 'idle';
+  status: 'idle' | 'created' | 'started' | 'finished' = 'idle';
   isLoading = false;
 
   constructor() {
@@ -86,6 +86,7 @@ class StudentExamStore {
     this.onStudentJoined(socket);
     this.onStudentReconnected(socket);
     this.onQuestion(socket);
+    this.onExamFinished(socket);
   }
 
   private onExamStart(socket: Socket) {
@@ -130,6 +131,25 @@ class StudentExamStore {
         return currStudent.studentId === student.studentId ? student : currStudent;
       });
     });
+  }
+
+  private onExamFinished(socket: Socket) {
+    socket.on(Message.EXAM_FINISHED, () => {
+      if (!this.exam) return;
+
+      this.status = 'finished';
+      this.exam.currentQuestion = null;
+    });
+  }
+
+  resetExam() {
+    this.socket?.disconnect();
+    this.socket = null;
+    this.auth = null;
+    this.exam = null;
+    this.error = null;
+    this.status = 'idle';
+    this.isLoading = false;
   }
 }
 
