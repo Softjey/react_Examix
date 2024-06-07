@@ -23,7 +23,7 @@ export default function getScore(
       const correctAnswers = question.answers.filter((answer) => answer.isCorrect);
       const answerWeight = maxScore / correctAnswers.length;
       let haveIncorrectAnswer = false;
-      const studentScore = studentAnswer.answers.reduce((sum, pupilAnswer) => {
+      const studentScore = answers.reduce((sum, pupilAnswer) => {
         const correctAnswer = correctAnswers.find((answer) => answer.title === pupilAnswer.title);
 
         if (!correctAnswer || haveIncorrectAnswer) {
