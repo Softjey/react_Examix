@@ -21,6 +21,10 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
     return <Navigate to={Routes.HOME} />;
   }
 
+  if (status === 'finished' && exam?.id) {
+    return <Navigate to={`${Routes.EXAM}/${exam.id}`} />;
+  }
+
   if (isLoading || !exam || !auth) {
     return <LoadingPage layout="home" />;
   }
@@ -37,7 +41,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
               {auth.examCode}
             </Typography>
 
-            {students?.length !== 0 && (
+            {students?.length !== 0 && status === 'created' && (
               <Button
                 variant="contained"
                 color="secondary"

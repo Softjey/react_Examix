@@ -7,6 +7,7 @@ import LoadingPage from './LoadingPage';
 import NotFoundPage from './NotFoundPage';
 import BaseTestInfo from '../components/common/BaseTestInfo';
 import QuestionsList from '../components/common/QuestionsList';
+import CreateExamButton from '../components/UI/buttons/CreateExamButton';
 
 interface Props extends HomeLayoutProps {}
 
@@ -25,7 +26,7 @@ const TestPage: React.FC<Props> = ({ ...rest }) => {
 
   return (
     <HomeLayout centered {...rest}>
-      <BaseTestInfo test={test} />
+      <BaseTestInfo test={test} action={<CreateExamButton testId={test.id} />} />
 
       <QuestionsList questions={test.testQuestions} />
     </HomeLayout>

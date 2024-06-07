@@ -1,34 +1,19 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import { Stack, Typography, Box, StackProps } from '@mui/material';
-import { useNavigate } from 'react-router';
-import { observer } from 'mobx-react-lite';
 import SubjectItem from '../UI/SubjectItem/SubjectItem';
 import TestAvatar from '../UI/TestAvatar';
 import { DetailedTest } from '../../types/api/entities/detailedTest';
 import UserAvatar from '../UI/UserAvatar';
-import authorExamStore from '../../store/ExamStore/AuthorExamStore';
-import Button from '../UI/buttons/Button';
-import Routes from '../../services/Router/Routes';
 
 interface Props extends StackProps {
-  test: Pick<
-    DetailedTest,
-    'id' | 'image' | 'name' | 'description' | 'author' | 'subject' | 'createdAt'
-  >;
+  test: Pick<DetailedTest, 'image' | 'name' | 'description' | 'author' | 'subject' | 'createdAt'>;
   action?: React.ReactNode;
 }
 
-const BaseTestInfo: React.FC<Props> = observer(({ sx, test, action, ...rest }) => {
-  const navigate = useNavigate();
-  const { id, name, description, subject, createdAt } = test;
+const BaseTestInfo: React.FC<Props> = ({ sx, test, action, ...rest }) => {
+  const { name, description, subject, createdAt } = test;
   const date = dayjs(createdAt).format('DD/MM/YYYY');
-
-  const createExam = async () => {
-    authorExamStore.createExam(id).then(() => {
-      navigate(Routes.ONGOING_EXAM_PANEL);
-    });
-  };
 
   return (
     <Stack
@@ -70,21 +55,10 @@ const BaseTestInfo: React.FC<Props> = observer(({ sx, test, action, ...rest }) =
           />
         </Box>
 
-        {action ?? (
-          <Button
-            variant="contained"
-            color="secondary"
-            disabled={authorExamStore.status !== 'idle'}
-            onClick={createExam}
-          >
-            {authorExamStore.status !== 'idle'
-              ? 'You have already started the exam'
-              : 'Create Exam with this Test'}
-          </Button>
-        )}
+        {action ?? null}
       </Stack>
     </Stack>
   );
-});
+};
 
 export default BaseTestInfo;
