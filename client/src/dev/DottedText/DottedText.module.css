@@ -1,0 +1,32 @@
+.dotted-text {
+  position: relative;
+}
+
+.dotted-text::after {
+  content: '';
+  position: absolute;
+  padding-left: 2%;
+  animation: dots 2s infinite;
+}
+
+@keyframes dots {
+  0%,
+  20% {
+    content: '';
+  }
+
+  25%,
+  45% {
+    content: '.';
+  }
+
+  50%,
+  70% {
+    content: '..';
+  }
+
+  75%,
+  100% {
+    content: '...';
+  }
+}

@@ -1,10 +1,5 @@
-import { Nullable } from '../../utils/Nullable';
-import { Answer, Question } from './question';
-
-export interface Result {
-  studentName: string;
-  studentAnswer: Nullable<{ answers: Pick<Answer, 'title'>[] }>;
-}
+import { Result } from './Result';
+import { Question, StudentAnswer } from './question';
 
 export interface TestQuestion {
   id: number;
@@ -16,3 +11,12 @@ export interface TestQuestion {
 export interface TestQuestionWithResults extends TestQuestion {
   results: Result[];
 }
+
+type TestQuestionInfo = Pick<TestQuestion, 'id' | 'timeLimit' | 'maxScore'>;
+
+export interface StudentQuestion extends Pick<Question, 'title' | 'type'>, TestQuestionInfo {
+  answers: StudentAnswer[];
+  index: number;
+}
+
+export type TempResultsQuestion = Pick<Question, 'title' | 'type' | 'answers'> & TestQuestionInfo;

@@ -1,139 +1,50 @@
-/* eslint-disable consistent-return */
-/* eslint-disable @typescript-eslint/no-use-before-define */
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  CircularProgress,
-  CircularProgressProps,
-  Typography,
-} from '@mui/material';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
+import { CircularProgress } from '@mui/material';
+import { useNavigate } from 'react-router';
 import StartLayout from '../components/layouts/StartLayout';
-// eslint-disable-next-line import/no-cycle
-import questions from './questions';
-
-interface StudentAnswer {
-  title: string;
-}
-
-export interface Question {
-  id: number;
-  index: number;
-  answers: StudentAnswer[];
-  type: 'single' | 'multiple';
-  title: string;
-  maxScore: number;
-  timeLimit: number;
-}
+import ExamQuestionCard from '../components/items/ExamQuestionCard';
+import Timer from '../components/UI/Timer';
+import { Question, StudentAnswer } from './questions';
+import log from './log';
+import { center } from '../styles/flex';
+import Routes from '../services/Router/Routes';
+import studentExamSocket, { MessageNames } from '../store/examSocket';
 
 const QuizPage: React.FC = () => {
-  const [time, setTime] = useState<number>(0);
-  const [question, setQuestion] = useState<Question | null>(null);
-  const currIndex = useRef(0);
-  // server request emulation
-  useEffect(() => {
-    setTimeout(() => {
-      setQuestion(questions[currIndex.current]);
-    }, 2000);
-
-    const timer = setTimeout(
-      () => {
-        setQuestion(questions[currIndex.current + 1]);
-      },
-      questions[currIndex.current].timeLimit * 1000 + 2000,
-    );
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (!question) return;
-
-    setTime(0);
-
-    const interval = setInterval(() => {
-      setTime((prev) => prev + 1);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [question]);
+  const [currQuestion, setCurrQuestion] = useState<Question | null>(null);
+  const { testInfo } = studentExamSocket;
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
+  studentExamSocket.on(MessageNames.QUESTION, (newQuestion: Question) => {
+    setCurrQuestion(newQuestion);
+    setIsLoading(false);
+  });
+  studentExamSocket.on(MessageNames.EXAM_FINISHED, () => {
+    log('finished')();
+    setIsLoading(false);
+    navigate(Routes.JOIN);
+  });
 
   return (
-    <StartLayout>
-      {question !== null ? (
-        <>
-          <CircularProgressWithLabel value={time} max={question.timeLimit} />
-          <QuizCard question={question} sendAnswer={() => {}} />
-        </>
-      ) : (
-        <div css={{ width: '120px', height: '120px', display: 'flex' }}>
+    <StartLayout header={false}>
+      {isLoading || currQuestion === null ? (
+        <div css={{ width: '120px', height: '120px', ...center }}>
           <CircularProgress />
         </div>
+      ) : (
+        <>
+          <Timer question={currQuestion} onEnd={() => setIsLoading(true)} />
+          <ExamQuestionCard
+            questionsAmount={testInfo?.questionsAmount}
+            question={currQuestion}
+            onAnswer={(answers: StudentAnswer[]) => {
+              studentExamSocket.sendAnswer(currQuestion!.id, answers);
+            }}
+          />
+        </>
       )}
     </StartLayout>
   );
 };
 
 export default QuizPage;
-
-interface CardProps {
-  question: Question;
-  sendAnswer: (answer: StudentAnswer) => void;
-}
-
-export const QuizCard: React.FC<CardProps> = memo(
-  ({ question: { title, answers, maxScore }, sendAnswer }) => (
-    <Card>
-      <CardHeader title="Max score:" subheader={maxScore} />
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {title}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <ButtonGroup>
-          {answers.map((answer) => (
-            <Button key={answer.title} onClick={() => sendAnswer(answer)}>
-              {answer.title}
-            </Button>
-          ))}
-        </ButtonGroup>
-
-        <Button size="small">Submit</Button>
-      </CardActions>
-    </Card>
-  ),
-);
-
-const CircularProgressWithLabel = (
-  props: CircularProgressProps & { value: number; max: number },
-) => {
-  const progress = (props.value / props.max) * 100;
-
-  return (
-    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-      <CircularProgress variant="determinate" value={progress} />
-      <Box
-        sx={{
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-          position: 'absolute',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Typography variant="caption" component="div" color="text.secondary">
-          {`${Math.round(props.value)}s`}
-        </Typography>
-      </Box>
-    </Box>
-  );
-};

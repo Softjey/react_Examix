@@ -27,7 +27,7 @@ export class WsExamsAuthenticator {
 
   async authorizeStudent(auth: ClientStudentAuthDto): AuthorizeStudentReturnType {
     const { client } = this;
-    const { studentId, examCode } = auth;
+    const { studentId, studentName, examCode } = auth;
     const { students, status } = await this.examsService.getExam(auth.examCode);
 
     if (!studentId) {
@@ -50,7 +50,12 @@ export class WsExamsAuthenticator {
       return ['error', null];
     }
 
-    const [oldId] = await this.examsService.updateStudentClientId(examCode, studentId, client.id);
+    const [oldId] = await this.examsService.updateStudentClientId(
+      examCode,
+      studentId,
+      studentName,
+      client.id,
+    );
     const [oldSocket] = await this.server.in(oldId).fetchSockets();
 
     if (oldSocket) {

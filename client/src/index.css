@@ -4,9 +4,15 @@
   padding: 0;
 }
 
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
 html {
   font-family: 'Roboto', sans-serif;
   font-size: 16px;
+  background: #f3f6f999;
   overflow: auto;
   scrollbar-gutter: stable;
 }
