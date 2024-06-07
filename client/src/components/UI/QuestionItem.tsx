@@ -48,7 +48,7 @@ const QuestionItem: React.FC<Props> = ({ question, index, studentAnswers, ...res
 
           <Stack direction="row" justifyItems="stretch" gap={1}>
             <RectChip label={`${question.maxScore} points`} />
-            <RectChip label={prettifyDuration(question.timeLimit)} />
+            <RectChip label={prettifyDuration(question.timeLimit * 1000)} />
           </Stack>
         </Stack>
       )}
