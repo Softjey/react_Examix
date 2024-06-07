@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Typography } from '@mui/material';
 import { Navigate, useNavigate } from 'react-router';
@@ -21,6 +21,12 @@ const ExamFinishedPage: React.FC<Props> = observer(() => {
     studentExamStore.resetExam();
     navigate(Routes.START);
   };
+
+  useEffect(() => {
+    return () => {
+      studentExamStore.resetExam();
+    };
+  }, []);
 
   return (
     <QuizLayout centeredProps={{ sx: { maxWidth: 400 } }}>
