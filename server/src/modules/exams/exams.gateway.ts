@@ -160,13 +160,12 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
 
     this.examsService.onExamFinish(examCode, async (detailedExamPromise) => {
+      const detailedExam = await detailedExamPromise;
+
       client.broadcast.to(examCode).emit('exam-finished');
-      client.broadcast.in(examCode).disconnectSockets(true);
-      detailedExamPromise.then((detailedExam) => {
-        client.emit('exam-finished', detailedExam);
-        client.leave(examCode);
-        client.disconnect(true);
-      });
+      client.emit('exam-finished', detailedExam);
+
+      client.in(examCode).disconnectSockets(true);
     });
   }
 

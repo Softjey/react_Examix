@@ -1,3 +1,4 @@
+import { DetailedExam } from '../../../types/api/entities/detailedExam';
 import { DetailedTest } from '../../../types/api/entities/detailedTest';
 import {
   StudentQuestion,
@@ -17,6 +18,7 @@ export interface StudentStoresExam extends StoresExam {
 }
 
 export interface AuthorStoresExam extends StoresExam {
+  id: null | DetailedExam['id'];
   test: DetailedTest;
   results: TestQuestionWithResults[] | null;
 }
