@@ -1,19 +1,21 @@
 import { makeAutoObservable } from 'mobx';
-import { Socket, io } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import Message from './types/Message';
 import WsException from './ws/types/WsException';
 import WsApiError from './ws/WsApiError';
 import { StudentConnectedResponse } from './ws/types/responses/ConnectedResponse';
-import { StudentAuth } from './types/auth';
 import Student from './types/Student';
 import { StudentQuestion } from '../../types/api/entities/testQuestion';
 import { StudentAnswer } from '../../types/api/entities/question';
 import { StudentEmitter } from './types/Emitter';
 import { StudentStoresExam } from './types/StoresExam';
 import storage from '../../services/storage';
+import createStudentSocket, { Credentials } from './utils/createStudentSocket';
+import createOffHandlers from './utils/createOffHandlers';
+import { StudentReconnectedResponse } from './ws/types/responses/ReconnectedResponse';
 
 class StudentExamStore {
-  private auth: Required<StudentAuth> | null = null;
+  private credentials: Required<Credentials> | null = null;
   private socket: Socket | null = null;
   exam: StudentStoresExam | null = null;
   status: 'idle' | 'created' | 'started' | 'finished' = 'idle';
@@ -22,19 +24,24 @@ class StudentExamStore {
     makeAutoObservable(this);
   }
 
+  private async setCredentials(credentials: Required<Credentials>) {
+    storage.write('student-exam-credentials', credentials);
+
+    this.credentials = credentials;
+  }
+
   async tryToReconnect() {
     const credentials = storage.read('student-exam-credentials');
     const { examCode, studentName, studentId, studentToken } = credentials ?? {};
     const someCredentialsAreMissing = !examCode || !studentName || !studentId || !studentToken;
     let credentialsDeleted = false;
 
-    if (someCredentialsAreMissing) {
+    if (someCredentialsAreMissing || !credentials) {
       storage.remove('student-exam-credentials');
-
       return true;
     }
 
-    await this.connectToExam({ examCode, studentName }).catch((error: WsApiError) => {
+    await this.reconnectToExam(credentials).catch((error: WsApiError) => {
       const studentNotFound = error.message === 'Student not found. Please, check the student id';
       const examNotFound = error.message === 'Exam not found. Please, check the exam code';
 
@@ -49,82 +56,75 @@ class StudentExamStore {
     return credentialsDeleted;
   }
 
-  connectToExam({ examCode, studentName }: Pick<StudentAuth, 'examCode' | 'studentName'>) {
-    const { studentId, studentToken } = storage.read('student-exam-credentials') ?? {};
-
+  connectToExam({ examCode, studentName }: Pick<Credentials, 'examCode' | 'studentName'>) {
     return new Promise<void>((resolve, reject) => {
-      const socket = io(`${import.meta.env.VITE_SERVER_WS_URL}/join-exam`, {
-        auth: {
-          role: 'student',
-          examCode,
-          studentName,
-          studentToken,
-          studentId,
-        } as StudentAuth,
-        autoConnect: false,
+      const socket = createStudentSocket({ examCode, studentName });
+      const offHandlers = createOffHandlers(socket, {
+        [Message.CONNECTED]: onConnect,
+        [Message.EXCEPTION]: onError,
       });
 
-      const offHandlers = () => {
-        socket.off(Message.EXCEPTION, onConnectError);
-        socket.off(Message.CONNECTED, onConnect);
-        socket.off(Message.RECONNECTED, onReconnect);
-      };
-
-      const setAuth = (data: Pick<StudentConnectedResponse, 'studentId' | 'studentToken'>) => {
-        const { studentId: newId, studentToken: newToken } = data;
-
-        storage.write('student-exam-credentials', {
-          studentId: newId,
-          studentToken: newToken,
-          examCode,
-          studentName,
-        });
-
-        this.auth = {
-          role: 'student',
-          studentId: data.studentId,
-          studentToken: data.studentToken,
-          examCode,
-          studentName,
-        };
-      };
-
-      const setExam = ({ test, students }: Pick<StudentConnectedResponse, 'test' | 'students'>) => {
+      const handleConnect = (
+        { students, test }: Pick<StudentConnectedResponse, 'test' | 'students'>,
+        credentials: Required<Credentials>,
+      ) => {
         this.exam = { test, students, currentQuestion: null };
+        this.setCredentials(credentials);
         this.status = 'created';
         this.socket = socket;
-
-        resolve();
       };
 
-      function onConnectError(error: WsException) {
+      function onError(error: WsException) {
         offHandlers();
         reject(new WsApiError(error));
       }
 
       function onConnect(response: StudentConnectedResponse) {
-        const { studentId: newStudentId, studentToken: newStudentToken, students, test } = response;
+        const { studentId, studentToken, students, test } = response;
 
+        handleConnect({ students, test }, { studentId, studentToken, examCode, studentName });
         offHandlers();
-        setAuth({ studentId: newStudentId, studentToken: newStudentToken });
-        setExam({ students, test });
+        resolve();
       }
-
-      function onReconnect(response: Pick<StudentConnectedResponse, 'test' | 'students'>) {
-        offHandlers();
-
-        if (studentId && studentToken) {
-          setAuth({ studentId, studentToken });
-        }
-
-        setExam(response);
-      }
-
-      socket.once(Message.EXCEPTION, onConnectError);
-      socket.once(Message.CONNECTED, onConnect);
-      socket.once(Message.RECONNECTED, onReconnect);
 
       this.addListeners(socket);
+      socket.once(Message.EXCEPTION, onError);
+      socket.once(Message.CONNECTED, onConnect);
+      socket.connect();
+    });
+  }
+
+  private reconnectToExam(credentials: Required<Credentials>) {
+    return new Promise<void>((resolve, reject) => {
+      const socket = createStudentSocket(credentials);
+      const offHandlers = createOffHandlers(socket, {
+        [Message.EXCEPTION]: onError,
+        [Message.RECONNECTED]: onReconnect,
+      });
+
+      const handleReconnect = (response: StudentReconnectedResponse) => {
+        const { students, test, examStatus, currentQuestion } = response;
+
+        this.exam = { test, students, currentQuestion };
+        this.setCredentials(credentials);
+        this.status = examStatus;
+        this.socket = socket;
+      };
+
+      function onReconnect(response: StudentReconnectedResponse) {
+        handleReconnect(response);
+        offHandlers();
+        resolve();
+      }
+
+      function onError(error: WsException) {
+        offHandlers();
+        reject(new WsApiError(error));
+      }
+
+      this.addListeners(socket);
+      socket.once(Message.RECONNECTED, onReconnect);
+      socket.once(Message.EXCEPTION, onError);
       socket.connect();
     });
   }
@@ -145,8 +145,8 @@ class StudentExamStore {
   }
 
   sendAnswer(answers: StudentAnswer[]) {
-    if (!this.socket || !this.auth || !this.exam?.currentQuestion) return;
-    const { studentId, studentToken } = this.auth;
+    if (!this.socket || !this.credentials || !this.exam?.currentQuestion) return;
+    const { studentId, studentToken } = this.credentials;
 
     this.socket.emit(StudentEmitter.ANSWER, {
       studentId,
@@ -203,7 +203,7 @@ class StudentExamStore {
   resetExam() {
     this.socket?.disconnect();
     this.socket = null;
-    this.auth = null;
+    this.credentials = null;
     this.exam = null;
     this.status = 'idle';
   }
