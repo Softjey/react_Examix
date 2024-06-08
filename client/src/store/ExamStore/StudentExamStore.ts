@@ -194,6 +194,7 @@ class StudentExamStore {
     socket.on(Message.EXAM_FINISHED, () => {
       if (!this.exam) return;
 
+      storage.remove('student-exam-credentials');
       this.status = 'finished';
       this.exam.currentQuestion = null;
     });
