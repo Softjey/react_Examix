@@ -1,7 +1,7 @@
 import { DetailedExam } from '../../../types/api/entities/detailedExam';
 import { DetailedTest } from '../../../types/api/entities/detailedTest';
 import {
-  StudentQuestion,
+  ExamCurrentQuestion,
   TempResultsQuestion,
   TestQuestionWithResults,
 } from '../../../types/api/entities/testQuestion';
@@ -10,7 +10,7 @@ import Student, { StudentWithResults } from './Student';
 
 export interface StoresExam {
   students: Student[];
-  currentQuestion: StudentQuestion | null;
+  currentQuestion: ExamCurrentQuestion | null;
 }
 
 export interface StudentStoresExam extends StoresExam {
