@@ -114,14 +114,28 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleDisconnect(@ConnectedSocket() client: Socket) {
-    const { examCode } = client.handshake.auth as ExamClientAuthDto;
-    const room = await this.server.in(examCode).fetchSockets();
-    const exam = await this.examsService.getExam(examCode, true);
+    try {
+      const { examCode, role } = client.handshake.auth as ExamClientAuthDto;
+      const room = await this.server.in(examCode).fetchSockets();
+      const exam = await this.examsService.getExam(examCode, true);
 
-    console.log('Disconnect', { examCode, room: room.length, examStatus: exam?.status });
+      if (role === 'author') {
+        await this.examsService.authorLeave(examCode);
+      }
 
-    if (exam && room.length === 0 && exam.status !== 'started') {
-      await this.examsService.deleteExam(examCode);
+      if (role === 'student') {
+        const { studentId } = await this.examsService.studentLeave(examCode, client.id);
+
+        client.broadcast.to(examCode).emit('student-disconnected', { studentId });
+      }
+
+      console.log('Disconnect', { examCode, room: room.length, examStatus: exam?.status });
+
+      if (exam && room.length === 0 && exam.status !== 'started') {
+        await this.examsService.deleteExam(examCode);
+      }
+    } catch (error) {
+      WsExceptionsFilter.handleError(client, error);
     }
   }
 

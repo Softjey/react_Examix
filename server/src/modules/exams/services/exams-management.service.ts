@@ -101,6 +101,44 @@ export class ExamManagementService extends EventEmitter {
     return studentClientId ?? null;
   }
 
+  async authorLeave(examCode: string) {
+    const exam = await this.examsCacheService.getExam(examCode);
+    const timeout = config.EXAM_AFTER_AUTHOR_LEAVE_TIMEOUT * 1000 * 60;
+
+    if (exam.author.clientId) {
+      exam.author.clientId = null;
+    }
+
+    if (exam.status === 'created') {
+      setTimeout(() => {
+        if (exam.author.clientId === null) {
+          this.deleteExam(examCode);
+        }
+      }, timeout);
+    }
+
+    await this.examsCacheService.setExam(examCode, exam);
+  }
+
+  async studentLeave(examCode: string, clientId: string) {
+    const exam = await this.examsCacheService.getExam(examCode);
+    const { status, students } = exam;
+
+    if (status !== 'created') {
+      return;
+    }
+
+    const [studentId, student] = Object.entries(students).find(([, student]) => {
+      return student.clientId === clientId;
+    });
+
+    delete exam.students[studentId];
+
+    await this.examsCacheService.setExam(examCode, exam);
+
+    return { studentId, ...student };
+  }
+
   private emitQuestion(examCode: string, question: ExamQuestion, questionIndex: number) {
     this.emit(this.questionEventName(examCode), question, questionIndex);
   }
