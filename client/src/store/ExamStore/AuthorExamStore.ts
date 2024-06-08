@@ -104,6 +104,7 @@ class AuthorExamStore {
     this.onStudentReconnected(socket);
     this.onResults(socket);
     this.onExamFinished(socket);
+    this.onStudentLeave(socket);
   }
 
   private onStudentJoined(socket: Socket) {
@@ -120,6 +121,14 @@ class AuthorExamStore {
       this.exam.students = this.exam.students.map((currStudent) => {
         return currStudent.studentId === student.studentId ? student : currStudent;
       });
+    });
+  }
+
+  private onStudentLeave(socket: Socket) {
+    socket.on(Message.STUDENT_DISCONNECTED, ({ studentId }: { studentId: string }) => {
+      if (!this.exam) return;
+
+      this.exam.students = this.exam.students.filter((student) => student.studentId !== studentId);
     });
   }
 
