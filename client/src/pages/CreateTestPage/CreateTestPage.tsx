@@ -67,12 +67,11 @@ const CreateTestPage: React.FC<Props> = () => {
   const addQuestionCard = () => append(getDefaultQuestion(), { shouldFocus: false });
 
   const addQuestionCardFromServer = (value: Question) => {
-    const { type, createdAt, ...question } = value;
+    const { type, ...question } = value;
 
     append(
       {
         ...question,
-        createdAt: createdAt.toISOString(),
         type: type as QuestionType.MULTIPLE_CHOICE | QuestionType.SINGLE_CHOICE,
         isFromServer: true,
         maxScore: 0,
@@ -107,7 +106,7 @@ const CreateTestPage: React.FC<Props> = () => {
           questions: getPreparedTestQuestions(
             createQuestionsResponse.questions,
             questionsFromServer as QuestionFromServer[],
-            data,
+            data.questions,
           ),
         };
 
@@ -177,8 +176,10 @@ const CreateTestPage: React.FC<Props> = () => {
         autoCompleteProps={{
           options: questions || [],
           onChange: (_, value) => {
+            console.log(value);
             addQuestionCardFromServer(value as Question);
 
+            setSearch('');
             setIsModalOpened(false);
           },
           loading: isLoading,

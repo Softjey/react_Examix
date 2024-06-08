@@ -22,7 +22,7 @@ const QuestionsGroup: React.FC<Props> = ({ fields, onRemove, ...props }) => {
 
   const questionsFromServer = data.questions.filter((question) => question.isFromServer);
 
-  console.log('questions: ', filteredQuestions);
+  console.log('questions from user: ', filteredQuestions);
   console.log('questions from server: ', questionsFromServer);
 
   console.log(errors);

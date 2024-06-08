@@ -14,39 +14,31 @@ const formatTimeLimit = (timeLimit: Dayjs) => {
 const getPreparedTestQuestions = (
   createdQuestions: CreateQuestionsResponse['questions'],
   questionsFromServer: QuestionFromServer[],
-  testData: CreateTestForm,
+  testFormQuestions: CreateTestForm['questions'],
 ) => {
   console.log('test', questionsFromServer);
 
-  const res: CreateTestQuestion[] = [];
+  const preparedTestQuestions: CreateTestQuestion[] = [];
 
   // make this algorithm more prettier
   let questionIndex = 0;
   let serverQuestionIndex = 0;
 
-  testData.questions.forEach((question) => {
-    const obj: CreateTestQuestion = question.isFromServer
-      ? {
-          questionId: questionsFromServer[serverQuestionIndex].id,
-          maxScore: question.maxScore,
-          timeLimit: formatTimeLimit(question.timeLimit),
-        }
-      : {
-          questionId: createdQuestions[questionIndex].id,
-          maxScore: question.maxScore,
-          timeLimit: formatTimeLimit(question.timeLimit),
-        };
+  testFormQuestions.forEach((question) => {
+    const source = question.isFromServer
+      ? questionsFromServer[serverQuestionIndex++]
+      : createdQuestions[questionIndex++];
 
-    res.push(obj);
+    const preparedTestQuestion: CreateTestQuestion = {
+      questionId: source.id,
+      maxScore: question.maxScore,
+      timeLimit: formatTimeLimit(question.timeLimit),
+    };
 
-    if (question.isFromServer) {
-      serverQuestionIndex++;
-    } else {
-      questionIndex++;
-    }
+    preparedTestQuestions.push(preparedTestQuestion);
   });
 
-  return res;
+  return preparedTestQuestions;
 };
 
 export default getPreparedTestQuestions;
