@@ -3,6 +3,6 @@ import { WithMessage } from './utils';
 
 export type UpdateMeResponse = WithMessage<{ user: User }>;
 export type UpdateMeDto = {
-  name: User['name'];
-  photo: User['photo'];
+  name?: User['name'];
+  photo?: User['photo'];
 };
