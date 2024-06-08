@@ -14,6 +14,8 @@ import { DetailedExam } from '../../types/api/entities/detailedExam';
 import { AuthorExamCredentials } from '../../services/storage/StorageMap';
 import createAuthorSocket from './utils/createAuthorSocket';
 import createOffHandlers from './utils/createOffHandlers';
+import storage from '../../services/storage';
+import ErrorMessage from './types/ErrorMessage';
 
 class AuthorExamStore {
   private socket: Socket | null = null;
@@ -23,14 +25,27 @@ class AuthorExamStore {
 
   constructor() {
     makeAutoObservable(this);
+
+    const credentials = storage.read('author-exam-credentials');
+
+    if (credentials) {
+      this.connectToExam(credentials).catch((error: WsApiError) => {
+        const examNotFound = error.message === ErrorMessage.EXAM_NOT_FOUND;
+        const notAuthor = error.message === ErrorMessage.NOT_AUTHOR;
+
+        if (examNotFound || notAuthor) {
+          storage.remove('author-exam-credentials');
+        }
+      });
+    }
   }
 
   async createExam(testId: Test['id']) {
     if (this.socket) return;
 
-    const credentials = await ApiClient.createExam(testId);
+    const { authorToken, examCode } = await ApiClient.createExam(testId);
 
-    await this.connectToExam(credentials);
+    await this.connectToExam({ authorToken, examCode });
   }
 
   private connectToExam(credentials: AuthorExamCredentials) {
@@ -42,6 +57,7 @@ class AuthorExamStore {
       });
 
       const handleConnect = ({ test, students }: AuthorConnectedResponse) => {
+        storage.write('author-exam-credentials', credentials);
         this.status = 'created';
         this.exam = { test, students, currentQuestion: null, results: null, id: null };
         this.credentials = credentials;
