@@ -17,9 +17,7 @@ class AuthorExamStore {
   private socket: Socket | null = null;
   auth: Required<AuthorAuth> | null = null;
   exam: AuthorStoresExam | null = null;
-  error: WsException | null = null;
   status: 'idle' | 'created' | 'started' | 'finished' = 'idle';
-  isLoading = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -34,63 +32,78 @@ class AuthorExamStore {
   }
 
   private connectToExam(authorToken: string, examCode: string) {
-    this.isLoading = true;
-    this.error = null;
-
     return new Promise<void>((resolve, reject) => {
       const socket = io(`${import.meta.env.VITE_SERVER_WS_URL}/join-exam`, {
         auth: { role: 'author', authorToken, examCode } as AuthorAuth,
         autoConnect: false,
       });
 
-      socket.on(Message.EXCEPTION, (error: WsException) => {
-        reject(new WsApiError(error));
-        this.isLoading = false;
-        this.error = error;
-      });
-
-      socket.on(Message.CONNECTED, ({ test, students }: AuthorConnectedResponse) => {
-        this.isLoading = false;
+      const connectActions = ({ test, students }: AuthorConnectedResponse) => {
         this.status = 'created';
         this.exam = { test, students, currentQuestion: null, results: null, id: null };
         this.auth = { role: 'author', authorToken, examCode };
         this.socket = socket;
+      };
+
+      const disableHandlers = () => {
+        socket.off(Message.EXCEPTION, onConnectError);
+        socket.off(Message.CONNECTED, onConnect);
+      };
+
+      function onConnectError(error: WsException) {
+        disableHandlers();
+        reject(new WsApiError(error));
+      }
+
+      function onConnect(response: AuthorConnectedResponse) {
+        connectActions(response);
+        disableHandlers();
         resolve();
-      });
+      }
+
+      socket.once(Message.CONNECTED, onConnect);
+      socket.once(Message.EXCEPTION, onConnectError);
 
       this.addListeners(socket);
-
-      Object.values(Message).forEach((message) => {
-        socket.on(message, (data: unknown) => {
-          // eslint-disable-next-line no-console
-          console.log(message, data);
-        });
-      });
-
       socket.connect();
     });
   }
 
   startExam() {
-    if (!this.socket) return;
+    return new Promise<void>((resolve, reject) => {
+      if (!this.socket) return;
 
-    this.isLoading = true;
-    this.socket.emit(AuthorEmitter.START_EXAM);
+      this.socket.emit(AuthorEmitter.START_EXAM);
+
+      const onStart = () => {
+        this.status = 'started';
+      };
+      const disableHandlers = () => {
+        this.socket?.off(Message.EXAM_STARTED, onExamStarted);
+        this.socket?.off(Message.EXCEPTION, onExamStartError);
+      };
+
+      function onExamStarted() {
+        resolve();
+        onStart();
+        disableHandlers();
+      }
+
+      function onExamStartError(error: WsApiError) {
+        disableHandlers();
+        reject(new WsApiError(error));
+      }
+
+      this.socket.once(Message.EXAM_STARTED, onExamStarted);
+      this.socket.once(Message.EXCEPTION, onExamStartError);
+    });
   }
 
   private addListeners(socket: Socket) {
-    this.onExamStart(socket);
     this.onStudentJoined(socket);
     this.onStudentReconnected(socket);
     this.onResults(socket);
     this.onExamFinished(socket);
-  }
-
-  private onExamStart(socket: Socket) {
-    socket.on(Message.EXAM_STARTED, () => {
-      this.status = 'started';
-      this.isLoading = false;
-    });
   }
 
   private onStudentJoined(socket: Socket) {
@@ -137,9 +150,7 @@ class AuthorExamStore {
     this.socket = null;
     this.auth = null;
     this.exam = null;
-    this.error = null;
     this.status = 'idle';
-    this.isLoading = false;
   }
 }
 

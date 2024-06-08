@@ -1,17 +1,17 @@
 import { Stack } from '@mui/material';
-import MainButton from '../components/UI/buttons/MainButton';
 import Routes from '../services/Router/Routes';
 import StartLayout from '../components/layouts/StartLayout';
+import Button from '../components/UI/buttons/Button';
 
 const StartPage: React.FC = () => (
   <StartLayout>
-    <Stack direction="column" spacing={2}>
-      <MainButton to={Routes.LOGIN} variant="contained">
+    <Stack direction="column" width={200} spacing={2}>
+      <Button size="large" to={Routes.LOGIN} variant="contained">
         Login as teacher
-      </MainButton>
-      <MainButton to={Routes.JOIN} variant="contained">
+      </Button>
+      <Button size="large" to={Routes.JOIN} variant="contained">
         Join the test
-      </MainButton>
+      </Button>
     </Stack>
   </StartLayout>
 );

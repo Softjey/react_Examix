@@ -15,18 +15,13 @@ class StudentExamStore {
   private auth: Required<StudentAuth> | null = null;
   private socket: Socket | null = null;
   exam: StudentStoresExam | null = null;
-  error: WsException | null = null;
   status: 'idle' | 'created' | 'started' | 'finished' = 'idle';
-  isLoading = false;
 
   constructor() {
     makeAutoObservable(this);
   }
 
   connectToExam({ examCode, studentName }: Omit<StudentAuth, 'role'>) {
-    this.isLoading = true;
-    this.error = null;
-
     return new Promise<void>((resolve, reject) => {
       const socket = io(`${import.meta.env.VITE_SERVER_WS_URL}/join-exam`, {
         auth: {
@@ -39,24 +34,14 @@ class StudentExamStore {
         autoConnect: false,
       });
 
-      const setExam = ({ test, students }: Pick<StudentConnectedResponse, 'test' | 'students'>) => {
-        this.isLoading = false;
-        this.exam = { test, students, currentQuestion: null };
-        this.status = 'created';
-        this.socket = socket;
-
-        resolve();
+      const offHandlers = () => {
+        socket.off(Message.EXCEPTION, onConnectError);
+        socket.off(Message.CONNECTED, onConnect);
+        socket.off(Message.RECONNECTED, onReconnect);
       };
 
-      socket.on(Message.EXCEPTION, (error: WsException) => {
-        reject(new WsApiError(error));
-        this.isLoading = false;
-        this.error = error;
-      });
-
-      socket.on(Message.CONNECTED, (data: StudentConnectedResponse) => {
-        const { studentId, studentToken, students, test } = data;
-
+      const setAuth = (data: Pick<StudentConnectedResponse, 'studentId' | 'studentToken'>) => {
+        const { studentId, studentToken } = data;
         this.auth = {
           role: 'student',
           studentId,
@@ -64,19 +49,39 @@ class StudentExamStore {
           examCode,
           studentName,
         };
+      };
 
+      const setExam = ({ test, students }: Pick<StudentConnectedResponse, 'test' | 'students'>) => {
+        this.exam = { test, students, currentQuestion: null };
+        this.status = 'created';
+        this.socket = socket;
+
+        resolve();
+      };
+
+      function onConnectError(error: WsException) {
+        offHandlers();
+        reject(new WsApiError(error));
+      }
+
+      function onConnect(data: StudentConnectedResponse) {
+        const { studentId, studentToken, students, test } = data;
+
+        offHandlers();
+        setAuth({ studentId, studentToken });
         setExam({ students, test });
-      });
-      socket.on(Message.RECONNECTED, setExam);
+      }
+
+      function onReconnect(response: Pick<StudentConnectedResponse, 'test' | 'students'>) {
+        offHandlers();
+        setExam(response);
+      }
+
+      socket.once(Message.EXCEPTION, onConnectError);
+      socket.once(Message.CONNECTED, onConnect);
+      socket.once(Message.RECONNECTED, onReconnect);
+
       this.addListeners(socket);
-
-      Object.values(Message).forEach((message) => {
-        socket.on(message, (data: unknown) => {
-          // eslint-disable-next-line no-console
-          console.log(message, data);
-        });
-      });
-
       socket.connect();
     });
   }
@@ -147,9 +152,7 @@ class StudentExamStore {
     this.socket = null;
     this.auth = null;
     this.exam = null;
-    this.error = null;
     this.status = 'idle';
-    this.isLoading = false;
   }
 }
 
