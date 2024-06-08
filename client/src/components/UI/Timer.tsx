@@ -5,6 +5,7 @@ import prettifyDuration from '../../utils/time/prettifyDuration';
 
 interface Props extends StackProps {
   duration: number;
+  endDate?: Date;
   onEnd?: () => void;
   frameRate?: number;
   restartDeps?: unknown[];
@@ -12,14 +13,23 @@ interface Props extends StackProps {
   progressProps?: LinearProgressProps;
 }
 
-const Timer: React.FC<Props> = ({ typographyProps, progressProps, ...props }) => {
+const adjustDuration = (duration: number, endDate?: Date) => {
+  const endTime = endDate ? endDate.getTime() : Date.now() + duration;
+
+  return Math.min(duration, endTime - Date.now());
+};
+
+const Timer: React.FC<Props> = ({ typographyProps, progressProps, endDate, ...props }) => {
   const { onEnd, duration, frameRate = 60, restartDeps = [], ...rest } = props;
-  const [remainingTime, setRemainingTime] = useState(duration);
-  const progress = (remainingTime / duration) * 100;
+  const [remainingTime, setRemainingTime] = useState(() => adjustDuration(duration, endDate));
   const timer = useRef<number>(-1);
+  const progress = (remainingTime / duration) * 100;
 
   useEffect(() => {
     const startTime = Date.now();
+    const adjustedDuration = adjustDuration(duration, endDate);
+
+    setRemainingTime(adjustedDuration);
 
     const stopTimer = () => {
       clearInterval(timer.current);
@@ -28,7 +38,7 @@ const Timer: React.FC<Props> = ({ typographyProps, progressProps, ...props }) =>
 
     timer.current = setInterval(() => {
       const elapsedTime = Date.now() - startTime;
-      const newRemainingTime = duration - elapsedTime;
+      const newRemainingTime = adjustedDuration - elapsedTime;
 
       if (newRemainingTime <= 0) {
         setRemainingTime(0);
@@ -40,7 +50,7 @@ const Timer: React.FC<Props> = ({ typographyProps, progressProps, ...props }) =>
 
     return stopTimer;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [duration, frameRate, ...restartDeps]);
+  }, [endDate, duration, frameRate, ...restartDeps]);
 
   return (
     <Stack spacing={1} {...rest}>
