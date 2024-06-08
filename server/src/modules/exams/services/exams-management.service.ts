@@ -10,6 +10,7 @@ import { ExamsHistoryService } from './exams-history.service';
 import { DetailedExam } from '../interfaces/detailed-exam.interface';
 import { ExamsCacheService } from './exams-cache.service';
 import { Exam } from '../entities/exam.entity';
+import { CurrentExamQuestion } from '../entities/current-exam-question.entity';
 
 @Injectable()
 export class ExamManagementService extends EventEmitter {
@@ -159,14 +160,15 @@ export class ExamManagementService extends EventEmitter {
       return this.finishExam(examCode);
     }
 
-    const questionTimeLimit = exam.questions[exam.currentQuestionIndex].timeLimit;
+    const currentIndex = exam.currentQuestionIndex;
+    const questionTimeLimit = exam.questions[currentIndex].timeLimit;
     const timeLimit = (questionTimeLimit + config.NETWORK_DELAY_BUFFER) * 1000;
+    const currentQuestion = new CurrentExamQuestion(exam.questions[currentIndex], {
+      index: currentIndex,
+    });
 
-    this.emitQuestion(
-      examCode,
-      exam.questions[exam.currentQuestionIndex],
-      exam.currentQuestionIndex,
-    );
+    exam.currentQuestion = currentQuestion;
+    this.emitQuestion(examCode, currentQuestion, exam.currentQuestionIndex);
 
     await this.examsCacheService.setExam(examCode, exam);
 

@@ -15,7 +15,6 @@ import { RoomAuthorGuard } from './guards/room-author.guard';
 import { RoomStudentGuard } from './guards/room-student.guard';
 import { KickStudentDto } from './dtos/kick-student.dto';
 import { Student } from './entities/student.entity';
-import { Exam } from './entities/exam.entity';
 
 @UseFilters(WsExceptionsFilter)
 @UsePipes(new ValidationPipe())
@@ -32,14 +31,6 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const answers: StudentAnswer[] = question.answers.map(({ title }) => ({ title }));
 
     return { ...question, index, answers };
-  }
-
-  private getCurrentQuestion(exam: Pick<Exam, 'currentQuestionIndex' | 'questions'>) {
-    const { currentQuestionIndex, questions } = exam;
-
-    return currentQuestionIndex === -1
-      ? null
-      : this.prepareQuestionForStudents(questions[currentQuestionIndex], currentQuestionIndex);
   }
 
   private async handleRole(authenticator: WsExamsAuthenticator, client: Socket) {
@@ -97,8 +88,6 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
             });
           },
           reconnected: () => {
-            const currentQuestion = this.getCurrentQuestion(exam);
-
             client.join(auth.examCode);
             client.broadcast
               .to(auth.examCode)
@@ -107,7 +96,7 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
             client.emit('reconnected', {
               message: 'You are reconnected to the exam room like a student',
               examStatus: exam.status,
-              currentQuestion,
+              currentQuestion: exam.currentQuestion,
               ...connectedData,
             });
           },
