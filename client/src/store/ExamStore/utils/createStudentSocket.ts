@@ -1,7 +1,7 @@
-import { ManagerOptions, SocketOptions as IoSocketOptions, io } from 'socket.io-client';
+import { io } from 'socket.io-client';
+import { SocketOptions } from '../../../types/utils/SocketOptions';
 import { StudentAuth } from '../types/auth';
 
-export type SocketOptions = Partial<ManagerOptions & IoSocketOptions>;
 export type Credentials = Omit<StudentAuth, 'role'>;
 
 function createStudentSocket(credentials: Credentials, socketOptions?: SocketOptions) {
