@@ -122,7 +122,7 @@ export class WsExamsAuthenticator {
   private async hasYouAreNotAuthorError(auth: ExamClientAuthDto, { authorToken }: Author) {
     if (auth.role === 'author' && authorToken !== auth.authorToken) {
       return !this.handleError(
-        WSException.Forbidden('You are not the author of this room', {
+        WSException.Forbidden('You are not the author of this exam', {
           disconnect: true,
         }),
       );
