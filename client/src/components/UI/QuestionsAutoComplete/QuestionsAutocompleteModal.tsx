@@ -29,7 +29,7 @@ const QuestionsAutocompleteModal: React.FC<Props> = ({ open, onClose, autoComple
           borderRadius: 1,
           minHeight: autoCompleteOpen ? 520 : 0,
           marginTop: 16,
-          transition: 'min-height 0.3s ease 0.05s',
+          transition: 'min-height 0.3s ease',
           boxShadow: 24,
         }}
       >

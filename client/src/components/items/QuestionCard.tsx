@@ -7,6 +7,7 @@ import {
   CardActions,
   CardContent,
   CardProps,
+  Collapse,
   Paper,
   Snackbar,
   TextField,
@@ -15,7 +16,6 @@ import {
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useState } from 'react';
 import QuestionTypeSelect from '../UI/QuestionTypeSelect';
-import AddButton from '../UI/buttons/AddButton';
 import DragBar from '../../dev/components/DragBar';
 import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
 import QuestionType from '../../types/api/enums/Type';
@@ -56,9 +56,31 @@ const QuestionCard: React.FC<Props> = ({
   const [isSnackBarOpened, setIsSnackBarOpened] = useState<boolean>(false);
   const [snackBarMessage, setSnackBarMessage] = useState<string>('');
 
+  const [isInfoOpened, setIsInfoOpened] = useState<boolean>(false);
+
+  const onAnswerItemRemove = (index: number) => {
+    if (fields.length > 2) {
+      remove(index);
+    } else {
+      setSnackBarMessage('Minimum number of answers is 2');
+      setIsSnackBarOpened(true);
+    }
+  };
+
+  const onAnswerItemAdd = () => {
+    if (fields.length < 6) {
+      append({ title: '', isCorrect: false }, { shouldFocus: false });
+    } else {
+      setSnackBarMessage('Maximum number of answers reached');
+      setIsSnackBarOpened(true);
+    }
+  };
+
   return (
     <>
       <Card
+        onMouseEnter={() => setIsInfoOpened(true)}
+        onMouseLeave={() => setIsInfoOpened(false)}
         component={Paper}
         elevation={2}
         sx={{
@@ -105,6 +127,17 @@ const QuestionCard: React.FC<Props> = ({
                 disabled={loading}
               />
             </ErrorPopover>
+
+            <DeleteButton
+              sx={{ marginLeft: 'auto' }}
+              disabled={loading}
+              onClick={() =>
+                onDelete(() => {
+                  setSnackBarMessage('Minimum number of questions is 1');
+                  setIsSnackBarOpened(true);
+                })
+              }
+            />
           </Box>
 
           <TextField
@@ -126,51 +159,25 @@ const QuestionCard: React.FC<Props> = ({
           <AnswersGroup
             isFromServer={isFromServer}
             fields={fields}
-            onItemRemove={(index) => {
-              if (fields.length > 2) {
-                remove(index);
-              } else {
-                setSnackBarMessage('Minimum number of answers is 2');
-                setIsSnackBarOpened(true);
-              }
-            }}
+            onItemAdd={onAnswerItemAdd}
+            onItemRemove={onAnswerItemRemove}
             questionIndex={questionIndex}
             questionType={type}
           />
         </CardContent>
-
         <CardActions
           sx={{ padding: '16px', paddingTop: '10px', display: 'flex', justifyContent: 'end' }}
         >
           {isFromServer && (
-            <Alert sx={{ mt: 1 }} severity="info">
-              <Typography color="info" variant="body2">
-                You can only edit the time limit and maximum score for the question, as it has been
-                added from the library.
-              </Typography>
-            </Alert>
+            <Collapse in={isInfoOpened} timeout={300}>
+              <Alert sx={{ mt: 1 }} severity="info">
+                <Typography color="info" variant="body2">
+                  You can only edit the time limit and maximum score for this question, as it has
+                  been added from the library.
+                </Typography>
+              </Alert>
+            </Collapse>
           )}
-          <AddButton
-            disabled={loading || isFromServer}
-            onClick={(e) => {
-              e.preventDefault();
-              if (fields.length < 6) {
-                append({ title: '', isCorrect: false }, { shouldFocus: false });
-              } else {
-                setSnackBarMessage('Maximum number of answers reached');
-                setIsSnackBarOpened(true);
-              }
-            }}
-          />
-          <DeleteButton
-            disabled={loading}
-            onClick={() =>
-              onDelete(() => {
-                setSnackBarMessage('Minimum number of questions is 1');
-                setIsSnackBarOpened(true);
-              })
-            }
-          />
         </CardActions>
       </Card>
 

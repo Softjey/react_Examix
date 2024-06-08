@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Stack, TextField, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
@@ -29,6 +29,7 @@ import { Question } from '../../types/api/entities/question';
 import QuestionType from '../../types/api/enums/Type';
 import QuestionsAutocompleteModal from '../../components/UI/QuestionsAutoComplete/QuestionsAutocompleteModal';
 import defaultValues from './defaultValues';
+import Button from '../../components/UI/buttons/Button';
 
 interface Props {}
 
@@ -141,25 +142,50 @@ const CreateTestPage: React.FC<Props> = () => {
           onSubmit={onSubmit}
           display="flex"
           flexDirection="column"
+          alignItems="center"
           padding="15px 30px"
           gap="32px"
         >
           <TestInfo />
 
-          <Typography variant="h6">Questions</Typography>
+          <Typography sx={{ width: '100%' }} variant="h6">
+            Questions
+          </Typography>
 
-          <QuestionsGroup fields={fields} onRemove={remove} />
+          <QuestionsGroup width="100%" fields={fields} onRemove={remove} />
 
-          <Button disabled={loading} type="button" onClick={addQuestionCard}>
-            Add
-          </Button>
+          <Stack width="100%" flexDirection="row" justifyContent="start" gap={2}>
+            <Button
+              sx={{ textTransform: 'none' }}
+              variant="outlined"
+              color="secondary"
+              disabled={loading}
+              type="button"
+              onClick={addQuestionCard}
+            >
+              Add new question
+            </Button>
 
-          <Button disabled={loading} type="button" onClick={() => setIsModalOpened(true)}>
-            Add from lobrary
-          </Button>
+            <Button
+              sx={{ textTransform: 'none' }}
+              variant="outlined"
+              color="secondary"
+              disabled={loading}
+              type="button"
+              onClick={() => setIsModalOpened(true)}
+            >
+              Add question from library
+            </Button>
+          </Stack>
 
-          <LoadingButton type="submit" loading={loading} buttonBase={Button}>
-            Submit
+          <LoadingButton
+            variant="contained"
+            size="large"
+            type="submit"
+            loading={loading}
+            buttonBase={Button}
+          >
+            Create Test
           </LoadingButton>
         </Box>
       </HomeLayout>

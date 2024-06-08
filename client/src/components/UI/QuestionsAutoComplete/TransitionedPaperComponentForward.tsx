@@ -10,7 +10,7 @@ const TransitionedPaperComponent = (
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
   return (
-    <Grow in timeout={350}>
+    <Grow in timeout={400}>
       <Paper {...paperProps} ref={ref} />
     </Grow>
   );
