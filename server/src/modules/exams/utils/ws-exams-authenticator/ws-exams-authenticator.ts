@@ -149,7 +149,7 @@ export class WsExamsAuthenticator {
     if (roomExist) return false;
 
     return !this.handleError(
-      WSException.NotFound('Room not found. Please, check the room id', {
+      WSException.NotFound('Exam not found. Please, check the exam code', {
         disconnect: true,
       }),
     );
