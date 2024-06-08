@@ -46,7 +46,7 @@ const QuestionSchema = z.object({
 
 const ServerQuestionSchema = QuestionSchema.extend({
   id: z.number().positive(),
-  createdAt: z.date(),
+  createdAt: z.string(),
   authorId: z.number().nullable(),
   subject: z.union([z.nativeEnum(Subject), z.string().length(0)]).nullable(),
   isFromServer: z.literal(true),
@@ -64,5 +64,7 @@ export const CreateTestSchema = z.object({
 });
 
 export type FormQuestion = z.infer<typeof QuestionSchema>;
+
+export type QuestionFromServer = z.infer<typeof ServerQuestionSchema>;
 
 export type CreateTestForm = z.infer<typeof CreateTestSchema>;

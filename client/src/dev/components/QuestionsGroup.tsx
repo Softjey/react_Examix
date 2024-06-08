@@ -1,7 +1,9 @@
+/* eslint-disable no-console */
 import { Box, BoxProps, Typography } from '@mui/material';
 import { FieldArrayWithId, useFormContext } from 'react-hook-form';
 import QuestionCard from '../../components/items/QuestionCard';
 import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
+import getFilteredQuestions from '../../pages/CreateTestPage/utils/getFilteredQuestions';
 
 interface Props extends BoxProps {
   fields: FieldArrayWithId<CreateTestForm, 'questions', 'id'>[];
@@ -14,8 +16,16 @@ const QuestionsGroup: React.FC<Props> = ({ fields, onRemove, ...props }) => {
     watch,
   } = useFormContext<CreateTestForm>();
 
-  // eslint-disable-next-line no-console
-  console.log('question watch', watch('questions'));
+  const data = watch();
+
+  const filteredQuestions = getFilteredQuestions(data);
+
+  const questionsFromServer = data.questions.filter((question) => question.isFromServer);
+
+  console.log('questions: ', filteredQuestions);
+  console.log('questions from server: ', questionsFromServer);
+
+  console.log(errors);
 
   return (
     <Box {...props}>

@@ -7,7 +7,11 @@ import { useNavigate } from 'react-router';
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import TestInfo from '../../components/TestInfo';
-import { CreateTestForm, CreateTestSchema } from '../../schemas/createTestFormValidationSchemas';
+import {
+  CreateTestForm,
+  CreateTestSchema,
+  QuestionFromServer,
+} from '../../schemas/createTestFormValidationSchemas';
 import QuestionsGroup from '../../dev/components/QuestionsGroup';
 import LoadingButton from '../../components/UI/buttons/LoadingButton';
 import { useCreateTest } from './CreateTestContext';
@@ -63,11 +67,12 @@ const CreateTestPage: React.FC<Props> = () => {
   const addQuestionCard = () => append(getDefaultQuestion(), { shouldFocus: false });
 
   const addQuestionCardFromServer = (value: Question) => {
-    const { type, ...question } = value;
+    const { type, createdAt, ...question } = value;
 
     append(
       {
         ...question,
+        createdAt: createdAt.toISOString(),
         type: type as QuestionType.MULTIPLE_CHOICE | QuestionType.SINGLE_CHOICE,
         isFromServer: true,
         maxScore: 0,
@@ -84,6 +89,8 @@ const CreateTestPage: React.FC<Props> = () => {
 
     const filteredQuestions = getFilteredQuestions(data);
 
+    const questionsFromServer = data.questions.filter((question) => question.isFromServer);
+
     console.log('data to send', filteredQuestions);
 
     createQuestions(filteredQuestions, {
@@ -97,7 +104,11 @@ const CreateTestPage: React.FC<Props> = () => {
           name: data.testName,
           description: data.testDescription,
           image: data.testImageLink,
-          questions: getPreparedTestQuestions(createQuestionsResponse.questions, data),
+          questions: getPreparedTestQuestions(
+            createQuestionsResponse.questions,
+            questionsFromServer as QuestionFromServer[],
+            data,
+          ),
         };
 
         if (data.subject) {
