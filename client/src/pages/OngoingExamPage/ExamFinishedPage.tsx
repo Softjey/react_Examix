@@ -30,7 +30,7 @@ const ExamFinishedPage: React.FC<Props> = observer(() => {
     <QuizLayout centeredProps={{ sx: { maxWidth: 400 } }}>
       <Stack direction="column" spacing={3} alignItems="center">
         <Typography variant="h3" paragraph>
-          Test Completed!
+          Exam Completed!
         </Typography>
         <Typography
           variant="body2"

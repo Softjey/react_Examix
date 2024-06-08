@@ -14,6 +14,7 @@ import createStudentSocket, { Credentials } from './utils/createStudentSocket';
 import createOffHandlers from './utils/createOffHandlers';
 import { StudentReconnectedResponse } from './ws/types/responses/ReconnectedResponse';
 import prepareCurrentQuestion from './utils/prepareCurrentQuestion';
+import ErrorMessage from './types/ErrorMessage';
 
 class StudentExamStore {
   private credentials: Required<Credentials> | null = null;
@@ -43,10 +44,11 @@ class StudentExamStore {
     }
 
     await this.reconnectToExam(credentials).catch((error: WsApiError) => {
-      const studentNotFound = error.message === 'Student not found. Please, check the student id';
-      const examNotFound = error.message === 'Exam not found. Please, check the exam code';
+      const studentNotFound = error.message === ErrorMessage.STUDENT_ID_INCORRECT;
+      const examNotFound = error.message === ErrorMessage.EXAM_NOT_FOUND;
+      const invalidToken = error.message === ErrorMessage.INVALID_STUDENT_TOKEN;
 
-      if (!studentNotFound && !examNotFound) {
+      if (!studentNotFound && !examNotFound && !invalidToken) {
         throw error;
       }
 
