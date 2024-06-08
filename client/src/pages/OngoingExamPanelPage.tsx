@@ -15,7 +15,7 @@ import ExamResultsTable from '../components/common/ExamResultsTable/ExamResultsT
 interface Props extends HomeLayoutProps {}
 
 const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
-  const { exam, status, auth, isLoading } = authorExamStore;
+  const { exam, status, credentials } = authorExamStore;
 
   if (status === 'idle') {
     return <Navigate to={Routes.HOME} />;
@@ -25,7 +25,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
     return <Navigate to={`${Routes.EXAM}/${exam.id}`} />;
   }
 
-  if (isLoading || !exam || !auth) {
+  if (!exam || !credentials) {
     return <LoadingPage layout="home" />;
   }
 
@@ -38,7 +38,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
         action={
           <Stack direction="row" justifyContent="space-around">
             <Typography align="center" variant="h4" color={(theme) => theme.palette.secondary.dark}>
-              {auth.examCode}
+              {credentials.examCode}
             </Typography>
 
             {students?.length !== 0 && status === 'created' && (

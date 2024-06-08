@@ -5,8 +5,14 @@ export interface StudentExamCredentials {
   studentName: string;
 }
 
+export interface AuthorExamCredentials {
+  authorToken: string;
+  examCode: string;
+}
+
 type StorageMap = {
   'student-exam-credentials': StudentExamCredentials;
+  'author-exam-credentials': AuthorExamCredentials;
 };
 
 export default StorageMap;
