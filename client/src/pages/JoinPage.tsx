@@ -8,6 +8,7 @@ import StartLayout from '../components/layouts/StartLayout';
 import studentExamStore from '../store/ExamStore/StudentExamStore';
 import Routes from '../services/Router/Routes';
 import useConnectToExamLikeStudent from '../hooks/queries/useConnectToExamLikeStudent';
+import LoadingPage from './LoadingPage';
 
 const defaultValues: JoinFormType = { name: '', code: '' };
 const JoinFormSchema = z.object({
@@ -22,11 +23,19 @@ const JoinFormSchema = z.object({
 type JoinFormType = z.infer<typeof JoinFormSchema>;
 
 const JoinPage: React.FC = observer(() => {
-  const { connectToExam, error, isPending, reset } = useConnectToExamLikeStudent();
+  const [reconnect, { connectToExam, error, isPending, reset }] = useConnectToExamLikeStudent();
   const { register, handleSubmit, formState } = useForm<JoinFormType>({
     resolver: zodResolver(JoinFormSchema),
     defaultValues,
   });
+
+  if (reconnect.isLoading) {
+    return <LoadingPage />;
+  }
+
+  if (reconnect.isSuccess) {
+    return <Navigate to={Routes.ONGOING_EXAM} />;
+  }
 
   if (studentExamStore.status !== 'idle') {
     return <Navigate to={Routes.ONGOING_EXAM} />;

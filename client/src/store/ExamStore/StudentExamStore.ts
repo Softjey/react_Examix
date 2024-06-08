@@ -10,6 +10,7 @@ import { StudentQuestion } from '../../types/api/entities/testQuestion';
 import { StudentAnswer } from '../../types/api/entities/question';
 import { StudentEmitter } from './types/Emitter';
 import { StudentStoresExam } from './types/StoresExam';
+import storage from '../../services/storage';
 
 class StudentExamStore {
   private auth: Required<StudentAuth> | null = null;
@@ -21,15 +22,36 @@ class StudentExamStore {
     makeAutoObservable(this);
   }
 
-  connectToExam({ examCode, studentName }: Omit<StudentAuth, 'role'>) {
+  async tryToReconnect() {
+    try {
+      const { examCode, studentName } = storage.read('student-exam-credentials') ?? {};
+
+      if (!examCode || !studentName) {
+        throw new Error('No exam code or student name');
+      }
+
+      await this.connectToExam({ examCode, studentName });
+    } catch (error) {
+      if (error instanceof Error) {
+        // якщо тут повідомлення що не правильний екзам код чи стюдент айді то видалити з стораджу
+        // console.log(error.message);
+      }
+
+      throw error;
+    }
+  }
+
+  connectToExam({ examCode, studentName }: Pick<StudentAuth, 'examCode' | 'studentName'>) {
+    const { studentId, studentToken } = storage.read('student-exam-credentials') ?? {};
+
     return new Promise<void>((resolve, reject) => {
       const socket = io(`${import.meta.env.VITE_SERVER_WS_URL}/join-exam`, {
         auth: {
           role: 'student',
           examCode,
           studentName,
-          studentToken: undefined, // will be loaded from local storage
-          studentId: undefined,
+          studentToken,
+          studentId,
         } as StudentAuth,
         autoConnect: false,
       });
@@ -41,11 +63,19 @@ class StudentExamStore {
       };
 
       const setAuth = (data: Pick<StudentConnectedResponse, 'studentId' | 'studentToken'>) => {
-        const { studentId, studentToken } = data;
+        const { studentId: newId, studentToken: newToken } = data;
+
+        storage.write('student-exam-credentials', {
+          studentId: newId,
+          studentToken: newToken,
+          examCode,
+          studentName,
+        });
+
         this.auth = {
           role: 'student',
-          studentId,
-          studentToken,
+          studentId: data.studentId,
+          studentToken: data.studentToken,
           examCode,
           studentName,
         };
@@ -64,16 +94,21 @@ class StudentExamStore {
         reject(new WsApiError(error));
       }
 
-      function onConnect(data: StudentConnectedResponse) {
-        const { studentId, studentToken, students, test } = data;
+      function onConnect(response: StudentConnectedResponse) {
+        const { studentId: newStudentId, studentToken: newStudentToken, students, test } = response;
 
         offHandlers();
-        setAuth({ studentId, studentToken });
+        setAuth({ studentId: newStudentId, studentToken: newStudentToken });
         setExam({ students, test });
       }
 
       function onReconnect(response: Pick<StudentConnectedResponse, 'test' | 'students'>) {
         offHandlers();
+
+        if (studentId && studentToken) {
+          setAuth({ studentId, studentToken });
+        }
+
         setExam(response);
       }
 
@@ -90,6 +125,7 @@ class StudentExamStore {
     this.onExamStart(socket);
     this.onStudentJoined(socket);
     this.onStudentReconnected(socket);
+    this.onStudentLeave(socket);
     this.onQuestion(socket);
     this.onExamFinished(socket);
   }
@@ -135,6 +171,14 @@ class StudentExamStore {
       this.exam.students = this.exam.students.map((currStudent) => {
         return currStudent.studentId === student.studentId ? student : currStudent;
       });
+    });
+  }
+
+  private onStudentLeave(socket: Socket) {
+    socket.on(Message.STUDENT_DISCONNECTED, ({ studentId }: { studentId: string }) => {
+      if (!this.exam) return;
+
+      this.exam.students = this.exam.students.filter((student) => student.studentId !== studentId);
     });
   }
 
