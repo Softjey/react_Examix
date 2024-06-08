@@ -18,6 +18,10 @@ export default class Storage<StorageMap extends Record<string, unknown>> {
     }
   }
 
+  remove<T extends keyof StorageMap>(key: T) {
+    this.storage.removeItem(key as string);
+  }
+
   has<T extends keyof StorageMap>(key: T): boolean {
     return this.storage.getItem(key as string) !== null;
   }
@@ -37,7 +41,7 @@ export default class Storage<StorageMap extends Record<string, unknown>> {
     this.write(key, array as unknown as StorageMap[T]);
   }
 
-  remove<T extends keyof StorageMap>(key: T, ...values: StorageMap[T][]) {
+  arrayRemove<T extends keyof StorageMap>(key: T, ...values: StorageMap[T][]) {
     if (!this.has(key)) {
       throw new Error(
         `You can't remove values from an array if it hasn't been initialized. Key: ${key.toString()}`,
