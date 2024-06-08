@@ -5,7 +5,7 @@ import WsException from './ws/types/WsException';
 import WsApiError from './ws/WsApiError';
 import { StudentConnectedResponse } from './ws/types/responses/ConnectedResponse';
 import Student from './types/Student';
-import { StudentQuestion } from '../../types/api/entities/testQuestion';
+import { RawExamCurrentQuestion } from '../../types/api/entities/testQuestion';
 import { StudentAnswer } from '../../types/api/entities/question';
 import { StudentEmitter } from './types/Emitter';
 import { StudentStoresExam } from './types/StoresExam';
@@ -13,6 +13,7 @@ import storage from '../../services/storage';
 import createStudentSocket, { Credentials } from './utils/createStudentSocket';
 import createOffHandlers from './utils/createOffHandlers';
 import { StudentReconnectedResponse } from './ws/types/responses/ReconnectedResponse';
+import prepareCurrentQuestion from './utils/prepareCurrentQuestion';
 
 class StudentExamStore {
   private credentials: Required<Credentials> | null = null;
@@ -105,7 +106,7 @@ class StudentExamStore {
       const handleReconnect = (response: StudentReconnectedResponse) => {
         const { students, test, examStatus, currentQuestion } = response;
 
-        this.exam = { test, students, currentQuestion };
+        this.exam = { test, students, currentQuestion: prepareCurrentQuestion(currentQuestion) };
         this.setCredentials(credentials);
         this.status = examStatus;
         this.socket = socket;
@@ -157,10 +158,10 @@ class StudentExamStore {
   }
 
   private onQuestion(socket: Socket) {
-    socket.on(Message.QUESTION, (question: StudentQuestion) => {
+    socket.on(Message.QUESTION, (rawQuestion: RawExamCurrentQuestion) => {
       if (!this.exam) return;
 
-      this.exam.currentQuestion = question;
+      this.exam.currentQuestion = prepareCurrentQuestion(rawQuestion);
     });
   }
 
