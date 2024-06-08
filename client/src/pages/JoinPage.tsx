@@ -33,7 +33,7 @@ const JoinPage: React.FC = observer(() => {
     return <LoadingPage />;
   }
 
-  if (reconnect.isSuccess) {
+  if (reconnect.isSuccess && !reconnect.needConnect) {
     return <Navigate to={Routes.ONGOING_EXAM} />;
   }
 

@@ -23,22 +23,30 @@ class StudentExamStore {
   }
 
   async tryToReconnect() {
-    try {
-      const { examCode, studentName } = storage.read('student-exam-credentials') ?? {};
+    const credentials = storage.read('student-exam-credentials');
+    const { examCode, studentName, studentId, studentToken } = credentials ?? {};
+    const someCredentialsAreMissing = !examCode || !studentName || !studentId || !studentToken;
+    let credentialsDeleted = false;
 
-      if (!examCode || !studentName) {
-        throw new Error('No exam code or student name');
-      }
+    if (someCredentialsAreMissing) {
+      storage.remove('student-exam-credentials');
 
-      await this.connectToExam({ examCode, studentName });
-    } catch (error) {
-      if (error instanceof Error) {
-        // якщо тут повідомлення що не правильний екзам код чи стюдент айді то видалити з стораджу
-        // console.log(error.message);
-      }
-
-      throw error;
+      return true;
     }
+
+    await this.connectToExam({ examCode, studentName }).catch((error: WsApiError) => {
+      const studentNotFound = error.message === 'Student not found. Please, check the student id';
+      const examNotFound = error.message === 'Exam not found. Please, check the exam code';
+
+      if (!studentNotFound && !examNotFound) {
+        throw error;
+      }
+
+      credentialsDeleted = true;
+      storage.remove('student-exam-credentials');
+    });
+
+    return credentialsDeleted;
   }
 
   connectToExam({ examCode, studentName }: Pick<StudentAuth, 'examCode' | 'studentName'>) {
