@@ -10,6 +10,7 @@ interface Props extends BoxProps {
   questionIndex: number;
   fields: FieldArrayWithId<CreateTestForm, `questions.${number}.answers`, 'id'>[];
   onItemRemove: (index: number) => void;
+  isFromServer?: boolean;
 }
 
 const AnswersGroup: React.FC<Props> = ({
@@ -17,6 +18,7 @@ const AnswersGroup: React.FC<Props> = ({
   questionType,
   questionIndex,
   onItemRemove,
+  isFromServer,
   ...boxProps
 }) => {
   const {
@@ -61,9 +63,16 @@ const AnswersGroup: React.FC<Props> = ({
 
   return (
     <>
-      <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2} {...boxProps}>
+      <Box
+        display="grid"
+        gridTemplateColumns="repeat(auto-fill, minmax(240px, 1fr))"
+        justifyContent="stretch"
+        gap={2}
+        {...boxProps}
+      >
         {fields.map((item, index) => (
           <FormAnswerItem
+            isFromServer={isFromServer}
             onCheckBoxClick={() => updateCorrect(index)}
             onDelete={() => onItemRemove(index)}
             answerIndex={index}

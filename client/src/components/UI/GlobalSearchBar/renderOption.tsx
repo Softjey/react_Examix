@@ -10,6 +10,7 @@ import prettifyDate from '../../../utils/prettifyDate';
 import SubjectItem from '../SubjectItem/SubjectItem';
 import Routes from '../../../services/Router/Routes';
 import { Question } from '../../../types/api/entities/question';
+import underscoreToUpperToSentence from '../../../utils/underscoreToUpperToSentence';
 
 export const getOptionLabel = (result: GlobalSearchResult | string) => {
   if (typeof result === 'string') {
@@ -41,7 +42,8 @@ export const getSubtitle = (result: GlobalSearchResult) => {
       return `Created at ${dateStr}. Students: ${students}`;
     }
     case 'question': {
-      return <SubjectItem subject={result.item.subject} endText={`Type: ${result.item.type}.`} />;
+      const type = underscoreToUpperToSentence(result.item.type);
+      return <SubjectItem subject={result.item.subject} endText={`Type: ${type}.`} />;
     }
     case 'test': {
       return (

@@ -1,7 +1,9 @@
 import dayjs from 'dayjs';
 import QuestionType from '../../../types/api/enums/Type';
+import { FormQuestion } from '../../../schemas/createTestFormValidationSchemas';
 
-const getDefaultQuestion = () => ({
+const getDefaultQuestion = (): FormQuestion => ({
+  isFromServer: false,
   title: '',
   type: QuestionType.SINGLE_CHOICE as const,
   answers: [

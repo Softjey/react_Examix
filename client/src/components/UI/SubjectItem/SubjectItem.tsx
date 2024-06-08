@@ -19,6 +19,7 @@ export interface DefaultProps extends BaseProps, BoxProps {
 export interface ChipProps extends BaseProps, Omit<MuiChipProps, 'variant'> {
   variant?: 'chip';
   chipVariant?: MuiChipProps['variant'];
+  chipColor?: MuiChipProps['color'];
 }
 
 export type Props = DefaultProps | ChipProps;
@@ -34,7 +35,7 @@ const SubjectItem: React.FC<Props> = ({
   const content = <SubjectItemContent {...{ subject, endText, textVariant, typographyProps }} />;
 
   if (variant === 'chip') {
-    const { chipVariant, ...restChipProps } = rest as Omit<ChipProps, 'variant'>;
+    const { chipColor, chipVariant, ...restChipProps } = rest as Omit<ChipProps, 'variant'>;
 
     return (
       <Chip
@@ -42,6 +43,7 @@ const SubjectItem: React.FC<Props> = ({
         size="small"
         sx={{ '.MuiChip-label': { ...baseSx }, bgcolor: '#fff8', ...sx }}
         variant={chipVariant}
+        color={chipColor}
         {...restChipProps}
       />
     );

@@ -14,6 +14,9 @@ const QuestionsGroup: React.FC<Props> = ({ fields, onRemove, ...props }) => {
     watch,
   } = useFormContext<CreateTestForm>();
 
+  // eslint-disable-next-line no-console
+  console.log('question watch', watch('questions'));
+
   return (
     <Box {...props}>
       {(errors.questions?.message || errors.questions?.root?.message) && (
@@ -25,10 +28,17 @@ const QuestionsGroup: React.FC<Props> = ({ fields, onRemove, ...props }) => {
       <Box display="flex" flexDirection="column" alignItems="center" gap="24px">
         {fields.map((field, index) => (
           <QuestionCard
+            isFromServer={field.isFromServer}
             key={field.id}
             questionIndex={index}
             type={watch(`questions.${index}.type`)}
-            onDelete={() => onRemove(index)}
+            onDelete={(openSnackBar: () => void) => {
+              if (fields.length < 2) {
+                openSnackBar();
+              } else {
+                onRemove(index);
+              }
+            }}
           />
         ))}
       </Box>

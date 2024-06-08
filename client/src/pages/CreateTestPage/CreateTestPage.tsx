@@ -1,18 +1,11 @@
 /* eslint-disable no-console */
 
-import {
-  Autocomplete,
-  Box,
-  Button,
-  ListItem,
-  ListItemText,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import dayjs from 'dayjs';
 import TestInfo from '../../components/TestInfo';
 import { CreateTestForm, CreateTestSchema } from '../../schemas/createTestFormValidationSchemas';
 import QuestionsGroup from '../../dev/components/QuestionsGroup';
@@ -29,37 +22,11 @@ import LoadingPage from '../LoadingPage';
 import Routes from '../../services/Router/Routes';
 import useQuestions from '../../hooks/queries/useQuestions';
 import { Question } from '../../types/api/entities/question';
-import { textEllipsis } from '../../styles/text';
-import { AutocompleteProps } from '../../types/utils/AutocompleteProps';
+import QuestionType from '../../types/api/enums/Type';
+import QuestionsAutocompleteModal from '../../components/UI/QuestionsAutoComplete/QuestionsAutocompleteModal';
+import defaultValues from './defaultValues';
 
 interface Props {}
-
-const defaultValues: CreateTestForm = {
-  testImageLink: null,
-  testName: '',
-  testDescription: '',
-  subject: '',
-  questions: [getDefaultQuestion()],
-};
-
-const renderOption: AutocompleteProps<Question>['renderOption'] = (
-  { ...rest },
-  question: Question,
-) => {
-  return (
-    <ListItem {...rest}>
-      <ListItemText
-        sx={{ marginBlock: '0' }}
-        primary={
-          <Typography variant="body2" sx={{ maxWidth: '100%', ...textEllipsis }}>
-            {question.title}
-          </Typography>
-        }
-        // secondary={<SubjectItem subject={test.subject} endText={test.description} />}
-      />
-    </ListItem>
-  );
-};
 
 const CreateTestPage: React.FC<Props> = () => {
   const navigate = useNavigate();
@@ -69,6 +36,7 @@ const CreateTestPage: React.FC<Props> = () => {
   const { createTest } = createTestMutation;
 
   const [search, setSearch] = useState<string>('');
+  const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
 
   const { questions, ...restQueryParams } = useQuestions({
     search: search || undefined,
@@ -76,14 +44,6 @@ const CreateTestPage: React.FC<Props> = () => {
   });
 
   const { isLoading } = restQueryParams;
-
-  useEffect(() => {
-    console.log('questions', questions);
-  }, [questions]);
-
-  useEffect(() => {
-    console.log('isPending', isLoading);
-  }, [isLoading]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
@@ -100,11 +60,24 @@ const CreateTestPage: React.FC<Props> = () => {
     name: 'questions',
   });
 
-  if (loading) {
-    return <LoadingPage layout="home" />;
-  }
-
   const addQuestionCard = () => append(getDefaultQuestion(), { shouldFocus: false });
+
+  const addQuestionCardFromServer = (value: Question) => {
+    const { type, ...question } = value;
+
+    append(
+      {
+        ...question,
+        type: type as QuestionType.MULTIPLE_CHOICE | QuestionType.SINGLE_CHOICE,
+        isFromServer: true,
+        maxScore: 0,
+        timeLimit: dayjs().startOf('hour'),
+      },
+      { shouldFocus: false },
+    );
+
+    console.log('question', question);
+  };
 
   const onSubmit = methods.handleSubmit((data) => {
     console.log('submitted');
@@ -145,6 +118,10 @@ const CreateTestPage: React.FC<Props> = () => {
     });
   });
 
+  if (loading) {
+    return <LoadingPage layout="home" />;
+  }
+
   return (
     <FormProvider {...methods}>
       <HomeLayout centered>
@@ -159,25 +136,6 @@ const CreateTestPage: React.FC<Props> = () => {
         >
           <TestInfo />
 
-          <Autocomplete
-            loading={isLoading}
-            disablePortal
-            id="combo-box-demo"
-            options={questions || []}
-            sx={{ width: 300 }}
-            renderOption={renderOption}
-            // isOptionEqualToValue={(option, query) => option.id === query?.id}
-            getOptionLabel={(option) => (typeof option === 'string' ? option : option.title)}
-            renderInput={(params) => (
-              <TextField
-                value={search}
-                onChange={handleSearchChange}
-                {...params}
-                label="Search questions"
-              />
-            )}
-          />
-
           <Typography variant="h6">Questions</Typography>
 
           <QuestionsGroup fields={fields} onRemove={remove} />
@@ -186,15 +144,43 @@ const CreateTestPage: React.FC<Props> = () => {
             Add
           </Button>
 
+          <Button disabled={loading} type="button" onClick={() => setIsModalOpened(true)}>
+            Add from lobrary
+          </Button>
+
           <LoadingButton type="submit" loading={loading} buttonBase={Button}>
             Submit
           </LoadingButton>
         </Box>
       </HomeLayout>
+
       <ErrorSnackBar
         open={!!error}
-        close={() => reset()}
+        onClose={reset}
         errorMessage={error?.message || 'Error occurred'}
+      />
+
+      <QuestionsAutocompleteModal
+        open={isModalOpened}
+        onClose={() => setIsModalOpened(false)}
+        autoCompleteProps={{
+          options: questions || [],
+          onChange: (_, value) => {
+            addQuestionCardFromServer(value as Question);
+
+            setIsModalOpened(false);
+          },
+          loading: isLoading,
+          renderInput: (params) => (
+            <TextField
+              autoFocus
+              placeholder="Question"
+              value={search}
+              onChange={handleSearchChange}
+              {...params}
+            />
+          ),
+        }}
       />
     </FormProvider>
   );

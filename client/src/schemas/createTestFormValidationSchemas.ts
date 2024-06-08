@@ -19,6 +19,7 @@ const AnswerSchema = z.object({
 
 const QuestionSchema = z.object({
   title: z.string().min(1, 'Question title is required'),
+  isFromServer: z.literal(false),
   type: z.enum([
     QuestionType.SINGLE_CHOICE,
     QuestionType.MULTIPLE_CHOICE,
@@ -43,13 +44,25 @@ const QuestionSchema = z.object({
     }),
 });
 
+const ServerQuestionSchema = QuestionSchema.extend({
+  id: z.number().positive(),
+  createdAt: z.date(),
+  authorId: z.number().nullable(),
+  subject: z.union([z.nativeEnum(Subject), z.string().length(0)]).nullable(),
+  isFromServer: z.literal(true),
+});
+
 export const CreateTestSchema = z.object({
   testImageLink: z.string().nullable(),
   // .url('Test image link must be a valid URL')
   testName: z.string().min(1, 'Test name is required'),
   testDescription: z.string().min(1, 'Test description is required'),
   subject: z.union([z.nativeEnum(Subject), z.string().length(0)]),
-  questions: z.array(QuestionSchema).min(1, 'At least one question is required'),
+  questions: z
+    .array(z.union([ServerQuestionSchema, QuestionSchema]))
+    .min(1, 'At least one question is required'),
 });
+
+export type FormQuestion = z.infer<typeof QuestionSchema>;
 
 export type CreateTestForm = z.infer<typeof CreateTestSchema>;

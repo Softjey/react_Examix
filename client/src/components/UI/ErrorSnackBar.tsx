@@ -4,23 +4,23 @@ interface Props extends SnackbarProps {
   errorMessage?: string;
   description?: string;
   open: boolean;
-  close: () => void;
+  onClose: () => void;
 }
 
-const ErrorSnackBar: React.FC<Props> = ({ errorMessage, description, close, open, ...props }) => {
+const ErrorSnackBar: React.FC<Props> = ({ errorMessage, description, onClose, open, ...props }) => {
   const handleClose = (_: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
 
-    close();
+    onClose();
   };
 
   return (
     <Snackbar
       sx={{ width: 400 }}
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      autoHideDuration={6000}
+      autoHideDuration={3000}
       onClose={handleClose}
       open={open}
       {...props}

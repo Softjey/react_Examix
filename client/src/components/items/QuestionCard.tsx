@@ -1,4 +1,7 @@
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable implicit-arrow-linebreak */
 import {
+  Alert,
   Box,
   Card,
   CardActions,
@@ -18,7 +21,6 @@ import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
 import QuestionType from '../../types/api/enums/Type';
 import DeleteButton from '../UI/buttons/DeleteButton';
 import AnswersGroup from '../../dev/components/AnswersGroup';
-import CloseButton from '../UI/buttons/CloseButton';
 import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
 import TimeLimitPicker from '../../dev/components/TimeLimitPicker';
 import MaxScoreInput from '../UI/MaxScoreInput';
@@ -27,10 +29,17 @@ import ErrorPopover from '../../dev/components/ErrorPopover';
 interface Props extends CardProps {
   type: QuestionType;
   questionIndex: number;
-  onDelete: () => void;
+  onDelete: (openSnackBar: () => void) => void;
+  isFromServer?: boolean;
 }
 
-const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props }) => {
+const QuestionCard: React.FC<Props> = ({
+  isFromServer,
+  onDelete,
+  type,
+  questionIndex,
+  ...props
+}) => {
   const {
     register,
     control,
@@ -53,6 +62,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
         component={Paper}
         elevation={2}
         sx={{
+          width: '100%',
           pointerEvents: 'auto',
           borderRadius: '12px',
           '&:hover .drag-bar': {
@@ -69,7 +79,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
         >
           <Box display="flex" gap={1} flexWrap="wrap">
             <QuestionTypeSelect
-              disabled={loading}
+              disabled={loading || isFromServer}
               {...register(`questions.${questionIndex}.type`)}
               ref={null}
             />
@@ -104,8 +114,9 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
             size="small"
             autoComplete="off"
             type="text"
+            fullWidth
             placeholder="Question title"
-            disabled={loading}
+            disabled={loading || isFromServer}
           />
 
           <Typography color="text.secondary" variant="body2">
@@ -113,6 +124,7 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
           </Typography>
 
           <AnswersGroup
+            isFromServer={isFromServer}
             fields={fields}
             onItemRemove={(index) => {
               if (fields.length > 2) {
@@ -130,8 +142,16 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
         <CardActions
           sx={{ padding: '16px', paddingTop: '10px', display: 'flex', justifyContent: 'end' }}
         >
+          {isFromServer && (
+            <Alert sx={{ mt: 1 }} severity="info">
+              <Typography color="info" variant="body2">
+                You can only edit the time limit and maximum score for the question, as it has been
+                added from the library.
+              </Typography>
+            </Alert>
+          )}
           <AddButton
-            disabled={loading}
+            disabled={loading || isFromServer}
             onClick={(e) => {
               e.preventDefault();
               if (fields.length < 6) {
@@ -142,12 +162,22 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
               }
             }}
           />
-          <DeleteButton disabled={loading} onClick={onDelete} />
+          <DeleteButton
+            disabled={loading}
+            onClick={() =>
+              onDelete(() => {
+                setSnackBarMessage('Minimum number of questions is 1');
+                setIsSnackBarOpened(true);
+              })
+            }
+          />
         </CardActions>
       </Card>
+
       <Snackbar
         open={isSnackBarOpened}
-        autoHideDuration={6000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        autoHideDuration={3000}
         onClose={(_, reason) => {
           if (reason === 'clickaway') {
             return;
@@ -155,9 +185,11 @@ const QuestionCard: React.FC<Props> = ({ onDelete, type, questionIndex, ...props
 
           setIsSnackBarOpened(false);
         }}
-        message={snackBarMessage}
-        action={<CloseButton onClick={() => setIsSnackBarOpened(false)} />}
-      />
+      >
+        <Alert onClose={() => setIsSnackBarOpened(false)} variant="filled" severity="warning">
+          {snackBarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
