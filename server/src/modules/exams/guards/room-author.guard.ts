@@ -10,7 +10,7 @@ export class RoomAuthorGuard implements CanActivate {
     const isAuthor = auth.role === 'author';
 
     if (!isAuthor) {
-      throw WebSocketException.Forbidden('You are not the author of this room');
+      throw WebSocketException.Forbidden('You are not the author of this exam');
     }
 
     return true;

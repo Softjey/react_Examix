@@ -15,6 +15,7 @@ import { CreateQuestionDto, CreateQuestionsResponse } from './types/create-quest
 import { CreateTestDto, CreateTestResponse } from './types/create-test';
 import { QuestionsParams, QuestionsResponse } from './types/questions';
 import { UpdateMeDto, UpdateMeResponse } from './types/update-me';
+import { CreateExamResponse } from './types/create-exam';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
@@ -123,6 +124,12 @@ export class RawApiClient {
     const { data } = await axios.patch<UpdateMeResponse>('/users/me', dto);
 
     return data.user;
+  }
+
+  static async createExam(testId: Test['id']) {
+    const { data } = await axios.post<CreateExamResponse>('/exams', { testId });
+
+    return data;
   }
 }
 

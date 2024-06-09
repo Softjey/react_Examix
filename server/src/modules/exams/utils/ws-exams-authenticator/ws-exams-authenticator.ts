@@ -27,7 +27,7 @@ export class WsExamsAuthenticator {
 
   async authorizeStudent(auth: ClientStudentAuthDto): AuthorizeStudentReturnType {
     const { client } = this;
-    const { studentId, examCode } = auth;
+    const { studentId, studentName, examCode } = auth;
     const { students, status } = await this.examsService.getExam(auth.examCode);
 
     if (!studentId) {
@@ -50,7 +50,12 @@ export class WsExamsAuthenticator {
       return ['error', null];
     }
 
-    const [oldId] = await this.examsService.updateStudentClientId(examCode, studentId, client.id);
+    const [oldId] = await this.examsService.updateStudentClientId(
+      examCode,
+      studentId,
+      studentName,
+      client.id,
+    );
     const [oldSocket] = await this.server.in(oldId).fetchSockets();
 
     if (oldSocket) {
@@ -117,7 +122,7 @@ export class WsExamsAuthenticator {
   private async hasYouAreNotAuthorError(auth: ExamClientAuthDto, { authorToken }: Author) {
     if (auth.role === 'author' && authorToken !== auth.authorToken) {
       return !this.handleError(
-        WSException.Forbidden('You are not the author of this room', {
+        WSException.Forbidden('You are not the author of this exam', {
           disconnect: true,
         }),
       );
@@ -144,7 +149,7 @@ export class WsExamsAuthenticator {
     if (roomExist) return false;
 
     return !this.handleError(
-      WSException.NotFound('Room not found. Please, check the room id', {
+      WSException.NotFound('Exam not found. Please, check the exam code', {
         disconnect: true,
       }),
     );

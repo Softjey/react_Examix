@@ -1,5 +1,4 @@
 import { Box, Stack, TextField, TextFieldProps } from '@mui/material';
-import MainButton from '../UI/buttons/MainButton';
 import { columnCenter } from '../../styles/flex';
 import LoadingButton from '../UI/buttons/LoadingButton';
 import { Nullable } from '../../types/utils/Nullable';
@@ -31,11 +30,12 @@ const LoginForm: React.FC<Props> = ({
         <TextField disabled={isLoading} fullWidth variant="outlined" {...secondFieldProps} />
       </Stack>
       <LoadingButton
-        buttonBase={MainButton}
+        size="large"
         loading={isLoading}
         disableElevation
         variant="contained"
         type="submit"
+        sx={{ minWidth: 200 }}
       >
         {submitButtonText}
       </LoadingButton>
