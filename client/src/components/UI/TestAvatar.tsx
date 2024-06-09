@@ -20,7 +20,7 @@ const isStringProps = (props: Props): props is StringProps => {
 
 const TestAvatar: React.FC<Props> = (props) => {
   const defaultWidth = 60;
-  const { test, width = defaultWidth, sx, ...rest } = props;
+  const { test, width = defaultWidth, sx, ...restProps } = props;
   const { image, name, createdAt, subject } = test;
   const [bgcolor, textColor] = generateColorsPair(`${name}--${createdAt}`);
   const aspectRatio = 3 / 4;
@@ -28,6 +28,7 @@ const TestAvatar: React.FC<Props> = (props) => {
   const fontSize = isStringProps(props)
     ? props.logoFontSize
     : `${(props.width ?? defaultWidth) / 4.5}px`;
+  const { logoFontSize, ...filteredRestProps } = restProps as StringProps;
 
   return (
     <Avatar
@@ -41,7 +42,7 @@ const TestAvatar: React.FC<Props> = (props) => {
         color: textColor,
         ...sx,
       }}
-      {...rest}
+      {...filteredRestProps}
     >
       {image && (
         <img

@@ -77,7 +77,7 @@ const ExamResultsTable: React.FC<Props> = memo(({ questions, sx: containerSx, ..
                     sx={{ borderColor: (theme) => theme.palette.text.primary }}
                   />
 
-                  <Typography variant="inherit">{Math.round(percentage * 100) / 10}%</Typography>
+                  <Typography variant="inherit">{Math.round(percentage * 100)}%</Typography>
                 </Stack>
               </TableCell>
             </TableRow>

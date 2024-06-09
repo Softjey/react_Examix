@@ -67,7 +67,9 @@ export class ExamsHistoryService {
 
   async parseResults(exam: Exam): Promise<TempResults> {
     return {
-      students: Object.values(exam.students),
+      students: Object.entries(exam.students).map(([studentId, { name, results }]) => {
+        return { studentId, name, results };
+      }),
       questions: exam.questions.slice(0, exam.currentQuestionIndex + 1),
     };
   }

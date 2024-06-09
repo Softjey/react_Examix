@@ -1,16 +1,17 @@
 import React from 'react';
 import dayjs from 'dayjs';
-import { Stack, Typography, Box, Button, StackProps } from '@mui/material';
+import { Stack, Typography, Box, StackProps } from '@mui/material';
 import SubjectItem from '../UI/SubjectItem/SubjectItem';
 import TestAvatar from '../UI/TestAvatar';
 import { DetailedTest } from '../../types/api/entities/detailedTest';
 import UserAvatar from '../UI/UserAvatar';
 
 interface Props extends StackProps {
-  test: DetailedTest;
+  test: Pick<DetailedTest, 'image' | 'name' | 'description' | 'author' | 'subject' | 'createdAt'>;
+  action?: React.ReactNode;
 }
 
-const BaseTestInfo: React.FC<Props> = ({ sx, test, ...rest }) => {
+const BaseTestInfo: React.FC<Props> = ({ sx, test, action, ...rest }) => {
   const { name, description, subject, createdAt } = test;
   const date = dayjs(createdAt).format('DD/MM/YYYY');
 
@@ -54,9 +55,7 @@ const BaseTestInfo: React.FC<Props> = ({ sx, test, ...rest }) => {
           />
         </Box>
 
-        <Button variant="contained" color="secondary" disableElevation>
-          Start Exam with this Test
-        </Button>
+        {action ?? null}
       </Stack>
     </Stack>
   );

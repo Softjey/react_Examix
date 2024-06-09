@@ -17,10 +17,12 @@ type ErrorDetails = {
 type Props = LayoutProps & {
   error?: Error;
   errorDetails?: ErrorDetails;
-  refreshPage?: () => void;
+  onGoHome?: () => void;
+  actions?: React.ReactNode;
 };
 
-const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, refreshPage, ...rest }) => {
+const ErrorPage: React.FC<Props> = (props) => {
+  const { layout, error, errorDetails, actions, onGoHome, ...rest } = props;
   let status;
   let message;
   let title;
@@ -51,12 +53,14 @@ const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, refreshPage, 
       <Typography variant="h6">{message}</Typography>
 
       <Stack direction="row" spacing={3} alignItems="center">
-        {refreshPage && (
-          <Button onClick={refreshPage} size="large">
-            Try again
-          </Button>
-        )}
-        <Button to={Routes.HOME} variant="contained" size="large">
+        {actions}
+
+        <Button
+          to={layout === 'home' ? Routes.HOME : Routes.START}
+          onClick={onGoHome}
+          variant="contained"
+          size="large"
+        >
           Go Home
         </Button>
       </Stack>
@@ -64,10 +68,10 @@ const ErrorPage: React.FC<Props> = ({ layout, error, errorDetails, refreshPage, 
   );
 
   if (layout === 'home') {
-    const props = rest as HomeLayoutProps;
+    const restProps = rest as HomeLayoutProps;
 
     return (
-      <HomeLayout contentSx={center} {...props}>
+      <HomeLayout contentSx={center} {...restProps}>
         {content}
       </HomeLayout>
     );

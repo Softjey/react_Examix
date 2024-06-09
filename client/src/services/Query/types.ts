@@ -7,4 +7,5 @@ export const enum QueryKey {
   TEST = 'test',
   EXAM = 'exam',
   QUESTIONS = 'questions',
+  RECONNECT_TO_EXAM = 'reconnect_to_exam',
 }

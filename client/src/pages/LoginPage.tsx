@@ -2,17 +2,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { z } from 'zod';
-import useLogin from '../../hooks/queries/useLogin';
-import LoginForm from '../../components/forms/LoginForm';
-import EyeButton from '../../components/UI/buttons/EyeButton';
-import StartLayout from '../../components/layouts/StartLayout';
+import useLogin from '../hooks/queries/useLogin';
+import LoginForm from '../components/forms/LoginForm';
+import EyeButton from '../components/UI/buttons/EyeButton';
+import StartLayout from '../components/layouts/StartLayout';
 
 const LoginFormSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email format'),
   password: z
     .string()
     .min(1, 'Password is required')
-    .min(6, 'Password must be at least 6 characters')
+    .min(8, 'Password must be at least 8 characters')
     .max(20, 'Max length is 20'),
 });
 
@@ -20,9 +20,7 @@ type LoginFormType = z.infer<typeof LoginFormSchema>;
 
 const LoginPage: React.FC = () => {
   const { mutate, isPending, reset, error: serverError, isError } = useLogin();
-
   const [showPassword, setShowPassword] = useState(false);
-
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const defaultValues: LoginFormType = {
@@ -43,7 +41,7 @@ const LoginPage: React.FC = () => {
     if (data.email && data.password) {
       const { email, password } = data;
 
-      mutate({ email, password }, {});
+      mutate({ email, password });
     }
   });
 
