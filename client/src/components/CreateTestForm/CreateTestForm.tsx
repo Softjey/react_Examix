@@ -8,7 +8,7 @@ import {
   CreateTestFormType,
   CreateTestSchema,
   QuestionFromServer,
-} from '../../schemas/createTestFormValidationSchemas';
+} from './schemas/createTestFormValidationSchemas';
 import defaultValues from '../../pages/CreateTestPage/defaultValues';
 import getDefaultQuestion from '../../pages/CreateTestPage/utils/getDefaultQuestion';
 import getFilteredQuestions from '../../pages/CreateTestPage/utils/getFilteredQuestions';

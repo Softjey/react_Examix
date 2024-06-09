@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import QuestionType from '../../../types/api/enums/Type';
-import { FormQuestion } from '../../../schemas/createTestFormValidationSchemas';
+import { FormQuestion } from '../../../components/CreateTestForm/schemas/createTestFormValidationSchemas';
 
 const getDefaultQuestion = (): FormQuestion => ({
   isFromServer: false,

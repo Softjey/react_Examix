@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import dayjs, { Dayjs } from 'dayjs';
-import Subject from '../types/api/enums/Subject';
-import QuestionType from '../types/api/enums/Type';
+import Subject from '../../../types/api/enums/Subject';
+import QuestionType from '../../../types/api/enums/Type';
 
 const AnswerSchema = z.object({
   title: z.string().min(1, 'Answer title is required'),

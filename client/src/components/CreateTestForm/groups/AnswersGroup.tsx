@@ -7,7 +7,7 @@ import { FieldArrayWithId } from 'react-hook-form';
 import { useEffect } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import QuestionType from '../../../types/api/enums/Type';
-import { CreateTestFormType } from '../../../schemas/createTestFormValidationSchemas';
+import { CreateTestFormType } from '../schemas/createTestFormValidationSchemas';
 import FormAnswerItem from '../items/FormAnswerItem';
 import Button from '../../UI/buttons/Button';
 import { useCreateTest } from '../../../pages/CreateTestPage/CreateTestContext';

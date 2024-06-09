@@ -1,7 +1,7 @@
 import { Box, BoxProps, Typography } from '@mui/material';
 import { FieldArrayWithId } from 'react-hook-form';
 import { useEffect, useRef } from 'react';
-import { CreateTestFormType } from '../../../schemas/createTestFormValidationSchemas';
+import { CreateTestFormType } from '../schemas/createTestFormValidationSchemas';
 import QuestionCard from '../items/QuestionCard';
 import useCreateTestForm from '../../../hooks/useCreateTestForm';
 

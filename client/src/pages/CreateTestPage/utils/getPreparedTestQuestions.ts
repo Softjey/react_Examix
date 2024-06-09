@@ -2,7 +2,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import {
   CreateTestFormType,
   QuestionFromServer,
-} from '../../../schemas/createTestFormValidationSchemas';
+} from '../../../components/CreateTestForm/schemas/createTestFormValidationSchemas';
 import { CreateQuestionsResponse } from '../../../services/Api/types/create-questions';
 import { CreateTestQuestion } from '../../../services/Api/types/create-test';
 

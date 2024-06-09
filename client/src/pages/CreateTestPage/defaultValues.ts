@@ -1,4 +1,4 @@
-import { CreateTestFormType } from '../../schemas/createTestFormValidationSchemas';
+import { CreateTestFormType } from '../../components/CreateTestForm/schemas/createTestFormValidationSchemas';
 import getDefaultQuestion from './utils/getDefaultQuestion';
 
 const defaultValues: CreateTestFormType = {

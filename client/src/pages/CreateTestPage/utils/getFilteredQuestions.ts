@@ -1,4 +1,4 @@
-import { CreateTestFormType } from '../../../schemas/createTestFormValidationSchemas';
+import { CreateTestFormType } from '../../../components/CreateTestForm/schemas/createTestFormValidationSchemas';
 import Subject from '../../../types/api/enums/Subject';
 
 const getFilteredQuestions = (testData: CreateTestFormType) => {
