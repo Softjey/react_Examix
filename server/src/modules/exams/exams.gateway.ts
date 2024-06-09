@@ -140,8 +140,6 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
       }
 
-      console.log('Disconnect', { examCode, room: room.length, examStatus: exam?.status });
-
       if (exam && room.length === 0 && exam.status !== 'started') {
         await this.examsService.deleteExam(examCode);
       }
