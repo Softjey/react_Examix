@@ -43,7 +43,7 @@ const ChangePasswordPage: React.FC<Props> = () => {
   const [successMessage, setSuccessMessage] = useState<Nullable<string>>(null);
 
   const [searchParams] = useSearchParams();
-  const confirmToken = searchParams.get('token')!.split('#')[0];
+  const confirmToken = searchParams.get('token')!;
 
   const {
     register,
@@ -74,11 +74,11 @@ const ChangePasswordPage: React.FC<Props> = () => {
         }}
       >
         <Typography sx={{ mb: 2 }} variant="h2">
-          Congratulations
+          Congratulations 🎉
         </Typography>
 
-        <Typography sx={{ mb: 5, maxWidth: '50dvw' }} textAlign="center" variant="h6">
-          Your password has been reset. You can now login with your new password.
+        <Typography sx={{ mb: 3, maxWidth: '50dvw' }} textAlign="center" variant="h6">
+          {successMessage}
         </Typography>
 
         <Button variant="contained" size="large" to={Routes.LOGIN}>

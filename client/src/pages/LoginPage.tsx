@@ -6,6 +6,8 @@ import useLogin from '../hooks/queries/useLogin';
 import LoginForm from '../components/forms/LoginForm';
 import EyeButton from '../components/UI/buttons/EyeButton';
 import StartLayout from '../components/layouts/StartLayout';
+import Button from '../components/UI/buttons/Button';
+import ChangePasswordModal from '../components/ChangePasswordModal';
 
 const LoginFormSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email format'),
@@ -20,8 +22,11 @@ type LoginFormType = z.infer<typeof LoginFormSchema>;
 
 const LoginPage: React.FC = () => {
   const { mutate, isPending, reset, error: serverError, isError } = useLogin();
+
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const [isModalOpened, setIsModalOpened] = useState(false);
 
   const defaultValues: LoginFormType = {
     email: '',
@@ -86,6 +91,11 @@ const LoginPage: React.FC = () => {
         submitButtonText="Login"
         onSubmit={onSubmit}
       />
+
+      <Button size="small" onClick={() => setIsModalOpened(true)}>
+        Forgot password
+      </Button>
+      <ChangePasswordModal open={isModalOpened} onClose={() => setIsModalOpened(false)} />
     </StartLayout>
   );
 };

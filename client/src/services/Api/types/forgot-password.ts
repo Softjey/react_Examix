@@ -1,7 +1,6 @@
-import { WithMessage } from './utils';
+import { User } from '../../../types/api/entities/user';
 
 export type ForgotPasswordDto = {
-  email: string;
+  email: User['email'];
+  redirectUrl: string;
 };
-
-export type ForgotPasswordResponse = WithMessage;

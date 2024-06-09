@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, TextField, Typography, Box } from '@mui/material';
 import Button from './UI/buttons/Button';
-import ApiClient from '../services/Api/ApiClient';
 
 const ChangePasswordButton: React.FC = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -12,9 +11,6 @@ const ChangePasswordButton: React.FC = () => {
   const handlePasswordChange = async () => {
     setIsPasswordModalOpen(false);
     // Implement the logic for changing the password here
-    const message = await ApiClient.forgotPassword({ email });
-    // eslint-disable-next-line no-console
-    console.log(message);
   };
 
   return (
@@ -49,17 +45,15 @@ const ChangePasswordButton: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Box sx={{ mt: 0 }}>
-            <TextField
-              fullWidth
-              label="Enter email"
-              type="email"
-              variant="outlined"
-              margin="normal"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Box>
+          <TextField
+            fullWidth
+            label="Enter email"
+            type="email"
+            variant="outlined"
+            margin="normal"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
           <Box sx={{ mt: 2 }}>
             <Button fullWidth variant="contained" color="primary" onClick={handlePasswordChange}>
               Confirm
