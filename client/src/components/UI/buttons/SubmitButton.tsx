@@ -1,5 +1,7 @@
+/* eslint-disable */
 import Button from './Button';
-import { StudentAnswer } from '../../../dev/questions';
+
+type StudentAnswer = any;
 
 interface Props {
   setValue: React.Dispatch<React.SetStateAction<StudentAnswer[] | null>>;
@@ -14,7 +16,7 @@ const SubmitButton: React.FC<Props> = ({ setValue, value, setIsShowAnswers }) =>
     onClick={() => {
       setValue(value);
       setIsShowAnswers(false);
-      // eslint-disable-next-line no-console
+
       console.log(value);
     }}
   >

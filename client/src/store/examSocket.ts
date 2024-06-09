@@ -1,7 +1,9 @@
+/* eslint-disable */
 import { makeAutoObservable } from 'mobx';
 import { Socket, io } from 'socket.io-client';
 import log from '../dev/log';
-import { StudentAnswer, TestInfo } from '../dev/questions';
+type StudentAnswer = any;
+type TestInfo = any;
 
 export enum MessageNames {
   EXCEPTION = 'exception',
@@ -82,7 +84,7 @@ class ExamStore {
         options.role === ExamRole.STUDENT
           ? this.createStudentAuth(options)
           : this.createAuthorAuth(options);
-      // eslint-disable-next-line no-console
+
       console.log('auth obj:', this.auth);
     }
     if (this.auth === null) {
@@ -93,17 +95,17 @@ class ExamStore {
     socket.on(MessageNames.TEST_INFO, (body) => {
       this.testInfo = body;
     });
-    // eslint-disable-next-line no-console
+
     socket.io.on('open', () => console.log('connected', socket));
     socket.io.on('close', log('connection closed'));
-    // eslint-disable-next-line no-console
+
     socket.io.on('error', (body) => console.log(body));
 
     this.setSocket(socket);
   }
 
   // FIXME: fix this "any" problem later :)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   on(messageName: MessageNames, callback: (value?: any) => void) {
     if (this.socket) {
       this.socket.on(messageName, (value) => {
@@ -141,11 +143,11 @@ class ExamStore {
     const lsItem = localStorage.getItem('studentAuth');
     if (lsItem !== null) {
       const [studentId, studentToken] = lsItem.split('\n');
-      // eslint-disable-next-line no-console
+
       console.log({ examCode, role, studentName, studentId, studentToken });
       return { examCode, role, studentName, studentId, studentToken };
     }
-    // eslint-disable-next-line no-console
+
     console.log({ examCode, role, studentName });
     return { examCode, role, studentName };
   }

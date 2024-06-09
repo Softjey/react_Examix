@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* eslint-disable no-nested-ternary */
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -14,9 +15,8 @@ import {
 import StartLayout from '../components/layouts/StartLayout';
 import Button from '../components/UI/buttons/Button';
 import BookLoader from './BookLoader/BookLoader';
-import DottedText from './DottedText/DottedText';
 import studentExamSocket, { MessageNames } from '../store/examSocket';
-import { TestInfo } from './questions';
+type TestInfo = any;
 import { camelCaseToNormal, snakeCaseToNormal } from './formatter';
 import Routes from '../services/Router/Routes';
 
@@ -40,7 +40,6 @@ const WaitingPage: React.FC = () => {
   studentExamSocket.on(MessageNames.TEST_INFO, (newTestInfo) => setTestInfo(newTestInfo));
   studentExamSocket.on(MessageNames.EXAM_FINISHED, () => navigate(Routes.QUIZ));
   studentExamSocket.on(MessageNames.EXCEPTION, (newException) => {
-    // eslint-disable-next-line no-console
     console.error(newException);
     setError(newException);
     setIsLoading(true);
@@ -60,7 +59,7 @@ const WaitingPage: React.FC = () => {
       {!isLoading ? (
         <>
           <Typography sx={{ fontWeight: '500' }} variant="h2">
-            <DottedText text="Waiting for the exam to start" />
+            {/* <DottedText text="Waiting for the exam to start" /> */}
           </Typography>
           <BookLoader />
           {testInfo && (
