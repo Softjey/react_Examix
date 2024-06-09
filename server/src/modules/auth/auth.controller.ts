@@ -54,10 +54,8 @@ export class AuthController {
   }
 
   @Post('forgot-password')
-  async changePassword(@Body() { email }: ForgotPasswordDto, @Req() request: Request) {
-    const originUrl = request.headers.referer;
-
-    await this.authService.forgotPassword(email, originUrl);
+  async changePassword(@Body() { email, redirectUrl }: ForgotPasswordDto) {
+    await this.authService.forgotPassword(email, redirectUrl);
 
     return {
       message: 'Password reset email sent. Check your inbox!',
