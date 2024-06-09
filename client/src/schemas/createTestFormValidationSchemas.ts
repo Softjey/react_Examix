@@ -52,4 +52,4 @@ export type FormQuestion = z.infer<typeof QuestionSchema>;
 
 export type QuestionFromServer = z.infer<typeof ServerQuestionSchema>;
 
-export type CreateTestForm = z.infer<typeof CreateTestSchema>;
+export type CreateTestFormType = z.infer<typeof CreateTestSchema>;

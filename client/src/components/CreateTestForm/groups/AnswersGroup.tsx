@@ -7,7 +7,7 @@ import { FieldArrayWithId } from 'react-hook-form';
 import { useEffect } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import QuestionType from '../../../types/api/enums/Type';
-import { CreateTestForm } from '../../../schemas/createTestFormValidationSchemas';
+import { CreateTestFormType } from '../../../schemas/createTestFormValidationSchemas';
 import FormAnswerItem from '../items/FormAnswerItem';
 import Button from '../../UI/buttons/Button';
 import { useCreateTest } from '../../../pages/CreateTestPage/CreateTestContext';
@@ -16,7 +16,7 @@ import useCreateTestForm from '../../../hooks/useCreateTestForm';
 interface Props extends BoxProps {
   questionType: QuestionType;
   questionIndex: number;
-  fields: FieldArrayWithId<CreateTestForm, `questions.${number}.answers`, 'id'>[];
+  fields: FieldArrayWithId<CreateTestFormType, `questions.${number}.answers`, 'id'>[];
   onItemRemove: (index: number) => void;
   onItemAdd: () => void;
   isFromServer?: boolean;

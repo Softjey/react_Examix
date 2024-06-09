@@ -1,7 +1,7 @@
-import { CreateTestForm } from '../../../schemas/createTestFormValidationSchemas';
+import { CreateTestFormType } from '../../../schemas/createTestFormValidationSchemas';
 import Subject from '../../../types/api/enums/Subject';
 
-const getFilteredQuestions = (testData: CreateTestForm) => {
+const getFilteredQuestions = (testData: CreateTestFormType) => {
   return testData.questions
     .filter((question) => !question.isFromServer)
     .map((question) => {

@@ -1,6 +1,6 @@
 import dayjs, { Dayjs } from 'dayjs';
 import {
-  CreateTestForm,
+  CreateTestFormType,
   QuestionFromServer,
 } from '../../../schemas/createTestFormValidationSchemas';
 import { CreateQuestionsResponse } from '../../../services/Api/types/create-questions';
@@ -13,7 +13,7 @@ const formatTimeLimit = (timeLimit: Dayjs) => {
 const getPreparedTestQuestions = (
   createdQuestions: CreateQuestionsResponse['questions'],
   questionsFromServer: QuestionFromServer[],
-  testFormQuestions: CreateTestForm['questions'],
+  testFormQuestions: CreateTestFormType['questions'],
 ) => {
   const preparedTestQuestions: CreateTestQuestion[] = [];
 

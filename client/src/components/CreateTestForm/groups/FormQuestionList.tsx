@@ -1,12 +1,12 @@
 import { Box, BoxProps, Typography } from '@mui/material';
 import { FieldArrayWithId } from 'react-hook-form';
 import { useEffect, useRef } from 'react';
-import { CreateTestForm } from '../../../schemas/createTestFormValidationSchemas';
+import { CreateTestFormType } from '../../../schemas/createTestFormValidationSchemas';
 import QuestionCard from '../items/QuestionCard';
 import useCreateTestForm from '../../../hooks/useCreateTestForm';
 
 interface Props extends BoxProps {
-  questions: FieldArrayWithId<CreateTestForm, 'questions', 'id'>[];
+  questions: FieldArrayWithId<CreateTestFormType, 'questions', 'id'>[];
   onRemove: (index: number) => void;
 }
 

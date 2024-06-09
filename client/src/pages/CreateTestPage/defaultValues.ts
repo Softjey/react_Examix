@@ -1,7 +1,7 @@
-import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
+import { CreateTestFormType } from '../../schemas/createTestFormValidationSchemas';
 import getDefaultQuestion from './utils/getDefaultQuestion';
 
-const defaultValues: CreateTestForm = {
+const defaultValues: CreateTestFormType = {
   testImageLink: null,
   testName: '',
   testDescription: '',
