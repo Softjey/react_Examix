@@ -11,9 +11,9 @@ import { useState, ChangeEvent } from 'react';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { FieldValues, UseFormRegisterReturn, UseFormSetValue } from 'react-hook-form';
-import { Nullable } from '../../types/utils/Nullable';
-import isImageAcessable from '../../utils/isImageAcessable';
-import isValidUrl from '../../utils/isValidUrl';
+import { Nullable } from '../../../types/utils/Nullable';
+import isImageAcessable from '../../../utils/isImageAcessable';
+import isValidUrl from '../../../utils/isValidUrl';
 
 interface Props extends BoxProps {
   testImageLink: string | null;

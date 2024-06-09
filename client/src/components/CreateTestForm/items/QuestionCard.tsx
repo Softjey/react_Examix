@@ -21,11 +21,10 @@ import QuestionType from '../../../types/api/enums/Type';
 import DeleteButton from '../../UI/buttons/DeleteButton';
 import AnswersGroup from '../groups/AnswersGroup';
 import { useCreateTest } from '../../../pages/CreateTestPage/CreateTestContext';
-
+import useCreateTestForm from '../../../hooks/useCreateTestForm';
 import MaxScoreInput from '../../UI/inputs/MaxScoreInput';
 import ErrorPopover from '../../UI/errors/ErrorPopover';
-import TimeLimitPicker from '../TimeLimitPicker';
-import useCreateTestForm from '../../../hooks/useCreateTestForm';
+import CreateTestFormTimeLimitPicker from '../CreateTestFormTimeLimitPicker';
 
 interface Props extends CardProps {
   type: QuestionType;
@@ -114,7 +113,7 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
                 isError={!!errors.questions?.[questionIndex]?.timeLimit}
                 errorMessage={errors.questions?.[questionIndex]?.timeLimit?.message}
               >
-                <TimeLimitPicker
+                <CreateTestFormTimeLimitPicker
                   questionIndex={questionIndex}
                   error={!!errors.questions?.[questionIndex]?.timeLimit}
                   disabled={loading}

@@ -1,15 +1,16 @@
-import { TimePicker, TimePickerProps } from '@mui/x-date-pickers/TimePicker';
+import { TimePickerProps } from '@mui/x-date-pickers/TimePicker';
 import { Controller } from 'react-hook-form';
 import React from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import useCreateTestForm from '../../hooks/useCreateTestForm';
+import TimeLimitPicker from '../UI/inputs/TimeLimitPicker';
 
 interface Props extends TimePickerProps<Dayjs> {
   questionIndex: number;
   error?: boolean;
 }
 
-const TimeLimitPicker: React.FC<Props> = ({ questionIndex, error, ...props }) => {
+const CreateTestFormTimeLimitPicker: React.FC<Props> = ({ questionIndex, error, ...props }) => {
   const { control, trigger } = useCreateTestForm();
 
   return (
@@ -25,30 +26,12 @@ const TimeLimitPicker: React.FC<Props> = ({ questionIndex, error, ...props }) =>
         };
 
         return (
-          <TimePicker
-            sx={{
-              maxWidth: '105px',
-              '.MuiInputBase-input': {
-                paddingTop: 1,
-                paddingBottom: 1,
-                '& ~ fieldset': {
-                  borderColor: error ? (theme) => theme.palette.error.main : 'auto',
-                },
-              },
-              '.MuiInputLabel-root': {
-                top: '-8px',
-              },
-            }}
-            views={['minutes', 'seconds']}
-            format="mm:ss"
+          <TimeLimitPicker
             value={value}
-            timeSteps={{ minutes: 1, seconds: 5 }}
-            maxTime={dayjs().startOf('hour').minute(10)}
-            skipDisabled
             onClose={onBlur}
             onChange={onTimeLimitChange}
             disabled={disabled}
-            slotProps={{ actionBar: { actions: [] } }}
+            error={error}
             ref={ref}
             {...props}
           />
@@ -58,4 +41,4 @@ const TimeLimitPicker: React.FC<Props> = ({ questionIndex, error, ...props }) =>
   );
 };
 
-export default TimeLimitPicker;
+export default CreateTestFormTimeLimitPicker;

@@ -3,7 +3,7 @@ import { BoxProps } from '@mui/material';
 import { UseFormSetValue, FieldValues } from 'react-hook-form';
 import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
 import useCreateTestForm from '../../hooks/useCreateTestForm';
-import ImageLinkUploader from './ImageLinkUploader';
+import ImageLinkUploader from '../UI/inputs/ImageLinkUploader';
 
 interface Props extends BoxProps {}
 
