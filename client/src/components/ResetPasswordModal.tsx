@@ -11,19 +11,19 @@ import Button from './UI/buttons/Button';
 
 interface Props extends Omit<ModalProps, 'children'> {}
 
-const ChangePasswordSchema = z.object({
+const ResetPasswordSchema = z.object({
   email: z.string().email().min(0),
 });
 
-type ChangePasswordType = z.infer<typeof ChangePasswordSchema>;
+type ResetPasswordType = z.infer<typeof ResetPasswordSchema>;
 
-const ChangePasswordModal: React.FC<Props> = ({ open, onClose }) => {
+const ResetPasswordModal: React.FC<Props> = ({ open, onClose }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ChangePasswordType>({
-    resolver: zodResolver(ChangePasswordSchema),
+  } = useForm<ResetPasswordType>({
+    resolver: zodResolver(ResetPasswordSchema),
     defaultValues: { email: '' },
   });
 
@@ -102,4 +102,4 @@ const ChangePasswordModal: React.FC<Props> = ({ open, onClose }) => {
   );
 };
 
-export default ChangePasswordModal;
+export default ResetPasswordModal;

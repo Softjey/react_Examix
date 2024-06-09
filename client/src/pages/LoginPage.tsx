@@ -7,7 +7,7 @@ import LoginForm from '../components/forms/LoginForm';
 import EyeButton from '../components/UI/buttons/EyeButton';
 import StartLayout from '../components/layouts/StartLayout';
 import Button from '../components/UI/buttons/Button';
-import ChangePasswordModal from '../components/ChangePasswordModal';
+import ResetPasswordModal from '../components/ResetPasswordModal';
 
 const LoginFormSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email format'),
@@ -95,7 +95,7 @@ const LoginPage: React.FC = () => {
       <Button size="small" onClick={() => setIsModalOpened(true)}>
         Forgot password
       </Button>
-      <ChangePasswordModal open={isModalOpened} onClose={() => setIsModalOpened(false)} />
+      <ResetPasswordModal open={isModalOpened} onClose={() => setIsModalOpened(false)} />
     </StartLayout>
   );
 };
