@@ -128,7 +128,7 @@ export class ExamManagementService extends EventEmitter {
     const { status, students } = exam;
 
     if (status !== 'created') {
-      return;
+      return null;
     }
 
     const [studentId, student] = Object.entries(students).find(([, student]) => {

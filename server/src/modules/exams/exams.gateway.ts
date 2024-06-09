@@ -131,9 +131,13 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       if (role === 'student') {
-        const { studentId } = await this.examsService.studentLeave(examCode, client.id);
+        const student = await this.examsService.studentLeave(examCode, client.id);
 
-        client.broadcast.to(examCode).emit('student-disconnected', { studentId });
+        if (student) {
+          client.broadcast.to(examCode).emit('student-disconnected', {
+            studentId: student.studentId,
+          });
+        }
       }
 
       console.log('Disconnect', { examCode, room: room.length, examStatus: exam?.status });
