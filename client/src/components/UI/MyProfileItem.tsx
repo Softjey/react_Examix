@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import CreateIcon from '@mui/icons-material/Create';
 import TextField from '@mui/material/TextField';
@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Stack } from '@mui/material';
 import useAuth from '../../hooks/queries/useAuth';
-import UserAvatar from '../UI/UserAvatar';
+import UserAvatar from './UserAvatar';
 import useUpdateMe from '../../hooks/queries/useUpdateMe';
 
 const MyProfileItem: React.FC = () => {
@@ -16,10 +16,6 @@ const MyProfileItem: React.FC = () => {
   const [name, setName] = useState(user ? user.name : '');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textFieldRef = useRef<HTMLInputElement>(null);
-
-  if (!user) {
-    return <div>Loading...</div>;
-  }
 
   const handleEditClick = () => {
     setEditMode(true);
@@ -33,8 +29,10 @@ const MyProfileItem: React.FC = () => {
   };
 
   const handleCancel = () => {
-    setName(user.name);
-    setEditMode(false);
+    if (user) {
+      setName(user.name);
+      setEditMode(false);
+    }
   };
 
   const handleSave = () => {
@@ -47,6 +45,12 @@ const MyProfileItem: React.FC = () => {
       fileInputRef.current.click();
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name);
+    }
+  }, [user]);
 
   return (
     <Box
@@ -61,30 +65,28 @@ const MyProfileItem: React.FC = () => {
         opacity: isPending ? 0.5 : 1,
       }}
     >
-      <UserAvatar onClick={handleAvatarClick} user={user} sx={{ width: 60, height: 60 }} />
+      <UserAvatar
+        onClick={handleAvatarClick}
+        user={user}
+        sx={{ width: 60, height: 60, cursor: 'pointer' }}
+        title="Change avatar feature will be available soon"
+      />
 
       <Stack direction="row" alignItems="center" gap={1}>
         <TextField
-          disabled={!editMode}
           value={name}
           onChange={handleNameChange}
           variant="outlined"
           autoComplete="off"
           size="small"
           inputRef={textFieldRef}
+          onClick={handleEditClick}
           sx={{
             width: 180,
             height: 40,
-            '.MuiInputBase-root': {
-              height: '100%',
-            },
-            '.MuiOutlinedInput-input': {
-              padding: '8px 10px',
-            },
-            '& .MuiInputBase-input.Mui-disabled': {
-              WebkitTextFillColor: 'black',
-              fontWeight: 'bold',
-            },
+            color: editMode ? 'text.primary' : 'text.secondary',
+            '.MuiInputBase-root': { height: '100%' },
+            '.MuiOutlinedInput-input': { paddingInline: 1 },
           }}
         />
 
@@ -93,9 +95,7 @@ const MyProfileItem: React.FC = () => {
             color="disabled"
             sx={{
               cursor: 'pointer',
-              '&:hover': {
-                color: 'primary.main',
-              },
+              '&:hover': { color: 'primary.main' },
             }}
             onClick={handleEditClick}
           />
