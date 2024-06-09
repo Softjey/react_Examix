@@ -148,10 +148,17 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @UseGuards(RoomAuthorGuard)
   @SubscribeMessage('get-results')
-  async sendResults(@ConnectedSocket() client: Socket, examCode: string) {
+  async sendResults(examCode: string, @ConnectedSocket() client?: Socket) {
     const results = await this.examsService.getResults(examCode);
+    const { author } = await this.examsService.getExam(examCode);
 
-    client.emit('results', results);
+    if (client) {
+      client.emit('results', results);
+    }
+
+    if (author.clientId) {
+      this.server.to(author.clientId).emit('results', results);
+    }
   }
 
   @UseGuards(RoomAuthorGuard)
@@ -174,18 +181,21 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const studentsQuestion = this.prepareQuestionForStudents(question, questionIndex);
 
       if (questionIndex > 0) {
-        this.sendResults(client, examCode);
+        this.sendResults(examCode);
       }
 
-      client.broadcast.to(examCode).emit('question', studentsQuestion);
+      client.to(examCode).emit('question', studentsQuestion);
     });
 
     this.examsService.onExamFinish(examCode, async (detailedExamPromise) => {
+      const { author } = await this.examsService.getExam(examCode);
       const detailedExam = await detailedExamPromise;
 
-      client.broadcast.to(examCode).emit('exam-finished');
-      client.emit('exam-finished', detailedExam);
+      if (author.clientId) {
+        client.to(author.clientId).emit('exam-finished', detailedExam);
+      }
 
+      client.to(examCode).except(author.clientId).emit('exam-finished');
       client.in(examCode).disconnectSockets(true);
     });
   }
