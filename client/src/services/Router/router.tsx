@@ -10,6 +10,7 @@ import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
 import CreateTestPage from '../../pages/CreateTestPage/CreateTestPage';
 import SettingsPage from '../../pages/SettingsPage';
 import TestPage from '../../pages/TestPage';
+import SettingsPage from '../../pages/SettingsPage';
 import ExamPage from '../../pages/ExamPage';
 import ChangePasswordPage from '../../dev/ChangePasswordPage';
 import OngoingExamPage from '../../pages/OngoingExamPage/OngoingExamPage';
