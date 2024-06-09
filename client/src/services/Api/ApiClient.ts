@@ -13,11 +13,11 @@ import { DetailedExam } from '../../types/api/entities/detailedExam';
 import ApiError from './ApiError';
 import { CreateQuestionDto, CreateQuestionsResponse } from './types/create-questions';
 import { CreateTestDto, CreateTestResponse } from './types/create-test';
-import { QuestionsParams, QuestionsRepsonse } from './types/questions';
 import { UpdateMeDto, UpdateMeResponse } from './types/update-me';
 import { ResetPasswordDto, ResetPasswordResponse } from './types/reset-password';
 import { CreateExamResponse } from './types/create-exam';
 import { ForgotPasswordDto } from './types/forgot-password';
+import { QuestionsParams, QuestionsResponse } from './types/questions';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
@@ -115,7 +115,7 @@ export class RawApiClient {
   }
 
   static async getQuestions(params: QuestionsParams = {}) {
-    const { data } = await axios.get<QuestionsRepsonse>('/questions', {
+    const { data } = await axios.get<QuestionsResponse>('/questions', {
       params,
     });
 
