@@ -170,7 +170,7 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
             />
           </CardContent>
           <CardActions
-            sx={{ padding: '16px', paddingTop: '10px', display: 'flex', justifyContent: 'end' }}
+            sx={{ padding: '16px', paddingTop: '10px', display: 'flex', justifyContent: 'center' }}
           >
             {isFromServer && (
               <Collapse in={isInfoOpened} timeout={300}>
