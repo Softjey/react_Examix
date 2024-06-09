@@ -4,7 +4,6 @@ import Message from './types/Message';
 import WsException from './ws/types/WsException';
 import WsApiError from './ws/WsApiError';
 import { StudentConnectedResponse } from './ws/types/responses/ConnectedResponse';
-import Student from './types/Student';
 import { RawExamCurrentQuestion } from '../../types/api/entities/testQuestion';
 import { StudentAnswer } from '../../types/api/entities/question';
 import { StudentEmitter } from './types/Emitter';
@@ -15,8 +14,10 @@ import createOffHandlers from './utils/createOffHandlers';
 import { StudentReconnectedResponse } from './ws/types/responses/ReconnectedResponse';
 import prepareCurrentQuestion from './utils/prepareCurrentQuestion';
 import ErrorMessage from './types/ErrorMessage';
+// eslint-disable-next-line import/no-cycle
+import { onStudentJoined, onStudentLeave, onStudentReconnected } from './utils/studentEvents';
 
-class StudentExamStore {
+export class StudentExamStore {
   private credentials: Required<Credentials> | null = null;
   private socket: Socket | null = null;
   exam: StudentStoresExam | null = null;
@@ -133,10 +134,11 @@ class StudentExamStore {
   }
 
   private addListeners(socket: Socket) {
+    onStudentJoined.call(this, socket);
+    onStudentReconnected.call(this, socket);
+    onStudentLeave.call(this, socket);
+
     this.onExamStart(socket);
-    this.onStudentJoined(socket);
-    this.onStudentReconnected(socket);
-    this.onStudentLeave(socket);
     this.onQuestion(socket);
     this.onExamFinished(socket);
   }
@@ -164,32 +166,6 @@ class StudentExamStore {
       if (!this.exam) return;
 
       this.exam.currentQuestion = prepareCurrentQuestion(rawQuestion);
-    });
-  }
-
-  private onStudentJoined(socket: Socket) {
-    socket.on(Message.STUDENT_JOINED, (student: Student) => {
-      if (!this.exam) return;
-
-      this.exam.students = [...this.exam.students, student];
-    });
-  }
-
-  private onStudentReconnected(socket: Socket) {
-    socket.on(Message.STUDENT_RECONNECTED, (student: Student) => {
-      if (!this.exam) return;
-
-      this.exam.students = this.exam.students.map((currStudent) => {
-        return currStudent.studentId === student.studentId ? student : currStudent;
-      });
-    });
-  }
-
-  private onStudentLeave(socket: Socket) {
-    socket.on(Message.STUDENT_DISCONNECTED, ({ studentId }: { studentId: string }) => {
-      if (!this.exam) return;
-
-      this.exam.students = this.exam.students.filter((student) => student.studentId !== studentId);
     });
   }
 
