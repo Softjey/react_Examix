@@ -14,6 +14,7 @@ import TestPage from '../../pages/TestPage';
 import LoginPage from '../../pages/LoginPage';
 import JoinPage from '../../pages/JoinPage';
 import ExamPage from '../../pages/ExamPage';
+import SettingsPage from '../../pages/SettingsPage';
 
 const router = createRouter([
   {
@@ -96,7 +97,7 @@ const router = createRouter([
     path: Routes.SETTINGS,
     element: (
       <Authenticated>
-        <HomeLayout>Settings page</HomeLayout>
+        <SettingsPage />
       </Authenticated>
     ),
   },
