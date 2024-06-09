@@ -22,7 +22,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
   }
 
   if (status === 'finished' && exam?.id) {
-    return <Navigate to={`${Routes.EXAM}/${exam.id}`} />;
+    return <Navigate to={`${Routes.EXAM}/${exam.id}`} state={{ examFinished: true }} />;
   }
 
   if (!exam || !credentials) {
