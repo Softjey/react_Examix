@@ -33,15 +33,17 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     return { ...question, index, answers };
   }
 
+  private prepareStudents = (students: Record<string, Student>) => {
+    return Object.entries(students).map(([studentId, { name }]) => ({
+      name,
+      studentId,
+    }));
+  };
+
   private async handleRole(authenticator: WsExamsAuthenticator, client: Socket) {
     const auth = client.handshake.auth as ExamClientAuthDto;
-    const { test, students } = await this.examsService.getExam(auth.examCode);
-
-    const prepareStudents = (students: Record<string, Student>) =>
-      Object.entries(students).map(([studentId, { name }]) => ({
-        name,
-        studentId,
-      }));
+    const { test, students, status } = await this.examsService.getExam(auth.examCode);
+    const results = await this.examsService.getResults(auth.examCode);
 
     switch (auth.role) {
       case 'author':
@@ -50,19 +52,21 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.join(auth.examCode);
         client.emit('connected', {
           message: 'You are connected to the exam room like an author',
-          students: prepareStudents(students),
+          students: this.prepareStudents(students),
+          examStatus: status,
+          results,
           test,
         });
 
         break;
-      case 'student':
+      case 'student': {
         const [status, studentId] = await authenticator.authorizeStudent(auth);
         const { students: newStudents, ...exam } = await this.examsService.getExam(auth.examCode);
         const { testQuestions, ...restTest } = test;
 
         const connectedData = {
           test: { ...restTest, questionsAmount: testQuestions.length },
-          students: prepareStudents(newStudents),
+          students: this.prepareStudents(newStudents),
         };
 
         const map = {
@@ -103,6 +107,7 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         };
 
         map[status]();
+      }
     }
   }
 
