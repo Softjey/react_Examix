@@ -4,12 +4,12 @@ import StartPage from '../../pages/StartPage';
 import NotFoundPage from '../../pages/NotFoundPage';
 import Authenticated from '../../components/hocs/Authenticated';
 import DebugPage from '../../dev/DebugPage';
-import QuizPage from '../../dev/QuizPage';
 import HomePage from '../../pages/HomePage';
 import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
+import CreateTestPage from '../../pages/CreateTestPage/CreateTestPage';
 import TestPage from '../../pages/TestPage';
 import LoginPage from '../../pages/Login/LoginPage';
 import JoinPage from '../../pages/Login/JoinPage';
@@ -61,14 +61,6 @@ const router = createRouter([
     ),
   },
   {
-    path: 'quiz',
-    element: (
-      <Authenticated>
-        <QuizPage />
-      </Authenticated>
-    ),
-  },
-  {
     path: Routes.EXAMS_HISTORY,
     element: (
       <Authenticated>
@@ -80,7 +72,7 @@ const router = createRouter([
     path: Routes.CREATE_TEST,
     element: (
       <Authenticated>
-        <HomeLayout>Create test page</HomeLayout>
+        <CreateTestPage />
       </Authenticated>
     ),
   },

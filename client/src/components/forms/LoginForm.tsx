@@ -1,9 +1,9 @@
-import { Alert, Box, IconButton, Stack, TextField, TextFieldProps } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Box, Stack, TextField, TextFieldProps } from '@mui/material';
 import MainButton from '../UI/buttons/MainButton';
 import { columnCenter } from '../../styles/flex';
 import LoadingButton from '../UI/buttons/LoadingButton';
 import { Nullable } from '../../types/utils/Nullable';
+import ErrorSnackBar from '../UI/errors/ErrorSnackBar';
 
 interface Props {
   errorMessage: Nullable<string>;
@@ -39,18 +39,7 @@ const LoginForm: React.FC<Props> = ({
       >
         {submitButtonText}
       </LoadingButton>
-      {errorMessage && (
-        <Alert
-          severity="error"
-          action={
-            <IconButton size="small" aria-label="close" color="inherit" onClick={onErrorClose}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          }
-        >
-          {errorMessage}
-        </Alert>
-      )}
+      <ErrorSnackBar errorMessage={errorMessage!} open={!!errorMessage} onClose={onErrorClose} />
     </Box>
   );
 };
