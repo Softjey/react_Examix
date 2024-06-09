@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { Socket } from 'socket.io-client';
 import Message from './types/Message';
 import WsException from './ws/types/WsException';
@@ -68,14 +68,8 @@ export class StudentExamStore {
         [Message.EXCEPTION]: onError,
       });
 
-      const handleConnect = (
-        { students, test }: Pick<StudentConnectedResponse, 'test' | 'students'>,
-        credentials: Required<Credentials>,
-      ) => {
-        this.exam = { test, students, currentQuestion: null };
-        this.setCredentials(credentials);
-        this.status = 'created';
-        this.socket = socket;
+      const handleConnect = (...args: Parameters<StudentExamStore['handleConnect']>) => {
+        this.handleConnect(...args);
       };
 
       function onError(error: WsException) {
@@ -85,8 +79,9 @@ export class StudentExamStore {
 
       function onConnect(response: StudentConnectedResponse) {
         const { studentId, studentToken, students, test } = response;
+        const credentials = { studentId, studentToken, examCode, studentName };
 
-        handleConnect({ students, test }, { studentId, studentToken, examCode, studentName });
+        handleConnect(socket, credentials, { students, test });
         offHandlers();
         resolve();
       }
@@ -95,6 +90,28 @@ export class StudentExamStore {
       socket.once(Message.EXCEPTION, onError);
       socket.once(Message.CONNECTED, onConnect);
       socket.connect();
+    });
+  }
+
+  sendAnswer(answers: StudentAnswer[]) {
+    if (!this.socket || !this.credentials || !this.exam?.currentQuestion) return;
+    const { studentId, studentToken } = this.credentials;
+
+    this.socket.emit(StudentEmitter.ANSWER, {
+      studentId,
+      studentToken,
+      questionIndex: this.exam.currentQuestion.index,
+      answers,
+    });
+  }
+
+  resetExam() {
+    runInAction(() => {
+      this.socket?.disconnect();
+      this.socket = null;
+      this.credentials = null;
+      this.exam = null;
+      this.status = 'idle';
     });
   }
 
@@ -138,53 +155,38 @@ export class StudentExamStore {
     onStudentReconnected.call(this, socket);
     onStudentLeave.call(this, socket);
 
-    this.onExamStart(socket);
-    this.onQuestion(socket);
-    this.onExamFinished(socket);
+    socket.on(Message.EXAM_STARTED, this.handleExamStart.bind(this));
+    socket.on(Message.QUESTION, this.handleQuestion.bind(this));
+    socket.on(Message.EXAM_FINISHED, this.handleExamFinished.bind(this));
   }
 
-  private onExamStart(socket: Socket) {
-    socket.on(Message.EXAM_STARTED, () => {
-      this.status = 'started';
-    });
+  private handleConnect(
+    socket: Socket,
+    credentials: Required<Credentials>,
+    { students, test }: Pick<StudentConnectedResponse, 'test' | 'students'>,
+  ) {
+    this.exam = { test, students, currentQuestion: null };
+    this.setCredentials(credentials);
+    this.status = 'created';
+    this.socket = socket;
   }
 
-  sendAnswer(answers: StudentAnswer[]) {
-    if (!this.socket || !this.credentials || !this.exam?.currentQuestion) return;
-    const { studentId, studentToken } = this.credentials;
-
-    this.socket.emit(StudentEmitter.ANSWER, {
-      studentId,
-      studentToken,
-      questionIndex: this.exam.currentQuestion.index,
-      answers,
-    });
+  private handleExamStart() {
+    this.status = 'started';
   }
 
-  private onQuestion(socket: Socket) {
-    socket.on(Message.QUESTION, (rawQuestion: RawExamCurrentQuestion) => {
-      if (!this.exam) return;
+  private handleQuestion(rawQuestion: RawExamCurrentQuestion) {
+    if (!this.exam) return;
 
-      this.exam.currentQuestion = prepareCurrentQuestion(rawQuestion);
-    });
+    this.exam.currentQuestion = prepareCurrentQuestion(rawQuestion);
   }
 
-  private onExamFinished(socket: Socket) {
-    socket.on(Message.EXAM_FINISHED, () => {
-      if (!this.exam) return;
+  private handleExamFinished() {
+    if (!this.exam) return;
 
-      storage.remove('student-exam-credentials');
-      this.status = 'finished';
-      this.exam.currentQuestion = null;
-    });
-  }
-
-  resetExam() {
-    this.socket?.disconnect();
-    this.socket = null;
-    this.credentials = null;
-    this.exam = null;
-    this.status = 'idle';
+    storage.remove('student-exam-credentials');
+    this.status = 'finished';
+    this.exam.currentQuestion = null;
   }
 }
 
