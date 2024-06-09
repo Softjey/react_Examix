@@ -58,7 +58,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
 
       <StudentsList variant="accordion" students={students ?? []} />
 
-      {results && <ExamResultsTable questions={results} />}
+      {results && results.length > 0 && <ExamResultsTable questions={results} />}
     </HomeLayout>
   );
 });
