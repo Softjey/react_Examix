@@ -10,11 +10,11 @@ import Student, { StudentWithResults } from './Student';
 
 export interface StoresExam {
   students: Student[];
-  currentQuestion: ExamCurrentQuestion | null;
 }
 
 export interface StudentStoresExam extends StoresExam {
   test: StudentTest;
+  currentQuestion: ExamCurrentQuestion | null;
 }
 
 export interface AuthorStoresExam extends StoresExam {
