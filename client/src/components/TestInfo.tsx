@@ -2,7 +2,7 @@ import { Box, BoxProps, MenuItem, TextField } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import { CreateTestForm } from '../schemas/createTestFormValidationSchemas';
 import SubjectSelect from './UI/SubjectSelect';
-import ImageLinkUploader from '../dev/components/ImageLinkUploader';
+import ImageLinkUploader from './UI/inputs/ImageLinkUploader';
 import { useCreateTest } from '../pages/CreateTestPage/CreateTestContext';
 
 interface Props extends BoxProps {}
@@ -19,7 +19,7 @@ const TestInfo: React.FC<Props> = ({ sx, ...rest }) => {
     <Box {...rest} display="flex" flexDirection="column" gap="24px" sx={{ width: '100%', ...sx }}>
       <ImageLinkUploader
         sx={{
-          alignSelf: 'start',
+          alignSelf: 'flex-start',
           maxHeight: '225px',
           maxWidth: '300px',
         }}

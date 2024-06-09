@@ -3,9 +3,9 @@ import { FieldArrayWithId, useFormContext } from 'react-hook-form';
 import { useEffect } from 'react';
 import QuestionType from '../../types/api/enums/Type';
 import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
-import FormAnswerItem from '../../components/items/FormAnswerItem';
-import Button from '../../components/UI/buttons/Button';
-import AddButton from '../../components/UI/buttons/AddButton';
+import FormAnswerItem from '../items/FormAnswerItem';
+import Button from '../UI/buttons/Button';
+import AddButton from '../UI/buttons/AddButton';
 import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
 
 interface Props extends BoxProps {
@@ -36,10 +36,12 @@ const AnswersGroup: React.FC<Props> = ({
 
   const isShowAddButton = fields.length >= 6 || isFromServer;
 
+  const isSingleChoise = questionType === QuestionType.SINGLE_CHOICE;
+
   const updateCorrect = (index: number) => {
     const answers = watch(`questions.${questionIndex}.answers`);
 
-    if (questionType === QuestionType.SINGLE_CHOICE) {
+    if (isSingleChoise) {
       if (answers.some((item, i) => item.isCorrect && i !== index)) {
         // If any checkbox is checked and it's not the current one, uncheck all checkboxes
         setValue(
@@ -59,7 +61,7 @@ const AnswersGroup: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (questionType === QuestionType.SINGLE_CHOICE) {
+    if (isSingleChoise) {
       const answers = watch(`questions.${questionIndex}.answers`);
       // set the first one checked and the rest unchecked
       setValue(
@@ -90,6 +92,7 @@ const AnswersGroup: React.FC<Props> = ({
             type={questionType}
           />
         ))}
+
         {isShowAddButton || (
           <Box display="flex">
             <Button
@@ -122,6 +125,7 @@ const AnswersGroup: React.FC<Props> = ({
           </Box>
         )}
       </Box>
+
       {errors.questions?.[questionIndex]?.answers && (
         <Typography align="center" color="error" variant="body2">
           {errors?.questions[questionIndex]?.answers?.root?.message ||

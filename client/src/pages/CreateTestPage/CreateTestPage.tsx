@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-
 import { Box, Stack, TextField, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,7 +11,7 @@ import {
   CreateTestSchema,
   QuestionFromServer,
 } from '../../schemas/createTestFormValidationSchemas';
-import QuestionsGroup from '../../dev/components/QuestionsGroup';
+import QuestionsGroup from '../../components/groups/QuestionsGroup';
 import LoadingButton from '../../components/UI/buttons/LoadingButton';
 import { useCreateTest } from './CreateTestContext';
 import Subject from '../../types/api/enums/Subject';
@@ -21,7 +20,7 @@ import getFilteredQuestions from './utils/getFilteredQuestions';
 import getPreparedTestQuestions from './utils/getPreparedTestQuestions';
 import getDefaultQuestion from './utils/getDefaultQuestion';
 import HomeLayout from '../../components/layouts/HomeLayout';
-import ErrorSnackBar from '../../components/UI/ErrorSnackBar';
+import ErrorSnackBar from '../../components/UI/errors/ErrorSnackBar';
 import LoadingPage from '../LoadingPage';
 import Routes from '../../services/Router/Routes';
 import useQuestions from '../../hooks/queries/useQuestions';
@@ -88,7 +87,6 @@ const CreateTestPage: React.FC<Props> = () => {
     console.log('submitted');
 
     const filteredQuestions = getFilteredQuestions(data);
-
     const questionsFromServer = data.questions.filter((question) => question.isFromServer);
 
     console.log('data to send', filteredQuestions);

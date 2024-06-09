@@ -4,7 +4,7 @@ import { Dayjs } from 'dayjs';
 import { useForm } from 'react-hook-form';
 import { Test } from '../../types/api/entities/test';
 import TestsAutocomplete from '../UI/TestsAutocomplete/TestsAutocomplete';
-import DatePicker from '../UI/DatePicker';
+import DatePicker from '../UI/inputs/DatePicker';
 import Button from '../UI/buttons/Button';
 
 export interface ExamsFiltersForm {

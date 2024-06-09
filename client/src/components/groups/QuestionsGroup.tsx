@@ -1,7 +1,7 @@
 import { Box, BoxProps, Typography } from '@mui/material';
 import { FieldArrayWithId, useFormContext } from 'react-hook-form';
 import { useEffect, useRef } from 'react';
-import QuestionCard from '../../components/items/QuestionCard';
+import QuestionCard from '../items/QuestionCard';
 import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
 // import getFilteredQuestions from '../../pages/CreateTestPage/utils/getFilteredQuestions';
 
@@ -45,22 +45,26 @@ const QuestionsGroup: React.FC<Props> = ({ fields, onRemove, ...props }) => {
       )}
 
       <Box display="flex" flexDirection="column" alignItems="center" gap="24px">
-        {fields.map((field, index) => (
-          <QuestionCard
-            ref={index === fields.length - 1 ? lastItemRef : null}
-            isFromServer={field.isFromServer}
-            key={field.id}
-            questionIndex={index}
-            type={watch(`questions.${index}.type`)}
-            onDelete={(openSnackBar: () => void) => {
-              if (fields.length < 2) {
-                openSnackBar();
-              } else {
-                onRemove(index);
-              }
-            }}
-          />
-        ))}
+        {fields.map((field, index) => {
+          const onDelete = (openSnackBar: () => void) => {
+            if (fields.length < 2) {
+              openSnackBar();
+            } else {
+              onRemove(index);
+            }
+          };
+
+          return (
+            <QuestionCard
+              ref={index === fields.length - 1 ? lastItemRef : null}
+              isFromServer={field.isFromServer}
+              key={field.id}
+              questionIndex={index}
+              type={watch(`questions.${index}.type`)}
+              onDelete={onDelete}
+            />
+          );
+        })}
       </Box>
     </Box>
   );

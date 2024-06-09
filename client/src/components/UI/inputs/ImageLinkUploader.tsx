@@ -3,10 +3,10 @@ import { Box, BoxProps, CircularProgress, Modal, TextField, Typography } from '@
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useFormContext } from 'react-hook-form';
-import Button from '../../components/UI/buttons/Button';
-import { CreateTestForm, isValidImageUrl } from '../../schemas/createTestFormValidationSchemas';
-import { Nullable } from '../../types/utils/Nullable';
-import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
+import Button from '../buttons/Button';
+import { useCreateTest } from '../../../pages/CreateTestPage/CreateTestContext';
+import { CreateTestForm, isValidImageUrl } from '../../../schemas/createTestFormValidationSchemas';
+import { Nullable } from '../../../types/utils/Nullable';
 
 interface ImageLinkUploaderProps extends BoxProps {}
 
@@ -20,18 +20,19 @@ const ImageLinkUploader: React.FC<ImageLinkUploaderProps> = (props) => {
 
   const { loading: disabled } = useCreateTest();
 
+  const testImageLink = watch('testImageLink');
+
   const handleImageChange = () => {
     setOpen(false);
-    setImageLink(watch('testImageLink'));
+    setImageLink(testImageLink);
   };
 
   const { onChange, ...reg } = register('testImageLink');
 
   const onModalClose = async () => {
     setOpen(false);
-    const link = watch('testImageLink');
-    if (await isValidImageUrl(link!)) {
-      setImageLink(link);
+    if (await isValidImageUrl(testImageLink!)) {
+      setImageLink(testImageLink);
     }
   };
 
@@ -115,8 +116,8 @@ const ImageLinkUploader: React.FC<ImageLinkUploaderProps> = (props) => {
               aspectRatio: '4 / 3',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              backgroundImage: loading || error ? 'none' : `url(${watch('testImageLink')})`,
-              border: loading || error || !watch('testImageLink') ? '2px dashed gray' : 'none',
+              backgroundImage: loading || error ? 'none' : `url(${testImageLink})`,
+              border: loading || error || !testImageLink ? '2px dashed gray' : 'none',
               borderRadius: '8px',
             }}
           >

@@ -17,7 +17,6 @@ const renderOption: AutocompleteProps<Question>['renderOption'] = (
       title={trim(question.title, 60)}
       subtitle={
         <Stack direction="row" alignItems="center" spacing={1}>
-          {/* <Chip color="primary" size="small" label={question.id} /> */}
           {question.subject && (
             <SubjectItem
               variant="chip"
@@ -28,13 +27,6 @@ const renderOption: AutocompleteProps<Question>['renderOption'] = (
           )}
 
           <Chip size="small" label={underscoreToUpperToSentence(question.type)} />
-
-          {/* <Chip
-            size="small"
-            color="secondary"
-            variant="outlined"
-            label={new Date(question.createdAt).toLocaleDateString()}
-          /> */}
         </Stack>
       }
       icon={<HelpIcon />}

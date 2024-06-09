@@ -3,7 +3,7 @@ import MainButton from '../UI/buttons/MainButton';
 import { columnCenter } from '../../styles/flex';
 import LoadingButton from '../UI/buttons/LoadingButton';
 import { Nullable } from '../../types/utils/Nullable';
-import ErrorSnackBar from '../UI/ErrorSnackBar';
+import ErrorSnackBar from '../UI/errors/ErrorSnackBar';
 
 interface Props {
   errorMessage: Nullable<string>;

@@ -1,12 +1,13 @@
 import { useFormContext } from 'react-hook-form';
-import { Box, TextField } from '@mui/material';
+import { Box, BoxProps, TextField } from '@mui/material';
+import { ChangeEvent } from 'react';
 import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
 import QuestionType from '../../types/api/enums/Type';
 import CloseButton from '../UI/buttons/CloseButton';
-import RadioCheckBox from '../UI/RadioCheckBox';
+import RadioCheckBox from '../UI/buttons/RadioCheckBox';
 import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
 
-interface Props {
+interface Props extends BoxProps {
   answerIndex: number;
   questionIndex: number;
   type: QuestionType;
@@ -22,6 +23,8 @@ const FormAnswerItem: React.FC<Props> = ({
   onDelete,
   onCheckBoxClick,
   isFromServer,
+  sx,
+  ...props
 }) => {
   const {
     register,
@@ -31,46 +34,52 @@ const FormAnswerItem: React.FC<Props> = ({
   } = useFormContext<CreateTestForm>();
 
   const { loading } = useCreateTest();
+  const disabled = loading || isFromServer;
+
+  const isCorrect = watch(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`);
+
+  const onCheckBoxChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onCheckBoxClick();
+    setValue(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`, e.target.checked);
+  };
+
+  const isError = !!errors.questions?.[questionIndex]?.answers?.[answerIndex]?.title;
+  const errorMessage =
+    errors.questions?.[questionIndex]?.answers?.[answerIndex]?.title?.message?.toString();
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'start' }}>
+    <Box sx={{ display: 'flex', alignItems: 'start', ...sx }} {...props}>
       <RadioCheckBox
         {...register(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`)}
         type={type}
         ref={null}
         /* this is neccessary because mui checkbox component
         is not working correctly with react-hook-form */
-        checked={watch(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`)}
-        onChange={(e) => {
-          onCheckBoxClick();
-          setValue(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`, e.target.checked);
-        }}
-        disabled={loading || isFromServer}
+        checked={isCorrect}
+        onChange={onCheckBoxChange}
+        disabled={disabled}
       />
       <TextField
         fullWidth
         {...register(`questions.${questionIndex}.answers.${answerIndex}.title`)}
-        error={!!errors.questions?.[questionIndex]?.answers?.[answerIndex]?.title}
-        helperText={errors.questions?.[questionIndex]?.answers?.[
-          answerIndex
-        ]?.title?.message?.toString()}
+        error={isError}
+        helperText={errorMessage}
         autoComplete="off"
         size="small"
         sx={{
           minWidth: '200px',
-          '&:hover .icon-button':
-            loading || isFromServer
-              ? {}
-              : {
-                  visibility: 'visible',
-                  opacity: 0.7,
-                },
+          '&:hover .icon-button': disabled
+            ? {}
+            : {
+                visibility: 'visible',
+                opacity: 0.7,
+              },
         }}
         placeholder={`Answer ${answerIndex + 1}`}
         InputProps={{
           endAdornment: (
             <CloseButton
-              disabled={loading || isFromServer}
+              disabled={disabled}
               onClick={onDelete}
               disableRipple
               sx={{
@@ -84,7 +93,7 @@ const FormAnswerItem: React.FC<Props> = ({
             />
           ),
         }}
-        disabled={loading || isFromServer}
+        disabled={disabled}
       />
     </Box>
   );

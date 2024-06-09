@@ -2,7 +2,7 @@ import { TimePicker, TimePickerProps } from '@mui/x-date-pickers/TimePicker';
 import { Controller, useFormContext } from 'react-hook-form';
 import React from 'react';
 import dayjs, { Dayjs } from 'dayjs';
-import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
+import { CreateTestForm } from '../../../schemas/createTestFormValidationSchemas';
 
 interface Props extends TimePickerProps<Dayjs> {
   questionIndex: number;
@@ -18,6 +18,12 @@ const TimeLimitPicker: React.FC<Props> = ({ questionIndex, error, ...props }) =>
       control={control}
       render={({ field }) => {
         const { onBlur, onChange, ref, value, disabled } = field;
+
+        const onTimeLimitChange = (e: dayjs.Dayjs | null) => {
+          onChange(e);
+          trigger(`questions.${questionIndex}.timeLimit`);
+        };
+
         return (
           <TimePicker
             sx={{
@@ -40,10 +46,7 @@ const TimeLimitPicker: React.FC<Props> = ({ questionIndex, error, ...props }) =>
             maxTime={dayjs().startOf('hour').minute(10)}
             skipDisabled
             onClose={onBlur}
-            onChange={(e) => {
-              onChange(e);
-              trigger(`questions.${questionIndex}.timeLimit`);
-            }}
+            onChange={onTimeLimitChange}
             disabled={disabled}
             slotProps={{ actionBar: { actions: [] } }}
             ref={ref}
