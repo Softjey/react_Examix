@@ -29,7 +29,7 @@ const SettingsPage: React.FC = () => (
 
     <SettingsSection name="Appearance">
       <SettingsOption
-        name="Change Theme"
+        name="Dark theme"
         description="Select a single theme and switch between your day and night themes."
         action={<ChangeThemeSwitch />}
       />
