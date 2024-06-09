@@ -1,8 +1,8 @@
 import { TimePicker, TimePickerProps } from '@mui/x-date-pickers/TimePicker';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import React from 'react';
 import dayjs, { Dayjs } from 'dayjs';
-import { CreateTestForm } from '../../../schemas/createTestFormValidationSchemas';
+import useCreateTestForm from '../../hooks/useCreateTestForm';
 
 interface Props extends TimePickerProps<Dayjs> {
   questionIndex: number;
@@ -10,7 +10,7 @@ interface Props extends TimePickerProps<Dayjs> {
 }
 
 const TimeLimitPicker: React.FC<Props> = ({ questionIndex, error, ...props }) => {
-  const { control, trigger } = useFormContext<CreateTestForm>();
+  const { control, trigger } = useCreateTestForm();
 
   return (
     <Controller

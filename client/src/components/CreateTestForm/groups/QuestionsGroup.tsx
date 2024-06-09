@@ -1,8 +1,9 @@
 import { Box, BoxProps, Typography } from '@mui/material';
-import { FieldArrayWithId, useFormContext } from 'react-hook-form';
+import { FieldArrayWithId } from 'react-hook-form';
 import { useEffect, useRef } from 'react';
+import { CreateTestForm } from '../../../schemas/createTestFormValidationSchemas';
 import QuestionCard from '../items/QuestionCard';
-import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
+import useCreateTestForm from '../../../hooks/useCreateTestForm';
 // import getFilteredQuestions from '../../pages/CreateTestPage/utils/getFilteredQuestions';
 
 interface Props extends BoxProps {
@@ -14,7 +15,7 @@ const QuestionsGroup: React.FC<Props> = ({ fields, onRemove, ...props }) => {
   const {
     formState: { errors },
     watch,
-  } = useFormContext<CreateTestForm>();
+  } = useCreateTestForm();
 
   /*   const data = watch();
 

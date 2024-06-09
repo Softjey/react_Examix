@@ -13,18 +13,19 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useFieldArray } from 'react-hook-form';
 import { forwardRef, useState } from 'react';
-import QuestionTypeSelect from '../UI/inputs/QuestionTypeSelect';
-import DragBar from '../../dev/components/DragBar';
-import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
-import QuestionType from '../../types/api/enums/Type';
-import DeleteButton from '../UI/buttons/DeleteButton';
+import QuestionTypeSelect from '../../UI/inputs/QuestionTypeSelect';
+import DragBar from '../../../dev/DragBar';
+import QuestionType from '../../../types/api/enums/Type';
+import DeleteButton from '../../UI/buttons/DeleteButton';
 import AnswersGroup from '../groups/AnswersGroup';
-import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
-import TimeLimitPicker from '../UI/inputs/TimeLimitPicker';
-import MaxScoreInput from '../UI/inputs/MaxScoreInput';
-import ErrorPopover from '../UI/errors/ErrorPopover';
+import { useCreateTest } from '../../../pages/CreateTestPage/CreateTestContext';
+
+import MaxScoreInput from '../../UI/inputs/MaxScoreInput';
+import ErrorPopover from '../../UI/errors/ErrorPopover';
+import TimeLimitPicker from '../TimeLimitPicker';
+import useCreateTestForm from '../../../hooks/useCreateTestForm';
 
 interface Props extends CardProps {
   type: QuestionType;
@@ -39,7 +40,7 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
       register,
       control,
       formState: { errors },
-    } = useFormContext<CreateTestForm>();
+    } = useCreateTestForm();
 
     const { loading } = useCreateTest();
     const disabled = loading || isFromServer;

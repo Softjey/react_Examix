@@ -2,16 +2,16 @@ import React, { useState, ChangeEvent } from 'react';
 import { Box, BoxProps, CircularProgress, Modal, TextField, Typography } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useFormContext } from 'react-hook-form';
-import Button from '../buttons/Button';
-import { useCreateTest } from '../../../pages/CreateTestPage/CreateTestContext';
-import { CreateTestForm, isValidImageUrl } from '../../../schemas/createTestFormValidationSchemas';
-import { Nullable } from '../../../types/utils/Nullable';
+import Button from '../UI/buttons/Button';
+import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
+import { isValidImageUrl } from '../../schemas/createTestFormValidationSchemas';
+import { Nullable } from '../../types/utils/Nullable';
+import useCreateTestForm from '../../hooks/useCreateTestForm';
 
 interface ImageLinkUploaderProps extends BoxProps {}
 
 const ImageLinkUploader: React.FC<ImageLinkUploaderProps> = (props) => {
-  const { register, watch, setValue } = useFormContext<CreateTestForm>();
+  const { register, watch, setValue } = useCreateTestForm();
 
   const [imageLink, setImageLink] = useState<Nullable<string>>(null);
   const [open, setOpen] = useState<boolean>(false);

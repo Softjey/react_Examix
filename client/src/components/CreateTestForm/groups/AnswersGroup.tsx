@@ -1,12 +1,13 @@
 import { Box, BoxProps, Typography } from '@mui/material';
-import { FieldArrayWithId, useFormContext } from 'react-hook-form';
+import { FieldArrayWithId } from 'react-hook-form';
 import { useEffect } from 'react';
-import QuestionType from '../../types/api/enums/Type';
-import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
+import QuestionType from '../../../types/api/enums/Type';
+import { CreateTestForm } from '../../../schemas/createTestFormValidationSchemas';
 import FormAnswerItem from '../items/FormAnswerItem';
-import Button from '../UI/buttons/Button';
-import AddButton from '../UI/buttons/AddButton';
-import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
+import Button from '../../UI/buttons/Button';
+import AddButton from '../../UI/buttons/AddButton';
+import { useCreateTest } from '../../../pages/CreateTestPage/CreateTestContext';
+import useCreateTestForm from '../../../hooks/useCreateTestForm';
 
 interface Props extends BoxProps {
   questionType: QuestionType;
@@ -30,7 +31,7 @@ const AnswersGroup: React.FC<Props> = ({
     setValue,
     watch,
     formState: { errors },
-  } = useFormContext<CreateTestForm>();
+  } = useCreateTestForm();
 
   const { loading } = useCreateTest();
 

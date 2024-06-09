@@ -1,9 +1,8 @@
 import { Box, BoxProps, MenuItem, TextField } from '@mui/material';
-import { useFormContext } from 'react-hook-form';
-import { CreateTestForm } from '../schemas/createTestFormValidationSchemas';
-import SubjectSelect from './UI/SubjectSelect';
-import ImageLinkUploader from './UI/inputs/ImageLinkUploader';
-import { useCreateTest } from '../pages/CreateTestPage/CreateTestContext';
+import SubjectSelect from '../UI/SubjectSelect';
+import ImageLinkUploader from './ImageLinkUploader';
+import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
+import useCreateTestForm from '../../hooks/useCreateTestForm';
 
 interface Props extends BoxProps {}
 
@@ -11,7 +10,7 @@ const TestInfo: React.FC<Props> = ({ sx, ...rest }) => {
   const {
     register,
     formState: { errors },
-  } = useFormContext<CreateTestForm>();
+  } = useCreateTestForm();
 
   const { loading } = useCreateTest();
 

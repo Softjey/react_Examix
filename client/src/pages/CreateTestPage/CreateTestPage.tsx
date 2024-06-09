@@ -5,13 +5,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
 import dayjs from 'dayjs';
-import TestInfo from '../../components/TestInfo';
+import TestInfo from '../../components/CreateTestForm/TestInfo';
 import {
   CreateTestForm,
   CreateTestSchema,
   QuestionFromServer,
 } from '../../schemas/createTestFormValidationSchemas';
-import QuestionsGroup from '../../components/groups/QuestionsGroup';
+import QuestionsGroup from '../../components/CreateTestForm/groups/QuestionsGroup';
 import LoadingButton from '../../components/UI/buttons/LoadingButton';
 import { useCreateTest } from './CreateTestContext';
 import Subject from '../../types/api/enums/Subject';

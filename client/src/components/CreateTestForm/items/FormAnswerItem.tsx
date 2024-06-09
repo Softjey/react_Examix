@@ -1,11 +1,10 @@
-import { useFormContext } from 'react-hook-form';
 import { Box, BoxProps, TextField } from '@mui/material';
 import { ChangeEvent } from 'react';
-import { CreateTestForm } from '../../schemas/createTestFormValidationSchemas';
-import QuestionType from '../../types/api/enums/Type';
-import CloseButton from '../UI/buttons/CloseButton';
-import RadioCheckBox from '../UI/buttons/RadioCheckBox';
-import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
+import QuestionType from '../../../types/api/enums/Type';
+import CloseButton from '../../UI/buttons/CloseButton';
+import RadioCheckBox from '../../UI/buttons/RadioCheckBox';
+import { useCreateTest } from '../../../pages/CreateTestPage/CreateTestContext';
+import useCreateTestForm from '../../../hooks/useCreateTestForm';
 
 interface Props extends BoxProps {
   answerIndex: number;
@@ -31,7 +30,7 @@ const FormAnswerItem: React.FC<Props> = ({
     watch,
     setValue,
     formState: { errors },
-  } = useFormContext<CreateTestForm>();
+  } = useCreateTestForm();
 
   const { loading } = useCreateTest();
   const disabled = loading || isFromServer;
