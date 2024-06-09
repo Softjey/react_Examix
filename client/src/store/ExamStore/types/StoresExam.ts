@@ -1,12 +1,10 @@
 import { DetailedExam } from '../../../types/api/entities/detailedExam';
 import { DetailedTest } from '../../../types/api/entities/detailedTest';
-import {
-  ExamCurrentQuestion,
-  TempResultsQuestion,
-  TestQuestionWithResults,
-} from '../../../types/api/entities/testQuestion';
-import { StudentTest } from '../ws/types/StudentTest';
+import { ExamCurrentQuestion } from '../../../types/api/entities/testQuestion';
+import { TempResultsQuestion } from '../../../types/api/entities/testQuestion';
+import { TestQuestionWithResults } from '../../../types/api/entities/testQuestion';
 import Student, { StudentWithResults } from './Student';
+import { StudentTest } from './StudentTest';
 
 export interface StoresExam {
   students: Student[];

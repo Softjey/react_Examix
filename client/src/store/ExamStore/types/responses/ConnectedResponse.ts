@@ -1,8 +1,8 @@
-import { DetailedTest } from '../../../../../types/api/entities/detailedTest';
-import { WithMessage } from '../../../../../services/Api/types/utils';
+import { DetailedTest } from '../../../../types/api/entities/detailedTest';
+import { WithMessage } from '../../../../services/Api/types/utils';
+import Student from '../Student';
+import { TempResults } from '../StoresExam';
 import { StudentTest } from '../StudentTest';
-import Student from '../../../types/Student';
-import { TempResults } from '../../../types/StoresExam';
 
 export type AuthorConnectedResponse = WithMessage<{
   test: DetailedTest;

@@ -1,9 +1,9 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { Socket } from 'socket.io-client';
 import Message from './types/Message';
-import WsException from './ws/types/WsException';
-import WsApiError from './ws/WsApiError';
-import { StudentConnectedResponse } from './ws/types/responses/ConnectedResponse';
+import WsApiError from '../../services/Api/ws/WsApiError';
+import WsException from '../../services/Api/ws/types/WsException';
+import { StudentConnectedResponse } from './types/responses/ConnectedResponse';
 import { RawExamCurrentQuestion } from '../../types/api/entities/testQuestion';
 import { StudentAnswer } from '../../types/api/entities/question';
 import { StudentEmitter } from './types/Emitter';
@@ -11,7 +11,7 @@ import { StudentStoresExam } from './types/StoresExam';
 import storage from '../../services/storage';
 import createStudentSocket, { Credentials } from './utils/createStudentSocket';
 import createOffHandlers from './utils/createOffHandlers';
-import { StudentReconnectedResponse } from './ws/types/responses/ReconnectedResponse';
+import { StudentReconnectedResponse } from './types/responses/ReconnectedResponse';
 import prepareCurrentQuestion from './utils/prepareCurrentQuestion';
 import ErrorMessage from './types/ErrorMessage';
 // eslint-disable-next-line import/no-cycle
