@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Switch from '@mui/material/Switch';
-import { Button, Modal, TextField, Typography, Box } from '@mui/material';
+import { Modal, TextField, Typography, Box } from '@mui/material';
+import Button from './UI/buttons/Button';
 
 const label = { inputProps: { 'aria-label': 'controlled' } };
 

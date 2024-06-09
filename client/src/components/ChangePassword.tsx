@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Modal, TextField, Typography, Box } from '@mui/material';
+import { Modal, TextField, Typography, Box } from '@mui/material';
+import Button from './UI/buttons/Button';
 
 const ChangePasswordButton: React.FC = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
