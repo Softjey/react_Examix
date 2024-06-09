@@ -114,7 +114,7 @@ export class ExamManagementService extends EventEmitter {
       setTimeout(async () => {
         const exam: Exam | null = await this.examsCacheService.getExam(examCode).catch(() => null);
 
-        if (exam.author.clientId === null) {
+        if (exam?.author?.clientId === null) {
           this.deleteExam(examCode);
         }
       }, timeout);

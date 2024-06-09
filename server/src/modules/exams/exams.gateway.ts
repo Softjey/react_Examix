@@ -192,7 +192,7 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const detailedExam = await detailedExamPromise;
 
       if (author.clientId) {
-        client.to(author.clientId).emit('exam-finished', detailedExam);
+        this.server.to(author.clientId).emit('exam-finished', detailedExam);
       }
 
       client.to(examCode).except(author.clientId).emit('exam-finished');
