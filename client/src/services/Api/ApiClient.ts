@@ -14,6 +14,7 @@ import ApiError from './ApiError';
 import { CreateQuestionDto, CreateQuestionsResponse } from './types/create-questions';
 import { CreateTestDto, CreateTestResponse } from './types/create-test';
 import { QuestionsParams, QuestionsRepsonse } from './types/questions';
+import { UpdateMeDto, UpdateMeResponse } from './types/update-me';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
@@ -116,6 +117,12 @@ export class RawApiClient {
     });
 
     return data;
+  }
+
+  static async updateMe(dto: UpdateMeDto) {
+    const { data } = await axios.patch<UpdateMeResponse>('/users/me', dto);
+
+    return data.user;
   }
 }
 
