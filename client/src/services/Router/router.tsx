@@ -14,6 +14,7 @@ import JoinPage from '../../pages/Login/JoinPage';
 import SettingsPage from '../../pages/SettingsPage';
 import TestPage from '../../pages/TestPage';
 import ExamPage from '../../pages/ExamPage';
+import ChangePasswordPage from '../../dev/ChangePasswordPage';
 
 const router = createRouter([
   {
@@ -43,6 +44,10 @@ const router = createRouter([
   {
     path: Routes.NOT_FOUND,
     element: <NotFoundPage />,
+  },
+  {
+    path: '/confirm',
+    element: <ChangePasswordPage />,
   },
   {
     path: Routes.HOME,
