@@ -14,7 +14,6 @@ import TestPage from '../../pages/TestPage';
 import LoginPage from '../../pages/Login/LoginPage';
 import JoinPage from '../../pages/Login/JoinPage';
 import ExamPage from '../../pages/ExamPage';
-import CreateTestProvider from '../../pages/CreateTestPage/CreateTestContext';
 
 const router = createRouter([
   {
@@ -73,9 +72,7 @@ const router = createRouter([
     path: Routes.CREATE_TEST,
     element: (
       <Authenticated>
-        <CreateTestProvider>
-          <CreateTestPage />
-        </CreateTestProvider>
+        <CreateTestPage />
       </Authenticated>
     ),
   },
