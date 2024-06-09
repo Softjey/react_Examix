@@ -56,10 +56,12 @@ class AuthorExamStore {
         [Message.CONNECTED]: onConnect,
       });
 
-      const handleConnect = ({ test, students }: AuthorConnectedResponse) => {
+      const handleConnect = ({ test, students, results, examStatus }: AuthorConnectedResponse) => {
+        const parsedTestResults = parseTempResultsIntoTestQuestionWithResults(test, results);
+
         storage.write('author-exam-credentials', credentials);
-        this.status = 'created';
-        this.exam = { test, students, currentQuestion: null, results: null, id: null };
+        this.status = examStatus;
+        this.exam = { test, students, results: parsedTestResults, id: null };
         this.credentials = credentials;
         this.socket = socket;
       };
@@ -166,7 +168,6 @@ class AuthorExamStore {
 
       this.exam.id = detailedExam.id;
       this.status = 'finished';
-      this.exam.currentQuestion = null;
     });
   }
 
