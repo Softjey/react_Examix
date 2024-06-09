@@ -10,11 +10,13 @@ import { ExamsHistoryService } from './exams-history.service';
 import { DetailedExam } from '../interfaces/detailed-exam.interface';
 import { ExamsCacheService } from './exams-cache.service';
 import { Exam } from '../entities/exam.entity';
+import { CurrentExamQuestion } from '../entities/current-exam-question.entity';
 
 @Injectable()
 export class ExamManagementService extends EventEmitter {
   private readonly questionEventName: (examCode: string) => string;
   private readonly examFinishedEventName: (examCode: string) => string;
+  private readonly examDeletedEventName: (examCode: string) => string;
 
   constructor(
     private readonly uniqueIdService: UniqueIdService,
@@ -24,6 +26,7 @@ export class ExamManagementService extends EventEmitter {
     super();
     this.questionEventName = (examCode: string) => `question-${examCode}`;
     this.examFinishedEventName = (examCode: string) => `finished-${examCode}`;
+    this.examDeletedEventName = (examCode: string) => `exam-deleted-${examCode}`;
   }
 
   getExam(examCode: string, nullable = false): Promise<Exam | null> {
@@ -66,12 +69,14 @@ export class ExamManagementService extends EventEmitter {
   async updateStudentClientId(
     examCode: string,
     studentId: Student['clientId'],
-    clientId: Student['clientId'],
+    newName: Student['name'],
+    newClientId: Student['clientId'],
   ) {
     const exam = await this.examsCacheService.getExam(examCode);
     const changedId = exam.students[studentId].clientId;
 
-    exam.students[studentId].clientId = clientId;
+    exam.students[studentId].clientId = newClientId;
+    exam.students[studentId].name = newName;
     await this.examsCacheService.setExam(examCode, exam);
 
     const newStudent = exam.students[studentId];
@@ -99,6 +104,46 @@ export class ExamManagementService extends EventEmitter {
     return studentClientId ?? null;
   }
 
+  async authorLeave(examCode: string) {
+    const exam = await this.examsCacheService.getExam(examCode);
+    const timeout = config.EXAM_AFTER_AUTHOR_LEAVE_TIMEOUT * 1000 * 60;
+
+    if (exam.author.clientId) {
+      exam.author.clientId = null;
+    }
+
+    if (exam.status === 'created') {
+      setTimeout(async () => {
+        const exam: Exam | null = await this.examsCacheService.getExam(examCode).catch(() => null);
+
+        if (exam?.author?.clientId === null) {
+          this.deleteExam(examCode);
+        }
+      }, timeout);
+    }
+
+    await this.examsCacheService.setExam(examCode, exam);
+  }
+
+  async studentLeave(examCode: string, clientId: string) {
+    const exam = await this.examsCacheService.getExam(examCode);
+    const { status, students } = exam;
+
+    if (status !== 'created') {
+      return null;
+    }
+
+    const [studentId, student] = Object.entries(students).find(([, student]) => {
+      return student.clientId === clientId;
+    });
+
+    delete exam.students[studentId];
+
+    await this.examsCacheService.setExam(examCode, exam);
+
+    return { studentId, ...student };
+  }
+
   private emitQuestion(examCode: string, question: ExamQuestion, questionIndex: number) {
     this.emit(this.questionEventName(examCode), question, questionIndex);
   }
@@ -111,7 +156,11 @@ export class ExamManagementService extends EventEmitter {
   }
 
   private async processQuestion(examCode: string) {
-    const exam = await this.examsCacheService.getExam(examCode);
+    const exam = await this.examsCacheService.getExam(examCode).catch(() => null);
+
+    if (!exam) {
+      return this.deleteExam(examCode);
+    }
 
     exam.currentQuestionIndex += 1;
 
@@ -119,14 +168,15 @@ export class ExamManagementService extends EventEmitter {
       return this.finishExam(examCode);
     }
 
-    const questionTimeLimit = exam.questions[exam.currentQuestionIndex].timeLimit;
+    const currentIndex = exam.currentQuestionIndex;
+    const questionTimeLimit = exam.questions[currentIndex].timeLimit;
     const timeLimit = (questionTimeLimit + config.NETWORK_DELAY_BUFFER) * 1000;
+    const currentQuestion = new CurrentExamQuestion(exam.questions[currentIndex], {
+      index: currentIndex,
+    });
 
-    this.emitQuestion(
-      examCode,
-      exam.questions[exam.currentQuestionIndex],
-      exam.currentQuestionIndex,
-    );
+    exam.currentQuestion = currentQuestion;
+    this.emitQuestion(examCode, currentQuestion, exam.currentQuestionIndex);
 
     await this.examsCacheService.setExam(examCode, exam);
 
@@ -147,6 +197,10 @@ export class ExamManagementService extends EventEmitter {
     return true;
   }
 
+  async onExamDeleted(examCode: string, callback: () => void) {
+    this.once(this.examDeletedEventName(examCode), callback);
+  }
+
   async onExamFinish(examCode: string, callback: (results: Promise<DetailedExam>) => void) {
     this.once(this.examFinishedEventName(examCode), callback);
   }
@@ -159,13 +213,16 @@ export class ExamManagementService extends EventEmitter {
 
   async deleteExam(examCode: string) {
     this.removeAllListeners(this.questionEventName(examCode));
+    this.removeAllListeners(this.examFinishedEventName(examCode));
     await this.examsCacheService.deleteExamFromCache(examCode);
+    this.emit(this.examDeletedEventName(examCode));
   }
 
   async finishExam(examCode: string) {
     const exam = await this.examsCacheService.getExam(examCode);
 
     this.removeAllListeners(this.questionEventName(examCode));
+    this.removeAllListeners(this.examDeletedEventName(examCode));
     exam.status = 'finished';
 
     const examPromise = this.examsHistoryService.saveExam(exam).then((exam) => {

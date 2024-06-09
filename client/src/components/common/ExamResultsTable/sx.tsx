@@ -49,6 +49,7 @@ const sx = {
   },
   dialogButton: {
     height: '100%',
+    width: '100%',
     p: 0,
     borderRadius: 0,
     color: 'inherit',
@@ -57,7 +58,7 @@ const sx = {
     },
   },
   container: {
-    width: '100%',
+    maxWidth: 'clamp(640px, 90vw, 1000px)',
     userSelect: 'none',
     maxHeight: 600,
   },

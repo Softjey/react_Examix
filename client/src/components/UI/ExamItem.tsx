@@ -2,7 +2,7 @@ import { ListItem, Box, ListItemAvatar } from '@mui/material';
 import { ListItemText, ListItemProps, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import React from 'react';
-import prettifyDate from '../../utils/prettifyDate';
+import prettifyDate from '../../utils/time/prettifyDate';
 import { Exam } from '../../types/api/entities/exam';
 import Routes from '../../services/Router/Routes';
 import { trim } from '../../utils/trim';

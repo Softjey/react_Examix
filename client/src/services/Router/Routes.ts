@@ -11,6 +11,8 @@ enum Routes {
   SETTINGS = '/settings',
   EXAM = '/exam',
   RESET_PASSWORD = '/reset-password',
+  ONGOING_EXAM = '/ongoing-exam',
+  ONGOING_EXAM_PANEL = '/ongoing-exam/panel',
 }
 
 export default Routes;

@@ -1,30 +1,36 @@
-import { Result, TestQuestionWithResults } from '../types/api/entities/testQuestion';
+import { Result } from '../types/api/entities/Result';
+import { TestQuestionWithResults } from '../types/api/entities/testQuestion';
 import QuestionType from '../types/api/enums/Type';
 
 export default function getScore(
-  question: TestQuestionWithResults,
+  testQuestion: TestQuestionWithResults,
   studentAnswer: Result['studentAnswer'],
 ) {
-  switch (question.question.type) {
-    case QuestionType.SINGLE_CHOICE: {
-      if (!studentAnswer?.answers) {
-        return 0;
-      }
-      const { maxScore } = question;
-      const correctAnswer = question.question.answers.find((answer) => answer.isCorrect);
+  if (!studentAnswer?.answers) {
+    return 0;
+  }
 
-      return correctAnswer?.title === studentAnswer.answers[0]?.title ? maxScore : 0;
+  const { maxScore, question } = testQuestion;
+  const { answers } = studentAnswer;
+
+  switch (question.type) {
+    case QuestionType.SINGLE_CHOICE: {
+      const correctAnswer = question.answers.find((answer) => answer.isCorrect);
+
+      return correctAnswer?.title === answers[0]?.title ? maxScore : 0;
     }
     case QuestionType.MULTIPLE_CHOICE: {
-      if (!studentAnswer?.answers) {
-        return 0;
-      }
-
-      const { maxScore } = question;
-      const correctAnswers = question.question.answers.filter((answer) => answer.isCorrect);
+      const correctAnswers = question.answers.filter((answer) => answer.isCorrect);
       const answerWeight = maxScore / correctAnswers.length;
-      const studentScore = studentAnswer.answers.reduce((sum, pupilAnswer) => {
+      let haveIncorrectAnswer = false;
+      const studentScore = answers.reduce((sum, pupilAnswer) => {
         const correctAnswer = correctAnswers.find((answer) => answer.title === pupilAnswer.title);
+
+        if (!correctAnswer || haveIncorrectAnswer) {
+          haveIncorrectAnswer = true;
+
+          return 0;
+        }
 
         return sum + (correctAnswer ? answerWeight : 0);
       }, 0);

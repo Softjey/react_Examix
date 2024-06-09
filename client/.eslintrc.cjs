@@ -17,6 +17,7 @@ module.exports = {
   plugins: ['react-refresh', '@emotion', '@tanstack/eslint-plugin-query'],
   rules: {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
     'import/no-absolute-path': 'off',
     'arrow-body-style': 'off',
     'no-plusplus': 'off',
