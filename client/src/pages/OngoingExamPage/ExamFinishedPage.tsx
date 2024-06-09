@@ -29,14 +29,14 @@ const ExamFinishedPage: React.FC<Props> = observer(() => {
   return (
     <QuizLayout centeredProps={{ sx: { maxWidth: 400 } }}>
       <Stack direction="column" spacing={3} alignItems="center">
-        <Typography variant="h3" paragraph>
+        <Typography variant="h3" align="center">
           Exam Completed!
         </Typography>
         <Typography
           variant="body2"
+          align="center"
           color={(t) => t.palette.text.secondary}
           paragraph
-          sx={{ textAlign: 'center' }}
         >
           Hey, great job on the exam! Time to chill and recharge. You deserve a break.
         </Typography>
@@ -44,7 +44,7 @@ const ExamFinishedPage: React.FC<Props> = observer(() => {
         <img
           src={`public/gifs/exam-finished/${randomNum}.gif`}
           alt="Test completed. Good job!"
-          style={{ height: '300px', width: 'auto' }}
+          css={{ maxHeight: '300px', maxWidth: '100%' }}
         />
 
         <Button size="large" onClick={handleGoHomeClick} variant="contained">
