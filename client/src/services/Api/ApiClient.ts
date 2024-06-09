@@ -11,11 +11,15 @@ import { Exam } from '../../types/api/entities/exam';
 import { Test } from '../../types/api/entities/test';
 import { DetailedExam } from '../../types/api/entities/detailedExam';
 import ApiError from './ApiError';
+import { CreateQuestionDto, CreateQuestionsResponse } from './types/create-questions';
+import { CreateTestDto, CreateTestResponse } from './types/create-test';
+import { QuestionsParams, QuestionsRepsonse } from './types/questions';
 import { CreateExamResponse } from './types/create-exam';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
   withCredentials: true,
+  // FIXME problem: while no internet connection the request pending infinitly
   timeout: 5000,
   timeoutErrorMessage: 'The request took too long to complete.',
 });
@@ -89,8 +93,28 @@ export class RawApiClient {
     return data;
   }
 
+  static async createQuestions(questions: CreateQuestionDto[]) {
+    const { data } = await axios.post<CreateQuestionsResponse>('/questions/many', questions);
+
+    return data;
+  }
+
+  static async createTest(testData: CreateTestDto) {
+    const { data } = await axios.post<CreateTestResponse>('/tests', testData);
+
+    return data.test;
+  }
+
   static async getExamById(id: Exam['id']) {
     const { data } = await axios.get<DetailedExam>(`/exams/${id}`);
+
+    return data;
+  }
+
+  static async getQuestions(params: QuestionsParams = {}) {
+    const { data } = await axios.get<QuestionsRepsonse>('/questions', {
+      params,
+    });
 
     return data;
   }

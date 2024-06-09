@@ -8,6 +8,7 @@ import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
+import CreateTestPage from '../../pages/CreateTestPage/CreateTestPage';
 import TestPage from '../../pages/TestPage';
 import ExamPage from '../../pages/ExamPage';
 import OngoingExamPage from '../../pages/OngoingExamPage/OngoingExamPage';
@@ -64,7 +65,7 @@ const router = createRouter([
     path: Routes.CREATE_TEST,
     element: (
       <Authenticated>
-        <HomeLayout>Create test page</HomeLayout>
+        <CreateTestPage />
       </Authenticated>
     ),
   },

@@ -11,7 +11,7 @@ export interface Question {
   title: string;
   type: QuestionType;
   answers: Answer[];
-  createdAt: Date;
+  createdAt: string;
   authorId: Nullable<User['id']>;
   subject: Nullable<Subject>;
 }

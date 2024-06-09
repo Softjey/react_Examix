@@ -24,6 +24,8 @@ textarea:-webkit-autofill,
 select:-webkit-autofill {
   transition: background-color 5000s ease-in-out 0s;
   -webkit-text-fill-color: none;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
 }
 
 input:-moz-autofill,
@@ -31,6 +33,8 @@ textarea:-moz-autofill,
 select:-moz-autofill {
   transition: background-color 5000s ease-in-out 0s;
   -moz-text-fill-color: none;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
 }
 
 a {
