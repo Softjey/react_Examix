@@ -2,12 +2,12 @@ import { StackProps, CardProps, CircularProgress } from '@mui/material';
 import { Card, CardHeader, CardContent } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Typography, CardActions, Stack } from '@mui/material';
-import CircularProgressWithLabel from '../../dev/CircularProgressWithLabel';
+import CircularProgressWithLabel from '../UI/CircularProgressWithLabel';
 import { ExamCurrentQuestion } from '../../types/api/entities/testQuestion';
 import { StudentAnswer } from '../../types/api/entities/question';
 import AnswerGroup from '../UI/AnswersGroup/AnswersGroup';
 import Timer from '../UI/Timer';
-import DottedText from '../../dev/DottedText/DottedText';
+import DottedText from '../UI/DottedText/DottedText';
 
 interface Props extends StackProps {
   question: ExamCurrentQuestion;

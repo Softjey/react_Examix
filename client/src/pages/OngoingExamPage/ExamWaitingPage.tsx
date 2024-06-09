@@ -3,7 +3,7 @@ import { Paper, Stack, Typography } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import QuizLayout from '../../components/layouts/QuizLayout';
 import BaseTestInfo from '../../components/common/BaseTestInfo';
-import DottedText from '../../dev/DottedText/DottedText';
+import DottedText from '../../components/UI/DottedText/DottedText';
 import StudentsList from '../../components/common/StudentsList';
 import studentExamStore from '../../store/ExamStore/StudentExamStore';
 import Button from '../../components/UI/buttons/Button';

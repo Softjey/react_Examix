@@ -3,9 +3,6 @@ import Routes from './Routes';
 import StartPage from '../../pages/StartPage';
 import NotFoundPage from '../../pages/NotFoundPage';
 import Authenticated from '../../components/hocs/Authenticated';
-import DebugPage from '../../dev/DebugPage';
-import QuizPage from '../../dev/QuizPage';
-import WaitingPage from '../../dev/WaitingPage';
 import HomePage from '../../pages/HomePage';
 import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
@@ -54,22 +51,6 @@ const router = createRouter([
         <HomePage />
       </Authenticated>
     ),
-  },
-  {
-    path: 'debug',
-    element: (
-      <Authenticated>
-        <DebugPage />
-      </Authenticated>
-    ),
-  },
-  {
-    path: Routes.QUIZ,
-    element: <QuizPage />,
-  },
-  {
-    path: Routes.WAITING,
-    element: <WaitingPage />,
   },
   {
     path: Routes.EXAMS_HISTORY,
