@@ -6,11 +6,14 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider/L
 import './index.css';
 import router from './services/Router/router';
 import queryClient from './services/Query/queryClient';
+import ThemeProvider from './components/providers/ThemeProvider';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <RouterProvider router={router} />
-    </LocalizationProvider>
+    <ThemeProvider>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <RouterProvider router={router} />
+      </LocalizationProvider>
+    </ThemeProvider>
   </QueryClientProvider>,
 );

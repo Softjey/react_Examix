@@ -1,7 +1,7 @@
 import { Dayjs } from 'dayjs';
 import { Controller, FieldValues } from 'react-hook-form';
 import { MobileDatePicker, MobileDatePickerProps } from '@mui/x-date-pickers/MobileDatePicker';
-import { ControlledProps } from '../../types/utils/ControlledProps';
+import { ControlledProps } from '../../../types/utils/ControlledProps';
 
 type OmittedProps = 'name' | 'onClose' | 'onAccept' | 'ref' | 'value' | 'disabled';
 
