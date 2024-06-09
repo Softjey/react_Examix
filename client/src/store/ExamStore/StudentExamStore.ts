@@ -21,7 +21,7 @@ export class StudentExamStore {
   private credentials: Required<Credentials> | null = null;
   private socket: Socket | null = null;
   exam: StudentStoresExam | null = null;
-  status: 'idle' | 'created' | 'started' | 'finished' = 'idle';
+  status: 'idle' | 'created' | 'started' | 'finished' | 'deleted' = 'idle';
 
   constructor() {
     makeAutoObservable(this);
@@ -157,6 +157,7 @@ export class StudentExamStore {
 
     socket.on(Message.EXAM_STARTED, this.handleExamStart.bind(this));
     socket.on(Message.QUESTION, this.handleQuestion.bind(this));
+    socket.on(Message.EXAM_DELETED, this.handleExamDeleted.bind(this));
     socket.on(Message.EXAM_FINISHED, this.handleExamFinished.bind(this));
   }
 
@@ -181,12 +182,14 @@ export class StudentExamStore {
     this.exam.currentQuestion = prepareCurrentQuestion(rawQuestion);
   }
 
-  private handleExamFinished() {
-    if (!this.exam) return;
+  private handleExamDeleted() {
+    storage.remove('student-exam-credentials');
+    this.status = 'deleted';
+  }
 
+  private handleExamFinished() {
     storage.remove('student-exam-credentials');
     this.status = 'finished';
-    this.exam.currentQuestion = null;
   }
 }
 

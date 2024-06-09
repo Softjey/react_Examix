@@ -109,6 +109,37 @@ export class AuthorExamStore {
     });
   }
 
+  deleteExam() {
+    return new Promise<void>((resolve, reject) => {
+      const { socket } = this;
+
+      if (!socket) return;
+
+      const offHandlers = createOffHandlers(socket, {
+        [Message.EXCEPTION]: onError,
+        [Message.EXAM_DELETED]: onExamDeleted,
+      });
+
+      const handleExamDeleted = () => this.resetExam();
+
+      function onExamDeleted() {
+        handleExamDeleted();
+        offHandlers();
+        resolve();
+      }
+
+      function onError(error: WsException) {
+        offHandlers();
+        reject(new WsApiError(error));
+      }
+
+      socket.once(Message.EXAM_DELETED, onExamDeleted);
+      socket.once(Message.EXCEPTION, onError);
+
+      socket.emit(AuthorEmitter.DELETE_EXAM);
+    });
+  }
+
   resetExam() {
     runInAction(() => {
       this.socket?.disconnect();
