@@ -234,6 +234,16 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @UseGuards(RoomAuthorGuard)
+  @SubscribeMessage('delete-exam')
+  async deleteExam(@ClientAuth('examCode') examCode: string) {
+    this.examsService.deleteExam(examCode);
+
+    this.examsService.onExamDeleted(examCode, () => {
+      this.server.to(examCode).emit('exam-deleted');
+    });
+  }
+
+  @UseGuards(RoomAuthorGuard)
   @SubscribeMessage('kick-student')
   async kickStudent(
     @MessageBody() { studentId }: KickStudentDto,

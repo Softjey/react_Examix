@@ -16,6 +16,7 @@ import { CurrentExamQuestion } from '../entities/current-exam-question.entity';
 export class ExamManagementService extends EventEmitter {
   private readonly questionEventName: (examCode: string) => string;
   private readonly examFinishedEventName: (examCode: string) => string;
+  private readonly examDeletedEventName: (examCode: string) => string;
 
   constructor(
     private readonly uniqueIdService: UniqueIdService,
@@ -25,6 +26,7 @@ export class ExamManagementService extends EventEmitter {
     super();
     this.questionEventName = (examCode: string) => `question-${examCode}`;
     this.examFinishedEventName = (examCode: string) => `finished-${examCode}`;
+    this.examDeletedEventName = (examCode: string) => `exam-deleted-${examCode}`;
   }
 
   getExam(examCode: string, nullable = false): Promise<Exam | null> {
@@ -154,7 +156,11 @@ export class ExamManagementService extends EventEmitter {
   }
 
   private async processQuestion(examCode: string) {
-    const exam = await this.examsCacheService.getExam(examCode);
+    const exam = await this.examsCacheService.getExam(examCode).catch(() => null);
+
+    if (!exam) {
+      return this.deleteExam(examCode);
+    }
 
     exam.currentQuestionIndex += 1;
 
@@ -191,6 +197,10 @@ export class ExamManagementService extends EventEmitter {
     return true;
   }
 
+  async onExamDeleted(examCode: string, callback: () => void) {
+    this.once(this.examDeletedEventName(examCode), callback);
+  }
+
   async onExamFinish(examCode: string, callback: (results: Promise<DetailedExam>) => void) {
     this.once(this.examFinishedEventName(examCode), callback);
   }
@@ -203,13 +213,16 @@ export class ExamManagementService extends EventEmitter {
 
   async deleteExam(examCode: string) {
     this.removeAllListeners(this.questionEventName(examCode));
+    this.removeAllListeners(this.examFinishedEventName(examCode));
     await this.examsCacheService.deleteExamFromCache(examCode);
+    this.emit(this.examDeletedEventName(examCode));
   }
 
   async finishExam(examCode: string) {
     const exam = await this.examsCacheService.getExam(examCode);
 
     this.removeAllListeners(this.questionEventName(examCode));
+    this.removeAllListeners(this.examDeletedEventName(examCode));
     exam.status = 'finished';
 
     const examPromise = this.examsHistoryService.saveExam(exam).then((exam) => {
