@@ -46,7 +46,7 @@ const router = createRouter([
     element: <NotFoundPage />,
   },
   {
-    path: '/confirm',
+    path: Routes.RESET_PASSWORD,
     element: <ChangePasswordPage />,
   },
   {

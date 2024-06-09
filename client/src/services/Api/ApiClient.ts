@@ -15,6 +15,8 @@ import { CreateQuestionDto, CreateQuestionsResponse } from './types/create-quest
 import { CreateTestDto, CreateTestResponse } from './types/create-test';
 import { QuestionsParams, QuestionsRepsonse } from './types/questions';
 import { UpdateMeDto, UpdateMeResponse } from './types/update-me';
+import { ResetPasswordDto, ResetPasswordResponse } from './types/reset-password';
+import { ForgotPasswordDto, ForgotPasswordResponse } from './types/forgot-password';
 
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
@@ -123,6 +125,18 @@ export class RawApiClient {
     const { data } = await axios.patch<UpdateMeResponse>('/users/me', dto);
 
     return data.user;
+  }
+
+  static async resetPassword(dto: ResetPasswordDto) {
+    const { data } = await axios.post<ResetPasswordResponse>('/auth/reset-password', dto);
+
+    return data.message;
+  }
+
+  static async forgotPassword(dto: ForgotPasswordDto) {
+    const { data } = await axios.post<ForgotPasswordResponse>('/auth/forgot-password', dto);
+
+    return data.message;
   }
 }
 

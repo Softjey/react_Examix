@@ -1,11 +1,15 @@
-/* eslint-disable no-console */
 import { useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSearchParams } from 'react-router-dom';
 import LoginForm from '../components/forms/LoginForm';
 import EyeButton from '../components/UI/buttons/EyeButton';
+import useResetPassword from '../hooks/queries/useResetPassword';
+import { Nullable } from '../types/utils/Nullable';
+import Button from '../components/UI/buttons/Button';
+import Routes from '../services/Router/Routes';
 
 const ChangePasswordSchema = z
   .object({
@@ -34,7 +38,12 @@ const ChangePasswordPage: React.FC<Props> = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const { resetPassword, isPending, error: serverError, isError, reset } = useResetPassword();
+
+  const [successMessage, setSuccessMessage] = useState<Nullable<string>>(null);
+
+  const [searchParams] = useSearchParams();
+  const confirmToken = searchParams.get('token')!.split('#')[0];
 
   const {
     register,
@@ -43,12 +52,41 @@ const ChangePasswordPage: React.FC<Props> = () => {
   } = useForm<ChangePasswordType>({ resolver: zodResolver(ChangePasswordSchema), defaultValues });
 
   const onSubmit = handleSubmit((data) => {
-    setLoading(true);
-    setTimeout(() => {
-      console.log(data);
-      setLoading(false);
-    }, 2000);
+    resetPassword(
+      { confirmToken, newPassword: data.newPassword },
+      {
+        onSuccess: (message) => {
+          setSuccessMessage(message);
+        },
+      },
+    );
   });
+
+  if (successMessage !== null) {
+    return (
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+        }}
+      >
+        <Typography sx={{ mb: 2 }} variant="h2">
+          Congratulations
+        </Typography>
+
+        <Typography sx={{ mb: 5, maxWidth: '50dvw' }} textAlign="center" variant="h6">
+          Your password has been reset. You can now login with your new password.
+        </Typography>
+
+        <Button variant="contained" size="large" to={Routes.LOGIN}>
+          Login
+        </Button>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -77,7 +115,7 @@ const ChangePasswordPage: React.FC<Props> = () => {
             endAdornment: (
               <EyeButton
                 aria-label="toggle password visibility"
-                disabled={loading}
+                disabled={isPending}
                 isEyeClosed={showPassword}
                 onClick={() => setShowPassword((prev) => !prev)}
                 onMouseDown={(e) => e.preventDefault()}
@@ -86,7 +124,7 @@ const ChangePasswordPage: React.FC<Props> = () => {
             ),
           },
           ...register('newPassword'),
-          error: !!errors.newPassword, // || isError,
+          error: !!errors.newPassword || isError,
           helperText: errors.newPassword?.message,
           autoComplete: 'new-password',
         }}
@@ -99,7 +137,7 @@ const ChangePasswordPage: React.FC<Props> = () => {
             endAdornment: (
               <EyeButton
                 aria-label="toggle password visibility"
-                disabled={loading}
+                disabled={isPending}
                 isEyeClosed={showConfirmPassword}
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
                 onMouseDown={(e) => e.preventDefault()}
@@ -108,13 +146,13 @@ const ChangePasswordPage: React.FC<Props> = () => {
             ),
           },
           ...register('confirmPassword'),
-          error: !!errors.confirmPassword, // || isError,
+          error: !!errors.confirmPassword || isError,
           helperText: errors.confirmPassword?.message,
           autoComplete: 'new-password',
         }}
-        errorMessage={null}
-        onErrorClose={() => {}}
-        isLoading={loading}
+        errorMessage={serverError?.message || null}
+        onErrorClose={() => reset()}
+        isLoading={isPending}
         submitButtonText="Change password"
         onSubmit={onSubmit}
       />
