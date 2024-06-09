@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import dayjs, { Dayjs } from 'dayjs';
 import {
   CreateTestForm,
@@ -16,11 +15,9 @@ const getPreparedTestQuestions = (
   questionsFromServer: QuestionFromServer[],
   testFormQuestions: CreateTestForm['questions'],
 ) => {
-  console.log('test', questionsFromServer);
-
   const preparedTestQuestions: CreateTestQuestion[] = [];
 
-  // make this algorithm more prettier
+  // TODO: make this algorithm more prettier
   let questionIndex = 0;
   let serverQuestionIndex = 0;
 

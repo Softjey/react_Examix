@@ -1,49 +1,70 @@
-import React, { useState, ChangeEvent } from 'react';
-import { Box, BoxProps, CircularProgress, Modal, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Modal,
+  Typography,
+  TextField,
+  CircularProgress,
+  Button,
+  BoxProps,
+} from '@mui/material';
+import { useState, ChangeEvent } from 'react';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Button from '../UI/buttons/Button';
-import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
-import { isValidImageUrl } from '../../schemas/createTestFormValidationSchemas';
+import { FieldValues, UseFormRegisterReturn, UseFormSetValue } from 'react-hook-form';
 import { Nullable } from '../../types/utils/Nullable';
-import useCreateTestForm from '../../hooks/useCreateTestForm';
+import isImageAcessable from '../../utils/isImageAcessable';
+import isValidUrl from '../../utils/isValidUrl';
 
-interface ImageLinkUploaderProps extends BoxProps {}
+interface Props extends BoxProps {
+  testImageLink: string | null;
+  disabled: boolean;
+  registerReturn: UseFormRegisterReturn<string>;
+  setValue: UseFormSetValue<FieldValues>;
+}
 
-const ImageLinkUploader: React.FC<ImageLinkUploaderProps> = (props) => {
-  const { register, watch, setValue } = useCreateTestForm();
-
+const ImageLinkUploader: React.FC<Props> = ({
+  setValue,
+  registerReturn,
+  testImageLink,
+  disabled,
+  ...props
+}) => {
   const [imageLink, setImageLink] = useState<Nullable<string>>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Nullable<Error>>(null);
-
-  const { loading: disabled } = useCreateTest();
-
-  const testImageLink = watch('testImageLink');
+  const [error, setError] = useState<Nullable<string>>(null);
 
   const handleImageChange = () => {
     setOpen(false);
-    setImageLink(testImageLink);
+    if (!error) {
+      setImageLink(testImageLink);
+    }
   };
 
-  const { onChange, ...reg } = register('testImageLink');
+  const { onChange, ...reg } = registerReturn;
 
   const onModalClose = async () => {
     setOpen(false);
-    if (await isValidImageUrl(testImageLink!)) {
+    if (!error) {
       setImageLink(testImageLink);
     }
   };
 
   const onTestImageLinkChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setLoading(true);
-    const isValid = await isValidImageUrl(e.target.value);
-    if (!isValid) {
-      setError(new Error('Image is not acessable'));
-    } else {
-      setError(null);
-    }
+
+    const getErrorMessage = async () => {
+      const isAcessable = await isImageAcessable(e.target.value);
+      const isUrl = isValidUrl(e.target.value);
+
+      if (!isUrl) return 'The url is not valid';
+      if (!isAcessable) return 'Image is not acessable';
+      return null;
+    };
+
+    const errorMessage = await getErrorMessage();
+    setError(errorMessage);
+
     setLoading(false);
     onChange(e);
   };
@@ -101,7 +122,7 @@ const ImageLinkUploader: React.FC<ImageLinkUploaderProps> = (props) => {
             {...reg}
             onChange={onTestImageLinkChange}
             error={!!error}
-            helperText={error?.message}
+            helperText={error}
             variant="standard"
             placeholder="Paste image link here"
             sx={{ width: '100%' }}

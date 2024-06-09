@@ -6,11 +6,11 @@ import QuestionCard from '../items/QuestionCard';
 import useCreateTestForm from '../../../hooks/useCreateTestForm';
 
 interface Props extends BoxProps {
-  fields: FieldArrayWithId<CreateTestForm, 'questions', 'id'>[];
+  questions: FieldArrayWithId<CreateTestForm, 'questions', 'id'>[];
   onRemove: (index: number) => void;
 }
 
-const QuestionsGroup: React.FC<Props> = ({ fields, onRemove, ...props }) => {
+const FormQuestionList: React.FC<Props> = ({ questions, onRemove, ...props }) => {
   const {
     formState: { errors },
     watch,
@@ -19,10 +19,10 @@ const QuestionsGroup: React.FC<Props> = ({ fields, onRemove, ...props }) => {
   const lastItemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (lastItemRef.current && fields.length > 1) {
+    if (lastItemRef.current && questions.length > 1) {
       lastItemRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [fields]);
+  }, [questions]);
 
   return (
     <Box {...props}>
@@ -33,9 +33,9 @@ const QuestionsGroup: React.FC<Props> = ({ fields, onRemove, ...props }) => {
       )}
 
       <Box display="flex" flexDirection="column" alignItems="center" gap="24px">
-        {fields.map((field, index) => {
+        {questions.map((field, index) => {
           const onDelete = (openSnackBar: () => void) => {
-            if (fields.length < 2) {
+            if (questions.length < 2) {
               openSnackBar();
             } else {
               onRemove(index);
@@ -44,7 +44,7 @@ const QuestionsGroup: React.FC<Props> = ({ fields, onRemove, ...props }) => {
 
           return (
             <QuestionCard
-              ref={index === fields.length - 1 ? lastItemRef : null}
+              ref={index === questions.length - 1 ? lastItemRef : null}
               isFromServer={field.isFromServer}
               key={field.id}
               questionIndex={index}
@@ -58,4 +58,4 @@ const QuestionsGroup: React.FC<Props> = ({ fields, onRemove, ...props }) => {
   );
 };
 
-export default QuestionsGroup;
+export default FormQuestionList;

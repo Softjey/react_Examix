@@ -4,7 +4,6 @@ import StartPage from '../../pages/StartPage';
 import NotFoundPage from '../../pages/NotFoundPage';
 import Authenticated from '../../components/hocs/Authenticated';
 import DebugPage from '../../dev/DebugPage';
-import QuizPage from '../../dev/QuizPage';
 import HomePage from '../../pages/HomePage';
 import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
@@ -59,14 +58,6 @@ const router = createRouter([
     element: (
       <Authenticated>
         <DebugPage />
-      </Authenticated>
-    ),
-  },
-  {
-    path: 'quiz',
-    element: (
-      <Authenticated>
-        <QuizPage />
       </Authenticated>
     ),
   },

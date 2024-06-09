@@ -32,7 +32,7 @@ const TimeLimitPicker: React.FC<Props> = ({ questionIndex, error, ...props }) =>
                 paddingTop: 1,
                 paddingBottom: 1,
                 '& ~ fieldset': {
-                  borderColor: error ? 'red !important' : 'auto',
+                  borderColor: error ? (theme) => theme.palette.error.main : 'auto',
                 },
               },
               '.MuiInputLabel-root': {

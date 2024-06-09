@@ -1,11 +1,15 @@
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable no-confusing-arrow */
+/* eslint-disable function-paren-newline */
+
 import { Box, BoxProps, Typography } from '@mui/material';
 import { FieldArrayWithId } from 'react-hook-form';
 import { useEffect } from 'react';
+import AddIcon from '@mui/icons-material/Add';
 import QuestionType from '../../../types/api/enums/Type';
 import { CreateTestForm } from '../../../schemas/createTestFormValidationSchemas';
 import FormAnswerItem from '../items/FormAnswerItem';
 import Button from '../../UI/buttons/Button';
-import AddButton from '../../UI/buttons/AddButton';
 import { useCreateTest } from '../../../pages/CreateTestPage/CreateTestContext';
 import useCreateTestForm from '../../../hooks/useCreateTestForm';
 
@@ -39,36 +43,40 @@ const AnswersGroup: React.FC<Props> = ({
 
   const isSingleChoise = questionType === QuestionType.SINGLE_CHOICE;
 
+  const answersPath = `questions.${questionIndex}.answers` as const;
+
   const updateCorrect = (index: number) => {
-    const answers = watch(`questions.${questionIndex}.answers`);
+    const answers = watch(answersPath);
 
     if (isSingleChoise) {
       if (answers.some((item, i) => item.isCorrect && i !== index)) {
         // If any checkbox is checked and it's not the current one, uncheck all checkboxes
-        setValue(
-          `questions.${questionIndex}.answers`,
-          answers.map((item, i) => {
-            return { ...item, isCorrect: i === index };
-          }),
-        );
+        const answersWithOnlyCurrentChecked = answers.map((item, i) => {
+          return { ...item, isCorrect: i === index };
+        });
+
+        setValue(answersPath, answersWithOnlyCurrentChecked);
       } else {
         // Otherwise, toggle the checkbox state
-        setValue(
-          `questions.${questionIndex}.answers`,
-          answers.map((item, i) => (i === index ? { ...item, isCorrect: !item.isCorrect } : item)),
+        const answersWithCurrentToggled = answers.map((item, i) =>
+          i === index ? { ...item, isCorrect: !item.isCorrect } : item,
         );
+
+        setValue(answersPath, answersWithCurrentToggled);
       }
     }
   };
 
   useEffect(() => {
     if (isSingleChoise) {
-      const answers = watch(`questions.${questionIndex}.answers`);
+      const answers = watch(answersPath);
       // set the first one checked and the rest unchecked
-      setValue(
-        `questions.${questionIndex}.answers`,
-        answers.map((item, index) => ({ ...item, isCorrect: index === 0 })),
-      );
+      const answersWithOnlyFirstChecked = answers.map((item, index) => ({
+        ...item,
+        isCorrect: index === 0,
+      }));
+
+      setValue(answersPath, answersWithOnlyFirstChecked);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionType]);
@@ -99,11 +107,16 @@ const AnswersGroup: React.FC<Props> = ({
             <Button
               disabled={loading}
               startIcon={
-                <AddButton
-                  disabled={loading}
-                  disableRipple
-                  sx={{ width: 42, height: 42 }}
-                  color="info"
+                <AddIcon
+                  sx={(theme) => ({
+                    width: 24,
+                    height: 24,
+                    marginX: '9px',
+                    color: loading ? theme.palette.action.disabled : theme.palette.info.main,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  })}
                 />
               }
               sx={{

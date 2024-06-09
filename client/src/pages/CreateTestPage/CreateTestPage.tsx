@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Box, Stack, TextField, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,7 +10,7 @@ import {
   CreateTestSchema,
   QuestionFromServer,
 } from '../../schemas/createTestFormValidationSchemas';
-import QuestionsGroup from '../../components/CreateTestForm/groups/QuestionsGroup';
+import FormQuestionList from '../../components/CreateTestForm/groups/FormQuestionList';
 import LoadingButton from '../../components/UI/buttons/LoadingButton';
 import { useCreateTest } from './CreateTestContext';
 import Subject from '../../types/api/enums/Subject';
@@ -25,7 +24,7 @@ import LoadingPage from '../LoadingPage';
 import Routes from '../../services/Router/Routes';
 import useQuestions from '../../hooks/queries/useQuestions';
 import { Question } from '../../types/api/entities/question';
-import QuestionType from '../../types/api/enums/Type';
+import { AvailableQuestionType } from '../../types/api/enums/Type';
 import QuestionsAutocompleteModal from '../../components/UI/QuestionsAutoComplete/QuestionsAutocompleteModal';
 import defaultValues from './defaultValues';
 import Button from '../../components/UI/buttons/Button';
@@ -72,32 +71,21 @@ const CreateTestPage: React.FC<Props> = () => {
     append(
       {
         ...question,
-        type: type as QuestionType.MULTIPLE_CHOICE | QuestionType.SINGLE_CHOICE,
+        type: type as AvailableQuestionType,
         isFromServer: true,
         maxScore: 0,
         timeLimit: dayjs().startOf('hour'),
       },
       { shouldFocus: false },
     );
-
-    console.log('question', question);
   };
 
   const onSubmit = methods.handleSubmit((data) => {
-    console.log('submitted');
-
     const filteredQuestions = getFilteredQuestions(data);
     const questionsFromServer = data.questions.filter((question) => question.isFromServer);
 
-    console.log('data to send', filteredQuestions);
-
     createQuestions(filteredQuestions, {
-      onError: (err) => {
-        console.dir(err);
-      },
       onSuccess: (createQuestionsResponse) => {
-        console.log('create questions response: ', createQuestionsResponse);
-
         const testData: CreateTestDto = {
           name: data.testName,
           description: data.testDescription,
@@ -113,13 +101,8 @@ const CreateTestPage: React.FC<Props> = () => {
           testData.subject = data.subject as Subject;
         }
 
-        console.log('test data to send: ', testData);
         createTest(testData, {
-          onError: (err) => {
-            console.dir(err);
-          },
           onSuccess: (test) => {
-            console.log(test);
             navigate(`${Routes.TEST}/${test.id}`);
           },
         });
@@ -150,7 +133,7 @@ const CreateTestPage: React.FC<Props> = () => {
             Questions
           </Typography>
 
-          <QuestionsGroup width="100%" fields={fields} onRemove={remove} />
+          <FormQuestionList width="100%" questions={fields} onRemove={remove} />
 
           <Stack width="100%" flexDirection="row" justifyContent="start" gap={2}>
             <Button
@@ -200,7 +183,6 @@ const CreateTestPage: React.FC<Props> = () => {
         autoCompleteProps={{
           options: questions || [],
           onChange: (_, value) => {
-            console.log(value);
             addQuestionCardFromServer(value as Question);
 
             setSearch('');

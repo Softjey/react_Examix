@@ -1,6 +1,6 @@
 import { Box, BoxProps, MenuItem, TextField } from '@mui/material';
 import SubjectSelect from '../UI/SubjectSelect';
-import ImageLinkUploader from './ImageLinkUploader';
+import CreateTestFormImageLinkUploader from './CreateTestFormImageLinkUploader';
 import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
 import useCreateTestForm from '../../hooks/useCreateTestForm';
 
@@ -16,7 +16,7 @@ const TestInfo: React.FC<Props> = ({ sx, ...rest }) => {
 
   return (
     <Box {...rest} display="flex" flexDirection="column" gap="24px" sx={{ width: '100%', ...sx }}>
-      <ImageLinkUploader
+      <CreateTestFormImageLinkUploader
         sx={{
           alignSelf: 'flex-start',
           maxHeight: '225px',

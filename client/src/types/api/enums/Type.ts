@@ -5,4 +5,6 @@ enum QuestionType {
   SHORT_ANSWER = 'SHORT_ANSWER',
 }
 
+export type AvailableQuestionType = QuestionType.MULTIPLE_CHOICE | QuestionType.SINGLE_CHOICE;
+
 export default QuestionType;
