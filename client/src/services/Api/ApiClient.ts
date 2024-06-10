@@ -131,6 +131,12 @@ export class RawApiClient {
 
     return data;
   }
+
+  static async checkPassword(password: string) {
+    const { data } = await axios.post<WithMessage>('/auth/check-password', { password });
+
+    return data.message;
+  }
 }
 
 const ApiClient = new Proxy(RawApiClient, {
