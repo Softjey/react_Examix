@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Switch } from '@mui/material';
+import { useThemeContext } from '../services/theme/ThemeContext';
 
 const ChangeTheme: React.FC = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { toggleTheme, currentTheme } = useThemeContext();
 
   const handleThemeChange = () => {
-    setIsDarkMode(!isDarkMode);
+    toggleTheme();
   };
 
   return (
     <Switch
-      checked={isDarkMode}
+      checked={currentTheme === 'dark'}
       onChange={handleThemeChange}
       inputProps={{ 'aria-label': 'controlled' }}
     />
