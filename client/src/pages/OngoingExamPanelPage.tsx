@@ -6,27 +6,39 @@ import HomeLayout, { Props as HomeLayoutProps } from '../components/layouts/Home
 import BaseTestInfo from '../components/common/BaseTestInfo';
 import QuestionsList from '../components/common/QuestionsList';
 import StudentsList from '../components/common/StudentsList';
-import Button from '../components/UI/buttons/Button';
 import authorExamStore from '../store/ExamStore/AuthorExamStore';
 import Routes from '../services/Router/Routes';
 import LoadingPage from './LoadingPage';
 import ExamResultsTable from '../components/common/ExamResultsTable/ExamResultsTable';
+import useDeleteOngoingExam from '../hooks/queries/useDeleteOngoingExam';
+import useStartExam from '../hooks/queries/useStartExam';
+import LoadingButton from '../components/UI/buttons/LoadingButton';
 
 interface Props extends HomeLayoutProps {}
 
 const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
-  const { exam, status, auth, isLoading } = authorExamStore;
+  const { deleteExam, ...deletion } = useDeleteOngoingExam();
+  const { startExam, ...starting } = useStartExam();
+  const isLoading = starting.isPending || deletion.isPending;
+  const error = starting.error || deletion.error;
+  const { exam, status, credentials } = authorExamStore;
 
   if (status === 'idle') {
     return <Navigate to={Routes.HOME} />;
   }
 
   if (status === 'finished' && exam?.id) {
-    return <Navigate to={`${Routes.EXAM}/${exam.id}`} />;
+    return <Navigate to={`${Routes.EXAM}/${exam.id}`} state={{ examFinished: true }} />;
   }
 
-  if (isLoading || !exam || !auth) {
+  if (!exam || !credentials) {
     return <LoadingPage layout="home" />;
+  }
+
+  if (error) {
+    // TODO: Change to use Snackbar
+    // eslint-disable-next-line no-alert
+    alert(error.message);
   }
 
   const { test, students, results } = exam;
@@ -36,20 +48,40 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
       <BaseTestInfo
         test={test}
         action={
-          <Stack direction="row" justifyContent="space-around">
-            <Typography align="center" variant="h4" color={(theme) => theme.palette.secondary.dark}>
-              {auth.examCode}
-            </Typography>
-
-            {students?.length !== 0 && status === 'created' && (
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={() => authorExamStore.startExam()}
+          <Stack spacing={1}>
+            {status === 'created' && (
+              <Typography
+                align="center"
+                variant="h4"
+                color={(theme) => theme.palette.secondary.dark}
               >
-                Start exam
-              </Button>
+                {credentials.examCode}
+              </Typography>
             )}
+
+            <Stack direction="row" justifyContent="space-around">
+              {students?.length !== 0 && status === 'created' && (
+                <LoadingButton
+                  loading={isLoading}
+                  variant="contained"
+                  color="secondary"
+                  onClick={startExam}
+                >
+                  Start exam
+                </LoadingButton>
+              )}
+
+              {status !== 'finished' && (
+                <LoadingButton
+                  loading={isLoading}
+                  variant="outlined"
+                  color="error"
+                  onClick={deleteExam}
+                >
+                  Delete exam
+                </LoadingButton>
+              )}
+            </Stack>
           </Stack>
         }
       />
@@ -58,7 +90,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
 
       <StudentsList variant="accordion" students={students ?? []} />
 
-      {results && <ExamResultsTable questions={results} />}
+      {results && results.length > 0 && <ExamResultsTable questions={results} />}
     </HomeLayout>
   );
 });

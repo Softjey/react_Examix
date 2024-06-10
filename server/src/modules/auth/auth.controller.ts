@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { HttpCode, HttpStatus, InternalServerErrorException } from '@nestjs/common';
 import { UsersService } from 'src/modules/users/users.service';
 import { LoginGuard } from './guards/login.guard';
@@ -11,6 +11,7 @@ import { Request } from 'express';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthService } from './services/auth.service';
+import { CheckPasswordDto } from './dto/check-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -54,10 +55,8 @@ export class AuthController {
   }
 
   @Post('forgot-password')
-  async changePassword(@Body() { email }: ForgotPasswordDto, @Req() request: Request) {
-    const originUrl = request.headers.referer;
-
-    await this.authService.forgotPassword(email, originUrl);
+  async changePassword(@Body() { email, redirectUrl }: ForgotPasswordDto) {
+    await this.authService.forgotPassword(email, redirectUrl);
 
     return {
       message: 'Password reset email sent. Check your inbox!',
@@ -71,5 +70,17 @@ export class AuthController {
     return {
       message: 'Your password has been reset. You can now login with your new password.',
     };
+  }
+
+  @UseSessionGuard()
+  @Post('check-password')
+  async checkPassword(@User() user: UserI, @Body() { password }: CheckPasswordDto) {
+    const validatedUser = this.authService.validateUser(user.email, password);
+
+    if (!validatedUser) {
+      throw new UnauthorizedException('Password is incorrect.');
+    }
+
+    return { message: 'Password is correct.' };
   }
 }

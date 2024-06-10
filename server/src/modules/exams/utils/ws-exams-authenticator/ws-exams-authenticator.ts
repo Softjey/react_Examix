@@ -122,7 +122,7 @@ export class WsExamsAuthenticator {
   private async hasYouAreNotAuthorError(auth: ExamClientAuthDto, { authorToken }: Author) {
     if (auth.role === 'author' && authorToken !== auth.authorToken) {
       return !this.handleError(
-        WSException.Forbidden('You are not the author of this room', {
+        WSException.Forbidden('You are not the author of this exam', {
           disconnect: true,
         }),
       );
@@ -149,7 +149,7 @@ export class WsExamsAuthenticator {
     if (roomExist) return false;
 
     return !this.handleError(
-      WSException.NotFound('Room not found. Please, check the room id', {
+      WSException.NotFound('Exam not found. Please, check the exam code', {
         disconnect: true,
       }),
     );

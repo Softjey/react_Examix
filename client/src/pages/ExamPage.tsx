@@ -1,5 +1,5 @@
-import React from 'react';
-import { useParams, Navigate } from 'react-router';
+import React, { useEffect } from 'react';
+import { useParams, Navigate, useLocation } from 'react-router';
 import { observer } from 'mobx-react-lite';
 import HomeLayout, { Props as HomeLayoutProps } from '../components/layouts/HomeLayout';
 import useExam from '../hooks/queries/useExam';
@@ -16,17 +16,19 @@ import CreateExamButton from '../components/UI/buttons/CreateExamButton';
 interface Props extends HomeLayoutProps {}
 
 const ExamPage: React.FC<Props> = observer(({ ...rest }) => {
-  const { exam: ongoingExam } = authorExamStore;
+  const { state } = useLocation();
   const { id } = useParams<{ id: string }>();
   const normalizedId = parseNumFromString(id);
   const { exam, isPending } = useExam(normalizedId);
 
+  useEffect(() => {
+    if (state?.examFinished) {
+      authorExamStore.resetExam();
+    }
+  }, [state?.examFinished]);
+
   if (!id) {
     return <Navigate to={Routes.EXAMS_HISTORY} />;
-  }
-
-  if (ongoingExam?.id === normalizedId) {
-    authorExamStore.resetExam();
   }
 
   if (isPending) {

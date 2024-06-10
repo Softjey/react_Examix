@@ -39,7 +39,7 @@ export class WsExceptionsFilter extends BaseWsExceptionFilter {
   static handleError(client: Socket, exception: WebSocketException) {
     client.emit(WsExceptionsFilter.eventName, new WebSocketExceptionResponse(exception));
 
-    if (exception.details.disconnect) {
+    if (exception.details?.disconnect) {
       client.disconnect();
     }
   }

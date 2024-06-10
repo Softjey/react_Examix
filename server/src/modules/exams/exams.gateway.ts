@@ -33,15 +33,17 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     return { ...question, index, answers };
   }
 
+  private prepareStudents = (students: Record<string, Student>) => {
+    return Object.entries(students).map(([studentId, { name }]) => ({
+      name,
+      studentId,
+    }));
+  };
+
   private async handleRole(authenticator: WsExamsAuthenticator, client: Socket) {
     const auth = client.handshake.auth as ExamClientAuthDto;
-    const { test, students } = await this.examsService.getExam(auth.examCode);
-
-    const prepareStudents = (students: Record<string, Student>) =>
-      Object.entries(students).map(([studentId, { name }]) => ({
-        name,
-        studentId,
-      }));
+    const { test, students, status } = await this.examsService.getExam(auth.examCode);
+    const results = await this.examsService.getResults(auth.examCode);
 
     switch (auth.role) {
       case 'author':
@@ -50,19 +52,21 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.join(auth.examCode);
         client.emit('connected', {
           message: 'You are connected to the exam room like an author',
-          students: prepareStudents(students),
+          students: this.prepareStudents(students),
+          examStatus: status,
+          results,
           test,
         });
 
         break;
-      case 'student':
+      case 'student': {
         const [status, studentId] = await authenticator.authorizeStudent(auth);
-        const { students: newStudents } = await this.examsService.getExam(auth.examCode);
+        const { students: newStudents, ...exam } = await this.examsService.getExam(auth.examCode);
         const { testQuestions, ...restTest } = test;
 
         const connectedData = {
           test: { ...restTest, questionsAmount: testQuestions.length },
-          students: prepareStudents(newStudents),
+          students: this.prepareStudents(newStudents),
         };
 
         const map = {
@@ -95,12 +99,15 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
             client.emit('reconnected', {
               message: 'You are reconnected to the exam room like a student',
+              examStatus: exam.status,
+              currentQuestion: exam.currentQuestion,
               ...connectedData,
             });
           },
         };
 
         map[status]();
+      }
     }
   }
 
@@ -114,23 +121,46 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleDisconnect(@ConnectedSocket() client: Socket) {
-    const { examCode } = client.handshake.auth as ExamClientAuthDto;
-    const room = await this.server.in(examCode).fetchSockets();
-    const exam = await this.examsService.getExam(examCode, true);
+    try {
+      const { examCode, role } = client.handshake.auth as ExamClientAuthDto;
+      const room = await this.server.in(examCode).fetchSockets();
+      const exam = await this.examsService.getExam(examCode, true);
 
-    console.log('Disconnect', { examCode, room: room.length, examStatus: exam?.status });
+      if (role === 'author') {
+        await this.examsService.authorLeave(examCode);
+      }
 
-    if (exam && room.length === 0 && exam.status !== 'started') {
-      await this.examsService.deleteExam(examCode);
+      if (role === 'student') {
+        const student = await this.examsService.studentLeave(examCode, client.id);
+
+        if (student) {
+          client.broadcast.to(examCode).emit('student-disconnected', {
+            studentId: student.studentId,
+          });
+        }
+      }
+
+      if (exam && room.length === 0 && exam.status !== 'started') {
+        await this.examsService.deleteExam(examCode);
+      }
+    } catch (error) {
+      WsExceptionsFilter.handleError(client, error);
     }
   }
 
   @UseGuards(RoomAuthorGuard)
   @SubscribeMessage('get-results')
-  async sendResults(@ConnectedSocket() client: Socket, examCode: string) {
+  async sendResults(examCode: string, @ConnectedSocket() client?: Socket) {
     const results = await this.examsService.getResults(examCode);
+    const { author } = await this.examsService.getExam(examCode);
 
-    client.emit('results', results);
+    if (client) {
+      client.emit('results', results);
+    }
+
+    if (author.clientId) {
+      this.server.to(author.clientId).emit('results', results);
+    }
   }
 
   @UseGuards(RoomAuthorGuard)
@@ -153,18 +183,21 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const studentsQuestion = this.prepareQuestionForStudents(question, questionIndex);
 
       if (questionIndex > 0) {
-        this.sendResults(client, examCode);
+        this.sendResults(examCode);
       }
 
-      client.broadcast.to(examCode).emit('question', studentsQuestion);
+      client.to(examCode).emit('question', studentsQuestion);
     });
 
     this.examsService.onExamFinish(examCode, async (detailedExamPromise) => {
+      const { author } = await this.examsService.getExam(examCode);
       const detailedExam = await detailedExamPromise;
 
-      client.broadcast.to(examCode).emit('exam-finished');
-      client.emit('exam-finished', detailedExam);
+      if (author.clientId) {
+        this.server.to(author.clientId).emit('exam-finished', detailedExam);
+      }
 
+      client.to(examCode).except(author.clientId).emit('exam-finished');
       client.in(examCode).disconnectSockets(true);
     });
   }
@@ -196,6 +229,16 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!studentExist) {
       throw WebSocketException.BadRequest('Student id is invalid. You are not in the exam room');
     }
+  }
+
+  @UseGuards(RoomAuthorGuard)
+  @SubscribeMessage('delete-exam')
+  async deleteExam(@ClientAuth('examCode') examCode: string) {
+    this.examsService.deleteExam(examCode);
+
+    this.examsService.onExamDeleted(examCode, () => {
+      this.server.to(examCode).emit('exam-deleted');
+    });
   }
 
   @UseGuards(RoomAuthorGuard)

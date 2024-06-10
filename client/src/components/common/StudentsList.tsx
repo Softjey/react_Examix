@@ -7,7 +7,7 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import UserAvatar from '../UI/UserAvatar';
 import Student from '../../store/ExamStore/types/Student';
-import DottedText from '../../dev/DottedText/DottedText';
+import DottedText from '../UI/DottedText/DottedText';
 
 interface Props extends ListProps {
   students: Student[];

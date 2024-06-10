@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import QuestionType from '../../../types/api/enums/Type';
 import { StudentAnswer } from '../../../types/api/entities/question';
@@ -37,6 +37,10 @@ const AnswersGroupComponent: React.FC<Props> = ({
   const onAnswerChange = (newAnswers: StudentAnswer[]) => {
     setSelectedAnswers(newAnswers);
   };
+
+  useEffect(() => {
+    setSelectedAnswers([]);
+  }, [answers]);
 
   const answersComponent = {
     [QuestionType.SINGLE_CHOICE]: (

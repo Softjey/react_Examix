@@ -3,12 +3,12 @@ import { z } from 'zod';
 import { Navigate } from 'react-router';
 import { observer } from 'mobx-react-lite';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
 import LoginForm from '../components/forms/LoginForm';
-import { Nullable } from '../types/utils/Nullable';
 import StartLayout from '../components/layouts/StartLayout';
 import studentExamStore from '../store/ExamStore/StudentExamStore';
 import Routes from '../services/Router/Routes';
+import useConnectToExamLikeStudent from '../hooks/queries/useConnectToExamLikeStudent';
+import LoadingPage from './LoadingPage';
 
 const defaultValues: JoinFormType = { name: '', code: '' };
 const JoinFormSchema = z.object({
@@ -23,32 +23,27 @@ const JoinFormSchema = z.object({
 type JoinFormType = z.infer<typeof JoinFormSchema>;
 
 const JoinPage: React.FC = observer(() => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [serverErrorMessage, setServerErrorMessage] = useState<Nullable<string>>(null);
+  const [reconnect, { connectToExam, error, isPending, reset }] = useConnectToExamLikeStudent();
   const { register, handleSubmit, formState } = useForm<JoinFormType>({
     resolver: zodResolver(JoinFormSchema),
     defaultValues,
   });
+
+  if (reconnect.isLoading) {
+    return <LoadingPage />;
+  }
+
+  if (reconnect.isSuccess && !reconnect.needConnect) {
+    return <Navigate to={Routes.ONGOING_EXAM} />;
+  }
 
   if (studentExamStore.status !== 'idle') {
     return <Navigate to={Routes.ONGOING_EXAM} />;
   }
 
   const { errors } = formState;
-  const onSubmit = handleSubmit(async ({ code, name }) => {
-    if (name && code) {
-      setIsLoading(true);
-      setServerErrorMessage(null);
-
-      await studentExamStore
-        .connectToExam({ examCode: code, studentName: name })
-        .catch((error) => {
-          if (error.message !== 'New client connected with that studentId') {
-            setServerErrorMessage(error.message);
-          }
-        })
-        .finally(() => setIsLoading(false));
-    }
+  const onSubmit = handleSubmit(({ code, name }) => {
+    connectToExam({ examCode: code, studentName: name });
   });
 
   return (
@@ -59,7 +54,7 @@ const JoinPage: React.FC = observer(() => {
           placeholder: 'Enter name',
           required: true,
           ...register('name'),
-          error: !!errors.name || !!serverErrorMessage,
+          error: !!errors.name || !!error,
           helperText: errors.name?.message,
           autoComplete: 'off',
         }}
@@ -71,14 +66,14 @@ const JoinPage: React.FC = observer(() => {
           },
           required: true,
           ...register('code'),
-          error: !!errors.code || !!serverErrorMessage,
+          error: !!errors.code || !!error,
           helperText: errors.code?.message,
           autoComplete: 'off',
         }}
         submitButtonText="Join"
-        errorMessage={serverErrorMessage}
-        onErrorClose={() => setServerErrorMessage(null)}
-        isLoading={isLoading}
+        errorMessage={error?.message ?? null}
+        onErrorClose={reset}
+        isLoading={isPending}
         onSubmit={onSubmit}
       />
     </StartLayout>

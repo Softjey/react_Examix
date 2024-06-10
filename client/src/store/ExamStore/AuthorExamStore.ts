@@ -1,28 +1,75 @@
-import { makeAutoObservable } from 'mobx';
-import { Socket, io } from 'socket.io-client';
+import { makeAutoObservable, runInAction } from 'mobx';
+import { Socket } from 'socket.io-client';
 import ApiClient from '../../services/Api/ApiClient';
 import { Test } from '../../types/api/entities/test';
 import Message from './types/Message';
-import WsException from './ws/types/WsException';
-import WsApiError from './ws/WsApiError';
-import { AuthorConnectedResponse } from './ws/types/responses/ConnectedResponse';
-import { AuthorAuth } from './types/auth';
-import Student from './types/Student';
+import WsApiError from '../../services/Api/ws/WsApiError';
+import WsException from '../../services/Api/ws/types/WsException';
+import { AuthorConnectedResponse } from './types/responses/ConnectedResponse';
 import { AuthorEmitter } from './types/Emitter';
 import { AuthorStoresExam, TempResults } from './types/StoresExam';
 import parseTempResultsIntoTestQuestionWithResults from '../../utils/parseTempResultsIntoTestQuestionWithResults';
 import { DetailedExam } from '../../types/api/entities/detailedExam';
+import { AuthorExamCredentials } from '../../services/storage/StorageMap';
+import createAuthorSocket from './utils/createAuthorSocket';
+import createOffHandlers from './utils/createOffHandlers';
+import storage from '../../services/storage';
+import ErrorMessage from './types/ErrorMessage';
+// eslint-disable-next-line import/no-cycle
+import { onStudentJoined, onStudentLeave, onStudentReconnected } from './utils/studentEvents';
 
-class AuthorExamStore {
+export class AuthorExamStore {
   private socket: Socket | null = null;
-  auth: Required<AuthorAuth> | null = null;
+  credentials: AuthorExamCredentials | null = null;
   exam: AuthorStoresExam | null = null;
-  error: WsException | null = null;
   status: 'idle' | 'created' | 'started' | 'finished' = 'idle';
-  isLoading = false;
 
   constructor() {
     makeAutoObservable(this);
+
+    const credentials = storage.read('author-exam-credentials');
+
+    if (credentials) {
+      this.connectToExam(credentials).catch((error: WsApiError) => {
+        const examNotFound = error.message === ErrorMessage.EXAM_NOT_FOUND;
+        const notAuthor = error.message === ErrorMessage.NOT_AUTHOR;
+
+        if (examNotFound || notAuthor) {
+          storage.remove('author-exam-credentials');
+        }
+      });
+    }
+  }
+
+  private connectToExam(credentials: AuthorExamCredentials) {
+    return new Promise<void>((resolve, reject) => {
+      const socket = createAuthorSocket(credentials);
+      const offHandlers = createOffHandlers(socket, {
+        [Message.EXCEPTION]: onConnectError,
+        [Message.CONNECTED]: onConnect,
+      });
+
+      const handleConnect = (response: AuthorConnectedResponse) => {
+        this.handleConnect(socket, credentials, response);
+      };
+
+      function onConnectError(error: WsException) {
+        offHandlers();
+        reject(new WsApiError(error));
+      }
+
+      function onConnect(response: AuthorConnectedResponse) {
+        handleConnect(response);
+        offHandlers();
+        resolve();
+      }
+
+      socket.once(Message.CONNECTED, onConnect);
+      socket.once(Message.EXCEPTION, onConnectError);
+
+      this.addListeners(socket);
+      socket.connect();
+    });
   }
 
   async createExam(testId: Test['id']) {
@@ -30,116 +77,124 @@ class AuthorExamStore {
 
     const { authorToken, examCode } = await ApiClient.createExam(testId);
 
-    await this.connectToExam(authorToken, examCode);
-  }
-
-  private connectToExam(authorToken: string, examCode: string) {
-    this.isLoading = true;
-    this.error = null;
-
-    return new Promise<void>((resolve, reject) => {
-      const socket = io(`${import.meta.env.VITE_SERVER_WS_URL}/join-exam`, {
-        auth: { role: 'author', authorToken, examCode } as AuthorAuth,
-        autoConnect: false,
-      });
-
-      socket.on(Message.EXCEPTION, (error: WsException) => {
-        reject(new WsApiError(error));
-        this.isLoading = false;
-        this.error = error;
-      });
-
-      socket.on(Message.CONNECTED, ({ test, students }: AuthorConnectedResponse) => {
-        this.isLoading = false;
-        this.status = 'created';
-        this.exam = { test, students, currentQuestion: null, results: null, id: null };
-        this.auth = { role: 'author', authorToken, examCode };
-        this.socket = socket;
-        resolve();
-      });
-
-      this.addListeners(socket);
-
-      Object.values(Message).forEach((message) => {
-        socket.on(message, (data: unknown) => {
-          // eslint-disable-next-line no-console
-          console.log(message, data);
-        });
-      });
-
-      socket.connect();
-    });
+    await this.connectToExam({ authorToken, examCode });
   }
 
   startExam() {
-    if (!this.socket) return;
+    return new Promise<void>((resolve, reject) => {
+      const { socket } = this;
 
-    this.isLoading = true;
-    this.socket.emit(AuthorEmitter.START_EXAM);
-  }
+      if (!socket) return;
 
-  private addListeners(socket: Socket) {
-    this.onExamStart(socket);
-    this.onStudentJoined(socket);
-    this.onStudentReconnected(socket);
-    this.onResults(socket);
-    this.onExamFinished(socket);
-  }
-
-  private onExamStart(socket: Socket) {
-    socket.on(Message.EXAM_STARTED, () => {
-      this.status = 'started';
-      this.isLoading = false;
-    });
-  }
-
-  private onStudentJoined(socket: Socket) {
-    socket.on(Message.STUDENT_JOINED, (student: Student) => {
-      if (!this.exam) return;
-      this.exam.students = [...this.exam.students, student];
-    });
-  }
-
-  private onStudentReconnected(socket: Socket) {
-    socket.on(Message.STUDENT_RECONNECTED, (student: Student) => {
-      if (!this.exam) return;
-
-      this.exam.students = this.exam.students.map((currStudent) => {
-        return currStudent.studentId === student.studentId ? student : currStudent;
+      const offHandlers = createOffHandlers(socket, {
+        [Message.EXAM_STARTED]: onExamStarted,
+        [Message.EXCEPTION]: onExamStartError,
       });
+
+      const handleExamStart = () => this.handleExamStart();
+      function onExamStarted() {
+        resolve();
+        handleExamStart();
+        offHandlers();
+      }
+
+      function onExamStartError(error: WsApiError) {
+        offHandlers();
+        reject(new WsApiError(error));
+      }
+
+      socket.emit(AuthorEmitter.START_EXAM);
+      socket.once(Message.EXAM_STARTED, onExamStarted);
+      socket.once(Message.EXCEPTION, onExamStartError);
     });
   }
 
-  private onResults(socket: Socket) {
-    socket.on(Message.RESULTS, (results: TempResults) => {
-      if (!this.exam) return;
-      const testQuestionsResults = parseTempResultsIntoTestQuestionWithResults(
-        this.exam.test,
-        results,
-      );
+  deleteExam() {
+    return new Promise<void>((resolve, reject) => {
+      const { socket } = this;
 
-      this.exam.results = testQuestionsResults;
-    });
-  }
+      if (!socket) return;
 
-  private onExamFinished(socket: Socket) {
-    socket.on(Message.EXAM_FINISHED, (detailedExam: DetailedExam) => {
-      if (!this.exam) return;
+      const offHandlers = createOffHandlers(socket, {
+        [Message.EXCEPTION]: onError,
+        [Message.EXAM_DELETED]: onExamDeleted,
+      });
 
-      this.exam.id = detailedExam.id;
-      this.status = 'finished';
-      this.exam.currentQuestion = null;
+      const handleExamDeleted = () => this.resetExam();
+
+      function onExamDeleted() {
+        handleExamDeleted();
+        offHandlers();
+        resolve();
+      }
+
+      function onError(error: WsException) {
+        offHandlers();
+        reject(new WsApiError(error));
+      }
+
+      socket.once(Message.EXAM_DELETED, onExamDeleted);
+      socket.once(Message.EXCEPTION, onError);
+
+      socket.emit(AuthorEmitter.DELETE_EXAM);
     });
   }
 
   resetExam() {
-    this.socket?.disconnect();
-    this.socket = null;
-    this.auth = null;
-    this.exam = null;
-    this.error = null;
-    this.status = 'idle';
-    this.isLoading = false;
+    runInAction(() => {
+      this.socket?.disconnect();
+      this.socket = null;
+      this.credentials = null;
+      this.exam = null;
+      this.status = 'idle';
+    });
+  }
+
+  private addListeners(socket: Socket) {
+    onStudentJoined.call(this, socket);
+    onStudentReconnected.call(this, socket);
+    onStudentLeave.call(this, socket);
+
+    socket.on(Message.RESULTS, this.handleResults.bind(this));
+    socket.on(Message.EXAM_FINISHED, this.handleExamFinished.bind(this));
+  }
+
+  private handleExamStart() {
+    this.status = 'started';
+  }
+
+  private handleConnect(
+    socket: Socket,
+    credentials: AuthorExamCredentials,
+    { test, students, results, examStatus }: AuthorConnectedResponse,
+  ) {
+    const parsedTestResults = parseTempResultsIntoTestQuestionWithResults(test, results);
+
+    storage.write('author-exam-credentials', credentials);
+
+    this.status = examStatus;
+    this.exam = { test, students, results: parsedTestResults, id: null };
+    this.credentials = credentials;
+    this.socket = socket;
+  }
+
+  private handleResults(results: TempResults) {
+    if (!this.exam) return;
+
+    const testQuestionsResults = parseTempResultsIntoTestQuestionWithResults(
+      this.exam.test,
+      results,
+    );
+
+    this.exam.results = testQuestionsResults;
+  }
+
+  private handleExamFinished(detailedExam: DetailedExam) {
+    if (!this.exam) return;
+
+    storage.remove('author-exam-credentials');
+    this.exam.id = detailedExam.id;
+    this.status = 'finished';
   }
 }
 

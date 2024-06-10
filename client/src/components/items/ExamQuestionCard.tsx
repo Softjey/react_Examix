@@ -2,15 +2,15 @@ import { StackProps, CardProps, CircularProgress } from '@mui/material';
 import { Card, CardHeader, CardContent } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Typography, CardActions, Stack } from '@mui/material';
-import CircularProgressWithLabel from '../../dev/CircularProgressWithLabel';
-import { StudentQuestion } from '../../types/api/entities/testQuestion';
+import CircularProgressWithLabel from '../UI/CircularProgressWithLabel';
+import { ExamCurrentQuestion } from '../../types/api/entities/testQuestion';
 import { StudentAnswer } from '../../types/api/entities/question';
 import AnswerGroup from '../UI/AnswersGroup/AnswersGroup';
 import Timer from '../UI/Timer';
-import DottedText from '../../dev/DottedText/DottedText';
+import DottedText from '../UI/DottedText/DottedText';
 
 interface Props extends StackProps {
-  question: StudentQuestion;
+  question: ExamCurrentQuestion;
   onAnswer: (answers: StudentAnswer[]) => void;
   questionsAmount: number | undefined;
   cardProps?: CardProps;
@@ -38,6 +38,7 @@ const ExamQuestionCard: React.FC<Props> = (props) => {
   return (
     <Stack {...rest}>
       <Timer
+        endDate={question.timeExpresAt}
         duration={question.timeLimit * 1000}
         restartDeps={[questionIndex]}
         onEnd={() => setTimesUp(true)}
@@ -60,9 +61,12 @@ const ExamQuestionCard: React.FC<Props> = (props) => {
             }}
           >
             <CircularProgress size={60} />
-            <DottedText align="center" variant="body1">
-              New question is loading
-            </DottedText>
+            <Stack direction="row" spacing={2.5}>
+              <DottedText align="center" variant="body1">
+                Please hold on, something wonderful is coming
+              </DottedText>
+              <Typography variant="body1">😊</Typography>
+            </Stack>
           </Stack>
         )}
 

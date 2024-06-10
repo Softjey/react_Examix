@@ -3,17 +3,19 @@ import Routes from './Routes';
 import StartPage from '../../pages/StartPage';
 import NotFoundPage from '../../pages/NotFoundPage';
 import Authenticated from '../../components/hocs/Authenticated';
-import DebugPage from '../../dev/DebugPage';
 import HomePage from '../../pages/HomePage';
 import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
 import CreateTestPage from '../../pages/CreateTestPage/CreateTestPage';
+import SettingsPage from '../../pages/SettingsPage';
 import TestPage from '../../pages/TestPage';
+import ExamPage from '../../pages/ExamPage';
+import ChangePasswordPage from '../../dev/ChangePasswordPage';
+import OngoingExamPage from '../../pages/OngoingExamPage/OngoingExamPage';
 import LoginPage from '../../pages/LoginPage';
 import JoinPage from '../../pages/JoinPage';
-import ExamPage from '../../pages/ExamPage';
-import SettingsPage from '../../pages/SettingsPage';
+import OngoingExamPanelPage from '../../pages/OngoingExamPanelPage';
 
 const router = createRouter([
   {
@@ -45,18 +47,14 @@ const router = createRouter([
     element: <NotFoundPage />,
   },
   {
+    path: Routes.RESET_PASSWORD,
+    element: <ChangePasswordPage />,
+  },
+  {
     path: Routes.HOME,
     element: (
       <Authenticated>
         <HomePage />
-      </Authenticated>
-    ),
-  },
-  {
-    path: 'debug',
-    element: (
-      <Authenticated>
-        <DebugPage />
       </Authenticated>
     ),
   },
@@ -106,6 +104,22 @@ const router = createRouter([
       <Authenticated>
         <ExamPage />
       </Authenticated>
+    ),
+  },
+  {
+    path: Routes.ONGOING_EXAM_PANEL,
+    element: (
+      <Authenticated>
+        <OngoingExamPanelPage />
+      </Authenticated>
+    ),
+  },
+  {
+    path: Routes.ONGOING_EXAM,
+    element: (
+      <OnlyPublic>
+        <OngoingExamPage />
+      </OnlyPublic>
     ),
   },
 ]);

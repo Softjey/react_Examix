@@ -3,8 +3,6 @@ enum Routes {
   LOGIN = '/login',
   JOIN = '/join',
   NOT_FOUND = '*',
-  QUIZ = '/quiz',
-  WAITING = '/waiting',
   HOME = '/home',
   TESTS_LIBRARY = '/tests',
   TEST = '/test',
@@ -12,6 +10,7 @@ enum Routes {
   EXAMS_HISTORY = '/history',
   SETTINGS = '/settings',
   EXAM = '/exam',
+  RESET_PASSWORD = '/reset-password',
   ONGOING_EXAM = '/ongoing-exam',
   ONGOING_EXAM_PANEL = '/ongoing-exam/panel',
 }
