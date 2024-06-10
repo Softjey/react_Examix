@@ -90,6 +90,23 @@ const AvatarLinkUploader: React.FC<Props> = ({
     }
   };
 
+  const handleDeleteImage = () => {
+    updateMe(
+      { photo: null },
+      {
+        onSuccess: () => {
+          setOpen(false);
+          setImageLink(null);
+          setValue('userAvatarLink', null);
+          onAvatarChange('');
+        },
+        onError: () => {
+          setError('Failed to delete avatar');
+        },
+      },
+    );
+  };
+
   return (
     <>
       <UserAvatar
@@ -159,12 +176,7 @@ const AvatarLinkUploader: React.FC<Props> = ({
               variant="outlined"
               startIcon={<DeleteIcon />}
               color="error"
-              onClick={() => {
-                setOpen(false);
-                setImageLink(null);
-                setValue('userAvatarLink', null);
-                onAvatarChange('');
-              }}
+              onClick={handleDeleteImage}
             >
               Delete Image
             </Button>
