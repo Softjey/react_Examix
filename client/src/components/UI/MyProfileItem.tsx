@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import CreateIcon from '@mui/icons-material/Create';
 import TextField from '@mui/material/TextField';
@@ -20,42 +20,51 @@ const MyProfileItem: React.FC<Props> = (props) => {
   const [name, setName] = useState(user ? user.name : '');
   const [avatarLink, setAvatarLink] = useState(user ? user.photo : '');
   const textFieldRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { register, setValue } = useForm<FieldValues>();
   const [disabled, setDisabled] = useState(false);
 
-  if (!user) {
-    return <div>Loading...</div>;
-  }
-
+  const handleCancel = () => {
+    if (user) {
+      setName(user.name);
+      setAvatarLink(user.photo);
+      setEditMode(false);
+    }
+  };
   const handleEditClick = () => {
     setEditMode(true);
     if (textFieldRef.current) {
       textFieldRef.current.focus();
     }
   };
-
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
+  };
+
+  const handleSave = () => {
+    updateMe({ name });
+    setDisabled(true);
+    updateMe({ name, photo: avatarLink });
+    refetch();
+    setEditMode(false);
+    setDisabled(false);
   };
 
   const handleAvatarChange = (newAvatarLink: string) => {
     setAvatarLink(newAvatarLink);
   };
 
-  const handleCancel = () => {
-    setName(user.name);
-    setAvatarLink(user.photo);
-    setEditMode(false);
+  const handleAvatarClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
-  const handleSave = async () => {
-    setDisabled(true);
-    await updateMe({ name, photo: avatarLink });
-    refetch();
-    setEditMode(false);
-    setDisabled(false);
-  };
-
+  useEffect(() => {
+    if (user) {
+      setName(user.name);
+    }
+  }, [user]);
   return (
     <Box
       gap={2}
@@ -72,6 +81,7 @@ const MyProfileItem: React.FC<Props> = (props) => {
       <AvatarLinkUploader
         disabled={disabled}
         userAvatarLink={avatarLink}
+        onClick={handleAvatarClick}
         registerReturn={register('userAvatarLink')}
         setValue={setValue as unknown as UseFormSetValue<FieldValues>}
         onAvatarChange={handleAvatarChange}
@@ -83,6 +93,7 @@ const MyProfileItem: React.FC<Props> = (props) => {
           disabled={!editMode || disabled}
           value={name}
           onChange={handleNameChange}
+          onClick={handleEditClick}
           variant="outlined"
           autoComplete="off"
           size="small"
@@ -90,16 +101,9 @@ const MyProfileItem: React.FC<Props> = (props) => {
           sx={{
             width: 180,
             height: 40,
-            '.MuiInputBase-root': {
-              height: '100%',
-            },
-            '.MuiOutlinedInput-input': {
-              padding: '8px 10px',
-            },
-            '& .MuiInputBase-input.Mui-disabled': {
-              WebkitTextFillColor: 'black',
-              fontWeight: 'bold',
-            },
+            color: editMode ? 'text.primary' : 'text.secondary',
+            '.MuiInputBase-root': { height: '100%' },
+            '.MuiOutlinedInput-input': { paddingInline: 1 },
           }}
         />
 
@@ -108,9 +112,7 @@ const MyProfileItem: React.FC<Props> = (props) => {
             color="disabled"
             sx={{
               cursor: 'pointer',
-              '&:hover': {
-                color: 'primary.main',
-              },
+              '&:hover': { color: 'primary.main' },
             }}
             onClick={handleEditClick}
           />
@@ -130,12 +132,7 @@ const MyProfileItem: React.FC<Props> = (props) => {
             </Button>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={handleCancel}
-              disabled={isPending || disabled}
-            >
+            <Button variant="outlined" size="small" onClick={handleCancel} disabled={isPending}>
               Cancel
             </Button>
           </Box>
