@@ -15,7 +15,7 @@ import isImageAcessable from '../../../utils/isImageAcessable';
 import isValidUrl from '../../../utils/isValidUrl';
 import UserAvatar from '../../UI/UserAvatar';
 import useAuth from '../../../hooks/queries/useAuth';
-import useUpdateMe from '../../../hooks/queries/useUpdateMe'; // Importuj hook
+import useUpdateMe from '../../../hooks/queries/useUpdateMe';
 
 interface Props extends BoxProps {
   userAvatarLink: string | null;
@@ -35,21 +35,24 @@ const AvatarLinkUploader: React.FC<Props> = ({
 }) => {
   const [, setImageLink] = useState<Nullable<string>>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Nullable<string>>(null);
   const { data: user } = useAuth();
-  const { updateMe } = useUpdateMe(); // Użyj hooka do aktualizacji użytkownika
+  const { updateMe, isPending, isError } = useUpdateMe();
 
   const handleImageChange = async () => {
     if (!error) {
-      setLoading(true);
-      try {
-        await updateMe({ photo: userAvatarLink });
-        onAvatarChange(userAvatarLink || ''); // Ustawienie nowego linku avatara
-      } finally {
-        setLoading(false);
-        setOpen(false);
-      }
+      updateMe(
+        { photo: userAvatarLink },
+        {
+          onSuccess: () => {
+            onAvatarChange(userAvatarLink || '');
+            setOpen(false);
+          },
+          onError: () => {
+            setError('Failed to update avatar');
+          },
+        },
+      );
     }
   };
 
@@ -66,25 +69,24 @@ const AvatarLinkUploader: React.FC<Props> = ({
   };
 
   const onUserAvatarLinkChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    setLoading(true);
+    setError(null);
+    const link = e.target.value;
 
     const getErrorMessage = async () => {
-      const isAcessable = await isImageAcessable(e.target.value);
-      const isUrl = isValidUrl(e.target.value);
+      const isAccessible = await isImageAcessable(link);
+      const isUrl = isValidUrl(link);
 
-      if (!isUrl) return 'The url is not valid';
-      if (!isAcessable) return 'Image is not accessible';
+      if (!isUrl) return 'The URL is not valid';
+      if (!isAccessible) return 'Image is not accessible';
       return null;
     };
 
     const errorMessage = await getErrorMessage();
     setError(errorMessage);
-
-    setLoading(false);
     onChange(e);
 
     if (!errorMessage) {
-      onAvatarChange(e.target.value);
+      onAvatarChange(link);
     }
   };
 
@@ -134,19 +136,19 @@ const AvatarLinkUploader: React.FC<Props> = ({
               aspectRatio: '4 / 3',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              backgroundImage: loading || error ? 'none' : `url(${userAvatarLink})`,
-              border: loading || error || !userAvatarLink ? '2px dashed gray' : 'none',
+              backgroundImage: isError || !userAvatarLink ? 'none' : `url(${userAvatarLink})`,
+              border: isError || !userAvatarLink ? '2px dashed gray' : 'none',
               borderRadius: '8px',
             }}
           >
-            {loading && <CircularProgress size={50} />}
+            {isPending && <CircularProgress size={50} />}
           </Box>
 
           <Box display="flex" gap={2} justifyContent="space-between">
             <Button
               fullWidth
               size="small"
-              disabled={!!error}
+              disabled={!!error || isPending}
               variant="contained"
               onClick={handleImageChange}
             >
