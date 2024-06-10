@@ -3,7 +3,7 @@ import HomeLayout from '../components/layouts/HomeLayout';
 import SettingsSection from '../components/SettingsSection';
 import SettingsOption from '../components/SettingsOption';
 import ChangeThemeSwitch from '../components/ChangeThemeSwitch';
-import ChangePinCodeButton from '../components/ChangePinCodeButton';
+import ChangePinCodeButton from '../components/features/ChangePinCode/ChangePinCode';
 import DeleteAccountButton from '../components/DeleteAccountButton';
 import ChangePasswordButton from '../components/ChangePassword';
 import MyProfileItem from '../components/UI/MyProfileItem';
