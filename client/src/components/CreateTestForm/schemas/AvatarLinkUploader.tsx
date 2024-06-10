@@ -148,9 +148,10 @@ const AvatarLinkUploader: React.FC<Props> = ({
             sx={{
               display: 'flex',
               alignItems: 'center',
+              alignSelf: 'center',
               justifyContent: 'center',
-              width: '100%',
-              aspectRatio: '4 / 3',
+              width: '80%',
+              aspectRatio: '3 / 3',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundImage: isError || !userAvatarLink ? 'none' : `url(${userAvatarLink})`,
