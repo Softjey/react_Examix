@@ -48,9 +48,11 @@ export default class PinCodeManager {
 
     const theSame = await PinCodeManager.comparePinCode(pinCode, hashedPinCode);
 
-    if (theSame) {
-      storage.write('pin-code', { pinCode: hashedPinCode, isLocked: false });
+    if (!theSame) {
+      throw new Error('The pin code is incorrect');
     }
+
+    storage.write('pin-code', { pinCode: hashedPinCode, isLocked: false });
 
     return theSame;
   }

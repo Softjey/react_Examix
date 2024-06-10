@@ -9,24 +9,32 @@ export const EnterPinCodeSchema = z.object({
     .max(8, 'Maximum length is 8'),
 });
 
+export const CurrentPasswordSchema = z.object({
+  currentPassword: z
+    .string()
+    .min(1, 'Password is required')
+    .min(8, 'Password must be at least 8 characters')
+    .max(20, 'Max length is 20'),
+});
+
+export const PinCodePasswordSchema = EnterPinCodeSchema.extend({
+  currentPassword: z
+    .string()
+    .min(1, 'Password is required')
+    .min(8, 'Password must be at least 8 characters')
+    .max(20, 'Max length is 20'),
+});
+
+export type CurrentPasswordValues = z.infer<typeof CurrentPasswordSchema>;
+export type EnterPinCodeValues = z.infer<typeof EnterPinCodeSchema>;
+export type PinCodePasswordValues = z.infer<typeof PinCodePasswordSchema>;
+
 export const getSetPinCodeSchema = (resetMode: boolean) => {
   if (resetMode) {
-    return z.object({
-      currentPassword: z
-        .string()
-        .min(1, 'Password is required')
-        .min(8, 'Password must be at least 8 characters')
-        .max(20, 'Max length is 20'),
-    });
+    return CurrentPasswordSchema;
   }
 
-  return EnterPinCodeSchema.extend({
-    currentPassword: z
-      .string()
-      .min(1, 'Password is required')
-      .min(8, 'Password must be at least 8 characters')
-      .max(20, 'Max length is 20'),
-  });
+  return PinCodePasswordSchema;
 };
 
 export type EnterPinCodeType = z.infer<typeof EnterPinCodeSchema>;

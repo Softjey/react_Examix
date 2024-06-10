@@ -11,17 +11,16 @@ import {
   EnterPinCodeType,
   EnterPinCodeSchema,
 } from '../components/features/ChangePinCode/PinCodeSchemas';
-// import ErrorSnackBar from '../components/UI/errors/ErrorSnackBar';
+import ErrorSnackBar from '../components/UI/errors/ErrorSnackBar';
 
 interface Props {}
 
 const LockedPage: React.FC<Props> = () => {
   const { data: user } = useAuth();
   const userName = user?.name || 'User';
-
-  const { unlock } = usePinCode();
-
   const [open, setOpen] = useState<boolean>(false);
+  const { unlock, unlockMutation } = usePinCode();
+  const { error, isError, reset } = unlockMutation;
 
   const {
     register,
@@ -99,7 +98,7 @@ const LockedPage: React.FC<Props> = () => {
         </Button>
       </Box>
       <SetPinCodeDialog resetMode open={open} onClose={() => setOpen(false)} />
-      {/* <ErrorSnackBar open={isError} errorMessage={error?.message} onClose={() => reset()} /> */}
+      <ErrorSnackBar open={isError} errorMessage={error?.message} onClose={reset} />
     </Box>
   );
 };
