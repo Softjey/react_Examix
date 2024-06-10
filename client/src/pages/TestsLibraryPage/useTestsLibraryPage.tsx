@@ -22,7 +22,7 @@ export default function useTestsLibraryPage() {
   const { tests, pagesAmount, isLoading, error } = useTests({ limit: 30, search, subjects, page });
 
   const handleFiltersChange = (filters: TestsFiltersValues) => {
-    const newSearchParams = new URLSearchParams(searchParams);
+    const newSearchParams = new URLSearchParams();
 
     if (filters.search) {
       newSearchParams.set('search', filters.search);

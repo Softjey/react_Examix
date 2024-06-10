@@ -27,7 +27,7 @@ interface Props<T extends FieldValues>
 
 const TestsAutocomplete = <T extends FieldValues>(props: Props<T>) => {
   const { name, control, label, controllerProps, ...restProps } = props;
-  const { tests, isPending } = useTests();
+  const { tests, isPending } = useTests({ limit: 20 });
 
   return (
     <Controller
