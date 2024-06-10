@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, TextField, Typography, Box, Stack } from '@mui/material';
 import Button from './UI/buttons/Button';
 
-const DeleteAccount: React.FC = () => {
+const DeleteAccount: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [password, setPassword] = useState('');
 
@@ -16,8 +16,13 @@ const DeleteAccount: React.FC = () => {
   };
 
   return (
-    <Stack>
-      <Button variant="contained" color="error" onClick={handleDeleteClick}>
+    <Stack
+      title="This feature is unavailable"
+      sx={{
+        cursor: 'not-allowed',
+      }}
+    >
+      <Button disabled={disabled} variant="contained" color="error" onClick={handleDeleteClick}>
         Delete Account
       </Button>
 

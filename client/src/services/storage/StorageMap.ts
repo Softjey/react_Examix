@@ -19,6 +19,7 @@ type StorageMap = {
   'student-exam-credentials': StudentExamCredentials;
   'author-exam-credentials': AuthorExamCredentials;
   'pin-code': PinCode;
+  theme: 'light' | 'dark';
 };
 
 export default StorageMap;
