@@ -39,7 +39,7 @@ const SettingsPage: React.FC = () => (
       <SettingsOption
         name="Delete Account"
         description="Once you delete your account, there is no going back."
-        action={<DeleteAccountButton />}
+        action={<DeleteAccountButton disabled />}
       />
     </SettingsSection>
   </HomeLayout>
