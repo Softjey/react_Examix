@@ -1,35 +1,62 @@
-import { Dialog, Stack, Typography, TextField, Button, DialogProps } from '@mui/material';
+import { Dialog, Stack, Typography, TextField, DialogProps } from '@mui/material';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { usePinCode } from '../../../store/contexts/PinCodeContext';
 import ErrorSnackBar from '../../UI/errors/ErrorSnackBar';
+import { getSetPinCodeSchema } from './PinCodeSchemas';
+import Button from '../../UI/buttons/Button';
 
 interface Props extends Omit<DialogProps, 'onClose'> {
   resetMode?: boolean;
   onClose: () => void;
 }
 
-const SetPinCodeModal: React.FC<Props> = ({ onClose, resetMode, ...rest }) => {
-  const { setPinCode, setPinMutation, checkPasswordMutation, pinCodeIsSet } = usePinCode();
+const SetPinCodeDialog: React.FC<Props> = ({ onClose, resetMode = false, ...rest }) => {
+  const { setPinCode, setPinMutation, checkPasswordMutation } = usePinCode();
   const error = checkPasswordMutation.error ?? setPinMutation.error;
   const isPending = checkPasswordMutation.isPending ?? setPinMutation.isPending;
-  const { register, handleSubmit, reset } = useForm({
-    defaultValues: {
-      pinCode: '',
-      currentPassword: '',
-    },
+
+  const SetPinCodeSchema = getSetPinCodeSchema(!!resetMode);
+
+  type SetPinCodeType = z.infer<typeof SetPinCodeSchema>;
+
+  const defaultValues = !resetMode
+    ? {
+        pinCode: '',
+        currentPassword: '',
+      }
+    : {
+        currentPassword: '',
+      };
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<SetPinCodeType>({
+    resolver: zodResolver(SetPinCodeSchema),
+    defaultValues,
   });
 
-  const onSubmit = handleSubmit(({ pinCode, currentPassword }) => {
-    const newPinCode = resetMode ? null : pinCode;
+  const onSubmit = handleSubmit((data) => {
+    const newPinCode = 'pinCode' in data ? (data.pinCode as string) : null;
+    const { currentPassword } = data;
+
+    if (newPinCode === undefined) return;
 
     setPinCode(currentPassword, newPinCode, {
       onSuccess: () => {
         onClose();
-        reset();
       },
+      onSettled: () => reset(),
     });
   });
+
+  // eslint-disable-next-line no-console
+  console.log(errors);
 
   const resetError = () => {
     checkPasswordMutation.reset();
@@ -42,6 +69,8 @@ const SetPinCodeModal: React.FC<Props> = ({ onClose, resetMode, ...rest }) => {
         <Typography variant="h5">{resetMode ? 'Reset pin code' : 'Set pin code'}</Typography>
 
         <TextField
+          error={!!errors.currentPassword}
+          helperText={errors.currentPassword?.message?.toString()}
           disabled={isPending}
           fullWidth
           autoFocus
@@ -52,14 +81,16 @@ const SetPinCodeModal: React.FC<Props> = ({ onClose, resetMode, ...rest }) => {
           {...register('currentPassword')}
         />
 
-        {!pinCodeIsSet && !resetMode && (
+        {!resetMode && (
           <TextField
+            // error={!!errors.pinCode}
+            // helperText={errors.pinCode?.message?.toString()}
             disabled={isPending}
             fullWidth
             label="Enter New PIN Code"
             variant="outlined"
             autoComplete="off"
-            {...register('pinCode')}
+            // {...register('pinCode')}
           />
         )}
 
@@ -79,4 +110,4 @@ const SetPinCodeModal: React.FC<Props> = ({ onClose, resetMode, ...rest }) => {
   );
 };
 
-export default SetPinCodeModal;
+export default SetPinCodeDialog;
