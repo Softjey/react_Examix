@@ -1,7 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Box, BoxProps, Button, CircularProgress, Stack, TextField } from '@mui/material';
+import React, { useState, useRef } from 'react';
+import Box from '@mui/material/Box';
 import CreateIcon from '@mui/icons-material/Create';
+import TextField from '@mui/material/TextField';
+import { BoxProps } from '@mui/material';
+import Button from '@mui/material/Button';
 import { useForm, UseFormSetValue, FieldValues } from 'react-hook-form';
+import CircularProgress from '@mui/material/CircularProgress';
+import { Stack } from '@mui/material';
 import useAuth from '../../hooks/queries/useAuth';
 import useUpdateMe from '../../hooks/queries/useUpdateMe';
 import AvatarLinkUploader from '../CreateTestForm/schemas/AvatarLinkUploader';
@@ -9,7 +14,7 @@ import AvatarLinkUploader from '../CreateTestForm/schemas/AvatarLinkUploader';
 interface Props extends BoxProps {}
 
 const MyProfileItem: React.FC<Props> = (props) => {
-  const { data: user } = useAuth();
+  const { data: user, refetch } = useAuth();
   const { updateMe, isPending, isError, error } = useUpdateMe();
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState(user ? user.name : '');
@@ -17,6 +22,10 @@ const MyProfileItem: React.FC<Props> = (props) => {
   const textFieldRef = useRef<HTMLInputElement>(null);
   const { register, setValue } = useForm<FieldValues>();
   const [disabled, setDisabled] = useState(false);
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
 
   const handleEditClick = () => {
     setEditMode(true);
@@ -34,49 +43,31 @@ const MyProfileItem: React.FC<Props> = (props) => {
   };
 
   const handleCancel = () => {
-    if (user) {
-      setName(user.name);
-      setAvatarLink(user.photo);
-    }
+    setName(user.name);
+    setAvatarLink(user.photo);
     setEditMode(false);
   };
 
   const handleSave = async () => {
     setDisabled(true);
-    updateMe(
-      { name, photo: avatarLink },
-      {
-        onSuccess: () => {
-          setEditMode(false);
-          setDisabled(false);
-        },
-        onError: () => {
-          setDisabled(false);
-        },
-      },
-    );
+    await updateMe({ name, photo: avatarLink });
+    refetch();
+    setEditMode(false);
+    setDisabled(false);
   };
-
-  useEffect(() => {
-    if (user) {
-      setName(user.name);
-      setAvatarLink(user.photo);
-    }
-  }, [user]);
 
   return (
     <Box
       gap={2}
       sx={{
         display: 'flex',
-        alignItems: 'flex-start',
+        alignItems: 'flex-top',
         marginBottom: 2,
         paddingBlock: 1,
         position: 'relative',
         pointerEvents: isPending ? 'none' : 'auto',
         opacity: isPending ? 0.5 : 1,
       }}
-      {...props}
     >
       <AvatarLinkUploader
         disabled={disabled}
@@ -96,13 +87,19 @@ const MyProfileItem: React.FC<Props> = (props) => {
           autoComplete="off"
           size="small"
           inputRef={textFieldRef}
-          onClick={handleEditClick}
           sx={{
             width: 180,
             height: 40,
-            color: editMode ? 'text.primary' : 'text.secondary',
-            '.MuiInputBase-root': { height: '100%' },
-            '.MuiOutlinedInput-input': { paddingInline: 1 },
+            '.MuiInputBase-root': {
+              height: '100%',
+            },
+            '.MuiOutlinedInput-input': {
+              padding: '8px 10px',
+            },
+            '& .MuiInputBase-input.Mui-disabled': {
+              WebkitTextFillColor: 'black',
+              fontWeight: 'bold',
+            },
           }}
         />
 
@@ -111,7 +108,9 @@ const MyProfileItem: React.FC<Props> = (props) => {
             color="disabled"
             sx={{
               cursor: 'pointer',
-              '&:hover': { color: 'primary.main' },
+              '&:hover': {
+                color: 'primary.main',
+              },
             }}
             onClick={handleEditClick}
           />

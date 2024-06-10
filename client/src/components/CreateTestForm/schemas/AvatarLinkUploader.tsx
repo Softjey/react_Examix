@@ -148,8 +148,8 @@ const AvatarLinkUploader: React.FC<Props> = ({
             sx={{
               display: 'flex',
               alignItems: 'center',
-              alignSelf: 'center',
               justifyContent: 'center',
+              alignSelf: 'center',
               width: '80%',
               aspectRatio: '3 / 3',
               backgroundSize: 'cover',
