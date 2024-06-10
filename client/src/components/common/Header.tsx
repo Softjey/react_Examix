@@ -5,16 +5,11 @@ import BackButton from '../UI/buttons/BackButton';
 interface Props {
   disableBackBtn?: boolean;
   style?: CSSObject;
-  invertHeader?: boolean;
 }
 
-const Header: React.FC<Props> = ({ invertHeader, disableBackBtn, style }) => (
+const Header: React.FC<Props> = ({ disableBackBtn, style }) => (
   <header css={{ position: 'relative', ...style }}>
-    <Logo
-      sx={{
-        color: invertHeader ? 'white' : 'auto',
-      }}
-    />
+    <Logo />
     {!disableBackBtn && (
       <BackButton
         sx={{ position: 'absolute', transform: 'translateY(-50%)', top: '50%', left: '-95px' }}

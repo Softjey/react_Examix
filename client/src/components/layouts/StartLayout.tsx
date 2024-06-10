@@ -6,16 +6,9 @@ import { center, columnCenter } from '../../styles/flex';
 export interface Props extends BoxProps {
   header?: boolean;
   backBtn?: boolean;
-  invertHeader?: boolean;
 }
 
-const StartLayout: React.FC<Props> = ({
-  invertHeader,
-  children,
-  sx,
-  header = true,
-  backBtn = false,
-}) => (
+const StartLayout: React.FC<Props> = ({ children, sx, header = true, backBtn = false }) => (
   <Box sx={{ minHeight: '100vh', ...center, ...sx }}>
     <Box
       sx={{
@@ -25,7 +18,7 @@ const StartLayout: React.FC<Props> = ({
         ...columnCenter,
       }}
     >
-      {header && <Header invertHeader={invertHeader} disableBackBtn={!backBtn} />}
+      {header && <Header disableBackBtn={!backBtn} />}
       {children}
     </Box>
   </Box>
