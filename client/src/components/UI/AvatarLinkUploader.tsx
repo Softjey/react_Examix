@@ -10,12 +10,12 @@ import {
 import { useState, ChangeEvent } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { FieldValues, UseFormRegisterReturn, UseFormSetValue } from 'react-hook-form';
-import { Nullable } from '../../../types/utils/Nullable';
-import isImageAcessable from '../../../utils/isImageAcessable';
-import isValidUrl from '../../../utils/isValidUrl';
-import UserAvatar from '../../UI/UserAvatar';
-import useAuth from '../../../hooks/queries/useAuth';
-import useUpdateMe from '../../../hooks/queries/useUpdateMe';
+import useAuth from '../../hooks/queries/useAuth';
+import useUpdateMe from '../../hooks/queries/useUpdateMe';
+import { Nullable } from '../../types/utils/Nullable';
+import isImageAcessable from '../../utils/isImageAcessable';
+import isValidUrl from '../../utils/isValidUrl';
+import UserAvatar from './UserAvatar';
 
 interface Props extends BoxProps {
   userAvatarLink: string | null;

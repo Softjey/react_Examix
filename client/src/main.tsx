@@ -12,7 +12,7 @@ import './index.css';
 import router from './services/Router/router';
 import queryClient from './services/Query/queryClient';
 import ThemeProvider from './components/providers/ThemeProvider';
-import { PinCodeProvider } from './components/providers/PinCodeProvider';
+import PinCodeProvider from './components/providers/PinCodeProvider';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>

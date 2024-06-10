@@ -1,70 +1,41 @@
-// import React, { ComponentProps, useState } from 'react';
-// import { usePinCode } from '../store/contexts/PinCodeContext';
-
-// interface Props extends ComponentProps<'div'> {}
-
-// const LockedPage: React.FC<Props> = ({ ...rest }) => {
-//   const [value, setValue] = useState('');
-
-//   const { unlock } = usePinCode();
-
-//   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-
-//     unlock(value);
-//   };
-
-//   return (
-//     <div {...rest}>
-//       <h1>Locked page</h1>
-//       <form action="" onSubmit={handleSubmit}>
-//         <input type="text" onChange={(e) => setValue(e.target.value)} value={value} />
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default LockedPage;
+import { useState } from 'react';
 import { Box, Fab, Stack, TextField, Typography } from '@mui/material';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '../components/UI/buttons/Button';
 import useAuth from '../hooks/queries/useAuth';
+import { usePinCode } from '../store/contexts/PinCodeContext';
+import SetPinCodeDialog from '../components/features/ChangePinCode/SetPinCodeDialog';
+import {
+  EnterPinCodeType,
+  EnterPinCodeSchema,
+} from '../components/features/ChangePinCode/PinCodeSchemas';
 // import ErrorSnackBar from '../components/UI/errors/ErrorSnackBar';
 
 interface Props {}
-
-const LockedSchema = z.object({
-  pinCode: z
-    .string()
-    .min(0, 'Pin-code is required')
-    .regex(/^[0-9]+$/, 'Pin-code must contain only digits')
-    .min(4, 'Code length must be at least 4')
-    .max(8, 'Maximum length is 8'),
-});
-
-type LockedType = z.infer<typeof LockedSchema>;
 
 const LockedPage: React.FC<Props> = () => {
   const { data: user } = useAuth();
   const userName = user?.name || 'User';
 
+  const { unlock } = usePinCode();
+
+  const [open, setOpen] = useState<boolean>(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LockedType>({
-    resolver: zodResolver(LockedSchema),
+  } = useForm<EnterPinCodeType>({
+    resolver: zodResolver(EnterPinCodeSchema),
     defaultValues: {
       pinCode: '',
     },
   });
 
   const onSubmit = handleSubmit((data) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
+    unlock(data.pinCode);
   });
 
   return (
@@ -123,11 +94,11 @@ const LockedPage: React.FC<Props> = () => {
           </Fab>
         </Stack>
 
-        <Button size="small" color="primary">
+        <Button onClick={() => setOpen(true)} size="small" color="primary">
           Forgot pin-code
         </Button>
       </Box>
-
+      <SetPinCodeDialog resetMode open={open} onClose={() => setOpen(false)} />
       {/* <ErrorSnackBar open={isError} errorMessage={error?.message} onClose={() => reset()} /> */}
     </Box>
   );

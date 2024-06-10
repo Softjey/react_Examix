@@ -9,7 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Stack } from '@mui/material';
 import useAuth from '../../hooks/queries/useAuth';
 import useUpdateMe from '../../hooks/queries/useUpdateMe';
-import AvatarLinkUploader from '../CreateTestForm/schemas/AvatarLinkUploader';
+import AvatarLinkUploader from './AvatarLinkUploader';
 
 interface Props extends BoxProps {}
 
