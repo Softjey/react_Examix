@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@mui/material';
+import Button from './UI/buttons/Button';
 
 const ChangeUserInfo: React.FC = () => <Button>Change</Button>;
 

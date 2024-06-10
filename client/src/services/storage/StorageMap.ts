@@ -13,6 +13,7 @@ export interface AuthorExamCredentials {
 type StorageMap = {
   'student-exam-credentials': StudentExamCredentials;
   'author-exam-credentials': AuthorExamCredentials;
+  theme: 'light' | 'dark';
 };
 
 export default StorageMap;

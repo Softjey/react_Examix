@@ -157,13 +157,7 @@ const CreateTestForm: React.FC<Props> = () => {
           </Button>
         </Stack>
 
-        <LoadingButton
-          variant="contained"
-          size="large"
-          type="submit"
-          loading={loading}
-          buttonBase={Button}
-        >
+        <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
           Create Test
         </LoadingButton>
       </Box>

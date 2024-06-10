@@ -8,9 +8,10 @@ import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
 import CreateTestPage from '../../pages/CreateTestPage/CreateTestPage';
-import TestPage from '../../pages/TestPage';
 import SettingsPage from '../../pages/SettingsPage';
+import TestPage from '../../pages/TestPage';
 import ExamPage from '../../pages/ExamPage';
+import ChangePasswordPage from '../../dev/ChangePasswordPage';
 import OngoingExamPage from '../../pages/OngoingExamPage/OngoingExamPage';
 import LoginPage from '../../pages/LoginPage';
 import JoinPage from '../../pages/JoinPage';
@@ -44,6 +45,10 @@ const router = createRouter([
   {
     path: Routes.NOT_FOUND,
     element: <NotFoundPage />,
+  },
+  {
+    path: Routes.RESET_PASSWORD,
+    element: <ChangePasswordPage />,
   },
   {
     path: Routes.HOME,
