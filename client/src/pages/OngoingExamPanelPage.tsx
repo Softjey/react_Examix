@@ -13,6 +13,7 @@ import ExamResultsTable from '../components/common/ExamResultsTable/ExamResultsT
 import useDeleteOngoingExam from '../hooks/queries/useDeleteOngoingExam';
 import useStartExam from '../hooks/queries/useStartExam';
 import LoadingButton from '../components/UI/buttons/LoadingButton';
+import ErrorSnackBar from '../components/UI/errors/ErrorSnackBar';
 
 interface Props extends HomeLayoutProps {}
 
@@ -33,12 +34,6 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
 
   if (!exam || !credentials) {
     return <LoadingPage layout="home" />;
-  }
-
-  if (error) {
-    // TODO: Change to use Snackbar
-    // eslint-disable-next-line no-alert
-    alert(error.message);
   }
 
   const { test, students, results } = exam;
@@ -91,6 +86,12 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
       <StudentsList variant="accordion" students={students ?? []} />
 
       {results && results.length > 0 && <ExamResultsTable questions={results} />}
+
+      <ErrorSnackBar
+        open={!!error}
+        errorMessage={error?.message}
+        onClose={() => starting.reset()}
+      />
     </HomeLayout>
   );
 });
