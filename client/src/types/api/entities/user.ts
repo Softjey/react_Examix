@@ -3,10 +3,9 @@ import Role from '../enums/Role';
 
 export interface User {
   id: number;
-  name: string; // (modifyable)
+  name: string;
   email: string;
-  photo: Nullable<string>; // (modifyable)
+  photo: Nullable<string>;
   role: Role;
   createdAt: string;
-  // password (modifyable)
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { CreateTestDtoAuthorId } from './dtos/create-test.dto';
 import { Prisma, Question, Test, TestQuestion, User } from '@prisma/client';
@@ -12,6 +12,21 @@ export class TestsService {
 
   async create({ questions, name, image, description, subject, authorId }: CreateTestDtoAuthorId) {
     return this.prismaService.$transaction(async (prisma) => {
+      const questionIds = questions.map((q) => q.questionId);
+      const existingQuestions = await prisma.question.findMany({
+        where: { id: { in: questionIds } },
+        select: { id: true },
+      });
+
+      const existingQuestionIds = new Set(existingQuestions.map((q) => q.id));
+      const missingQuestionIds = questionIds.filter((id) => !existingQuestionIds.has(id));
+
+      if (missingQuestionIds.length > 0) {
+        throw new ConflictException(
+          `Questions with IDs [${missingQuestionIds.join(', ')}] do not exist.`,
+        );
+      }
+
       const test = await prisma.test.create({
         data: { name, image, description, authorId, subject },
       });

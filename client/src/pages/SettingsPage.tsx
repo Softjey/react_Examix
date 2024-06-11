@@ -1,32 +1,48 @@
 import React from 'react';
-import { List, Box } from '@mui/material';
 import HomeLayout from '../components/layouts/HomeLayout';
-import ChangePinCode from './ChangePinCode';
-import ChangeTheme from './ChangeTheme';
-import ChangeUserInfo from './ChangeUserInfo';
-import DeleteAccount from './DeleteAccount';
+import SettingsSection from '../components/SettingsSection';
+import SettingsOption from '../components/SettingsOption';
+import ChangeThemeSwitch from '../components/ChangeThemeSwitch';
+import ChangePinCodeButton from '../components/features/ChangePinCode/ChangePinCode';
+import DeleteAccountButton from '../components/DeleteAccountButton';
+import ChangePasswordButton from '../components/ChangePassword';
+import MyProfileItem from '../components/UI/MyProfileItem';
 
-const SettingsPage: React.FC = () => {
-  return (
-    <HomeLayout>
-      <Box sx={{ bgcolor: 'background.paper', color: 'text.primary', height: '100vh', p: 1 }}>
-        <List sx={{ width: '100%', maxWidth: 350, paddingTop: 0, bgcolor: 'background.paper' }}>
-          <Box sx={{ mb: 1 }}>
-            <ChangeUserInfo />
-          </Box>
-          <Box sx={{ mb: 1 }}>
-            <ChangePinCode />
-          </Box>
-          <Box sx={{ mb: 1 }}>
-            <ChangeTheme />
-          </Box>
-          <Box sx={{ mb: 1 }}>
-            <DeleteAccount />
-          </Box>
-        </List>
-      </Box>
-    </HomeLayout>
-  );
-};
+const SettingsPage: React.FC = () => (
+  <HomeLayout centered centeredSx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+    <SettingsSection name="Profile">
+      <MyProfileItem />
+    </SettingsSection>
+
+    <SettingsSection name="Security">
+      <SettingsOption
+        name="Pin Code Protection"
+        description="Security features help keep your Tests/Exams secure and updated."
+        action={<ChangePinCodeButton />}
+      />
+      <SettingsOption
+        name="Change Password"
+        description="Ensure your account's safety by changing your password"
+        action={<ChangePasswordButton />}
+      />
+    </SettingsSection>
+
+    <SettingsSection name="Appearance">
+      <SettingsOption
+        name="Dark theme"
+        description="Select a single theme and switch between your day and night themes."
+        action={<ChangeThemeSwitch />}
+      />
+    </SettingsSection>
+
+    <SettingsSection name="Delete Account">
+      <SettingsOption
+        name="Delete Account"
+        description="Once you delete your account, there is no going back."
+        action={<DeleteAccountButton disabled />}
+      />
+    </SettingsSection>
+  </HomeLayout>
+);
 
 export default SettingsPage;

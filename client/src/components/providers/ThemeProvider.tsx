@@ -4,13 +4,24 @@ import CssBaseline from '@mui/material/CssBaseline';
 import darkTheme from '../../services/theme/darkTheme';
 import lightTheme from '../../services/theme/lightTheme';
 import { ThemeContext } from '../../services/theme/ThemeContext';
+import storage from '../../services/storage';
 
 const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [themeMode, setThemeMode] = useState<'light' | 'dark'>('light');
+  const prefferedTheme = window.matchMedia('(prefers-color-scheme: light)').matches
+    ? 'light'
+    : 'dark';
+
+  const [themeMode, setThemeMode] = useState<'light' | 'dark'>(
+    () => storage.read('theme') ?? prefferedTheme,
+  );
 
   const contextValue = useMemo(() => {
     const toggleTheme = () => {
-      setThemeMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+      setThemeMode((prevMode) => {
+        const newTheme = prevMode === 'light' ? 'dark' : 'light';
+        storage.write('theme', newTheme);
+        return newTheme;
+      });
     };
 
     return {

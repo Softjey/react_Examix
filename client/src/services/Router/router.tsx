@@ -11,10 +11,12 @@ import SettingsPage from '../../pages/SettingsPage';
 import CreateTestPage from '../../pages/CreateTestPage/CreateTestPage';
 import TestPage from '../../pages/TestPage';
 import ExamPage from '../../pages/ExamPage';
+import ChangePasswordPage from '../../pages/ChangePasswordPage';
 import OngoingExamPage from '../../pages/OngoingExamPage/OngoingExamPage';
 import LoginPage from '../../pages/LoginPage';
 import JoinPage from '../../pages/JoinPage';
 import OngoingExamPanelPage from '../../pages/OngoingExamPanelPage';
+import LockedPage from '../../pages/LockedPage';
 
 const router = createRouter([
   {
@@ -44,6 +46,10 @@ const router = createRouter([
   {
     path: Routes.NOT_FOUND,
     element: <NotFoundPage />,
+  },
+  {
+    path: Routes.RESET_PASSWORD,
+    element: <ChangePasswordPage />,
   },
   {
     path: Routes.HOME,
@@ -116,6 +122,10 @@ const router = createRouter([
         <OngoingExamPage />
       </OnlyPublic>
     ),
+  },
+  {
+    path: Routes.LOCKED,
+    element: <LockedPage />,
   },
 ]);
 
