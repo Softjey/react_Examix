@@ -1,17 +1,17 @@
 import React from 'react';
+import { Box, BoxProps } from '@mui/material';
 import Header from '../common/Header';
 import { center, columnCenter } from '../../styles/flex';
-import { ComponentProps } from '../../types/utils/ComponentProps';
 
-export interface Props extends ComponentProps<'div'> {
+export interface Props extends BoxProps {
   header?: boolean;
   backBtn?: boolean;
 }
 
-const StartLayout: React.FC<Props> = ({ children, css, header = true, backBtn = false }) => (
-  <div css={{ minHeight: '100vh', ...center, ...css }}>
-    <div
-      css={{
+const StartLayout: React.FC<Props> = ({ children, sx, header = true, backBtn = false }) => (
+  <Box sx={{ minHeight: '100vh', ...center, ...sx }}>
+    <Box
+      sx={{
         height: '300px',
         justifyContent: 'flex-start',
         gap: '20px',
@@ -20,8 +20,8 @@ const StartLayout: React.FC<Props> = ({ children, css, header = true, backBtn = 
     >
       {header && <Header disableBackBtn={!backBtn} />}
       {children}
-    </div>
-  </div>
+    </Box>
+  </Box>
 );
 
 export default StartLayout;

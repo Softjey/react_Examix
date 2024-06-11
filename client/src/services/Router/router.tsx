@@ -6,15 +6,17 @@ import Authenticated from '../../components/hocs/Authenticated';
 import HomePage from '../../pages/HomePage';
 import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
-import HomeLayout from '../../components/layouts/HomeLayout';
 import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
 import CreateTestPage from '../../pages/CreateTestPage/CreateTestPage';
+import SettingsPage from '../../pages/SettingsPage';
 import TestPage from '../../pages/TestPage';
 import ExamPage from '../../pages/ExamPage';
+import ChangePasswordPage from '../../pages/ChangePasswordPage';
 import OngoingExamPage from '../../pages/OngoingExamPage/OngoingExamPage';
 import LoginPage from '../../pages/LoginPage';
 import JoinPage from '../../pages/JoinPage';
 import OngoingExamPanelPage from '../../pages/OngoingExamPanelPage';
+import LockedPage from '../../pages/LockedPage';
 
 const router = createRouter([
   {
@@ -44,6 +46,10 @@ const router = createRouter([
   {
     path: Routes.NOT_FOUND,
     element: <NotFoundPage />,
+  },
+  {
+    path: Routes.RESET_PASSWORD,
+    element: <ChangePasswordPage />,
   },
   {
     path: Routes.HOME,
@@ -81,7 +87,7 @@ const router = createRouter([
     path: Routes.SETTINGS,
     element: (
       <Authenticated>
-        <HomeLayout>Settings page</HomeLayout>
+        <SettingsPage />
       </Authenticated>
     ),
   },
@@ -116,6 +122,10 @@ const router = createRouter([
         <OngoingExamPage />
       </OnlyPublic>
     ),
+  },
+  {
+    path: Routes.LOCKED,
+    element: <LockedPage />,
   },
 ]);
 

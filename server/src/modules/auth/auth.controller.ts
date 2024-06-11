@@ -75,7 +75,7 @@ export class AuthController {
   @UseSessionGuard()
   @Post('check-password')
   async checkPassword(@User() user: UserI, @Body() { password }: CheckPasswordDto) {
-    const validatedUser = this.authService.validateUser(user.email, password);
+    const validatedUser = await this.authService.validateUser(user.email, password);
 
     if (!validatedUser) {
       throw new UnauthorizedException('Password is incorrect.');

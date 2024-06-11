@@ -27,6 +27,7 @@ const CreateTestFormTimeLimitPicker: React.FC<Props> = ({ questionIndex, error, 
 
         return (
           <TimeLimitPicker
+            maxTime={dayjs().startOf('hour').minute(10)}
             value={value}
             onClose={onBlur}
             onChange={onTimeLimitChange}

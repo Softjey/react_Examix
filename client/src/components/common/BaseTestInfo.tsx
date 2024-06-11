@@ -17,9 +17,16 @@ const BaseTestInfo: React.FC<Props> = ({ sx, test, action, ...rest }) => {
 
   return (
     <Stack
-      direction="row"
       justifyContent="space-between"
-      sx={{ gap: 6, p: 2, ...sx }}
+      sx={{
+        gap: 6,
+        p: 2,
+        flexDirection: {
+          sm: 'column',
+          md: 'row',
+        },
+        ...sx,
+      }}
       component="section"
       {...rest}
     >
@@ -43,7 +50,7 @@ const BaseTestInfo: React.FC<Props> = ({ sx, test, action, ...rest }) => {
         </Typography>
       </Stack>
 
-      <Stack spacing={2} overflow="visible">
+      <Stack spacing={2} alignItems="center" overflow="visible">
         <Box position="relative">
           <TestAvatar width={300} test={test} />
           <SubjectItem

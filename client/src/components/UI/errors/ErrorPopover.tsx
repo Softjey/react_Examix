@@ -38,6 +38,7 @@ const ErrorPopover: React.FC<Props> = ({ isError, errorMessage, children }) => {
       </div>
 
       <Popover
+        disableScrollLock
         disableAutoFocus
         disableEnforceFocus
         id="mouse-over-popover"

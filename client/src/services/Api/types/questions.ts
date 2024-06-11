@@ -11,4 +11,4 @@ export type QuestionsParams = {
   types?: QuestionType[];
 };
 
-export type QuestionsRepsonse = Question[];
+export type QuestionsResponse = Question[];
