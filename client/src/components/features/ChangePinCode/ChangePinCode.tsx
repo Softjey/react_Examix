@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Switch from '@mui/material/Switch';
 import { Button, Box } from '@mui/material';
-import SetPinCodeModal from './SetPinCodeDialog';
+import SetPinCodeDialog from './SetPinCodeDialog';
 import { usePinCode } from '../../../store/contexts/PinCodeContext';
 
 const ChangePinCode: React.FC = () => {
@@ -41,7 +41,7 @@ const ChangePinCode: React.FC = () => {
         <Switch checked={pinCodeIsSet} onChange={handlePinToggle} />
       </Box>
 
-      <SetPinCodeModal resetMode={resetMode} open={setPinDialogOpen} onClose={handleDialogClose} />
+      <SetPinCodeDialog resetMode={resetMode} open={setPinDialogOpen} onClose={handleDialogClose} />
     </>
   );
 };
