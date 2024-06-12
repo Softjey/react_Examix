@@ -2,7 +2,7 @@ import { Box, Stack, TextField, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import {
   CreateTestFormType,
@@ -57,12 +57,17 @@ const CreateTestForm: React.FC<Props> = () => {
     mode: 'onBlur',
   });
 
+  const shouldScroll = useRef<boolean>(false);
+
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
     name: 'questions',
   });
 
-  const addQuestionCard = () => append(getDefaultQuestion(), { shouldFocus: false });
+  const addQuestionCard = () => {
+    append(getDefaultQuestion(), { shouldFocus: false });
+    shouldScroll.current = true;
+  };
 
   const addQuestionCardFromServer = (value: Question) => {
     const { type, ...question } = value;
@@ -77,6 +82,8 @@ const CreateTestForm: React.FC<Props> = () => {
       },
       { shouldFocus: false },
     );
+
+    shouldScroll.current = true;
   };
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -131,7 +138,12 @@ const CreateTestForm: React.FC<Props> = () => {
           Questions
         </Typography>
 
-        <FormQuestionList width="100%" questions={fields} onRemove={remove} />
+        <FormQuestionList
+          shouldScroll={shouldScroll}
+          width="100%"
+          questionFields={fields}
+          onRemove={remove}
+        />
 
         <Stack width="100%" flexDirection="row" justifyContent="start" gap={2}>
           <Button

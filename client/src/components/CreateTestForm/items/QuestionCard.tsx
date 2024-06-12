@@ -34,7 +34,7 @@ interface Props extends CardProps {
 }
 
 const QuestionCard = forwardRef<HTMLDivElement, Props>(
-  ({ isFromServer, onDelete, type, questionIndex, ...props }, ref) => {
+  ({ isFromServer, onDelete, type, questionIndex, sx: cardSx, ...props }, ref) => {
     const {
       register,
       control,
@@ -76,8 +76,8 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
       <>
         <Card
           ref={ref}
-          onMouseEnter={() => setIsInfoOpened(true)}
-          onMouseLeave={() => setIsInfoOpened(false)}
+          onMouseEnter={isFromServer ? () => setIsInfoOpened(true) : undefined}
+          onMouseLeave={isFromServer ? () => setIsInfoOpened(false) : undefined}
           component={Paper}
           elevation={2}
           sx={{
@@ -88,10 +88,11 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
               opacity: 0.7,
               visibility: 'visible',
             },
+            ...cardSx,
           }}
           {...props}
         >
-          <DragBar sx={{ cursor: 'not-allowed' }} title="This feature is unavailable" />
+          <DragBar />
 
           <CardContent
             sx={{
