@@ -59,7 +59,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
               </Typography>
             )}
 
-            <Stack direction="row" justifyContent="space-around">
+            <Stack direction="row" justifyContent="center" spacing={2}>
               {students?.length !== 0 && status === 'created' && (
                 <LoadingButton
                   loading={isLoading}
@@ -67,7 +67,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
                   color="secondary"
                   onClick={startExam}
                 >
-                  Start exam
+                  Start Exam
                 </LoadingButton>
               )}
 
@@ -78,7 +78,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
                   color="error"
                   onClick={deleteExam}
                 >
-                  Delete exam
+                  Delete Exam
                 </LoadingButton>
               )}
             </Stack>
