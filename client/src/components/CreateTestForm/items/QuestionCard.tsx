@@ -72,6 +72,10 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
       }
     };
 
+    const { ref: questionTypeRef, ...questionTypeReg } = register(
+      `questions.${questionIndex}.type`,
+    );
+
     return (
       <>
         <Card
@@ -107,7 +111,8 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
               <QuestionTypeSelect
                 defaultValue={type}
                 disabled={disabled}
-                {...register(`questions.${questionIndex}.type`)}
+                {...questionTypeReg}
+                inputRef={questionTypeRef}
               />
 
               <ErrorPopover
