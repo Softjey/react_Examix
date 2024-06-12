@@ -14,6 +14,8 @@ const TestInfo: React.FC<Props> = ({ sx, ...rest }) => {
 
   const { loading } = useCreateTest();
 
+  const { ref: subjectRef, ...subjectRegister } = register('subject');
+
   return (
     <Box {...rest} display="flex" flexDirection="column" gap="24px" sx={{ width: '100%', ...sx }}>
       <CreateTestFormImageLinkUploader
@@ -34,10 +36,10 @@ const TestInfo: React.FC<Props> = ({ sx, ...rest }) => {
       />
       <SubjectSelect
         otherMenuItems={<MenuItem value="">No subject</MenuItem>}
-        {...register('subject')}
+        {...subjectRegister}
+        inputRef={subjectRef}
         error={!!errors.subject}
         helperText={errors.subject?.message?.toString()}
-        ref={null}
         disabled={loading}
       />
       <TextField

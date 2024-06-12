@@ -51,8 +51,7 @@ const FormAnswerItem: React.FC<Props> = ({
       <RadioCheckBox
         {...register(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`)}
         type={type}
-        ref={null}
-        /* this is neccessary because mui checkbox component
+        /* this is necessary because mui checkbox component
         is not working correctly with react-hook-form */
         checked={isCorrect}
         onChange={onCheckBoxChange}
