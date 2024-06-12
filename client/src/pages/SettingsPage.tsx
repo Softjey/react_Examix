@@ -17,7 +17,7 @@ const SettingsPage: React.FC = () => (
     <SettingsSection name="Security">
       <SettingsOption
         name="Pin Code Protection"
-        description="Security features help keep your Tests/Exams secure and updated."
+        description="Ensure the security of your tests and exams with our advanced pin code protection feature."
         action={<ChangePinCodeButton />}
       />
       <SettingsOption
