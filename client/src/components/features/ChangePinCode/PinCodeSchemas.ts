@@ -18,15 +18,11 @@ export const CurrentPasswordSchema = z.object({
 });
 
 export const PinCodePasswordSchema = EnterPinCodeSchema.extend({
-  currentPassword: z
-    .string()
-    .min(1, 'Password is required')
-    .min(8, 'Password must be at least 8 characters')
-    .max(20, 'Max length is 20'),
+  currentPassword: CurrentPasswordSchema.shape.currentPassword,
 });
 
+export type EnterPinCodeType = z.infer<typeof EnterPinCodeSchema>;
 export type CurrentPasswordValues = z.infer<typeof CurrentPasswordSchema>;
-export type EnterPinCodeValues = z.infer<typeof EnterPinCodeSchema>;
 export type PinCodePasswordValues = z.infer<typeof PinCodePasswordSchema>;
 
 export const getSetPinCodeSchema = (resetMode: boolean) => {
@@ -36,5 +32,3 @@ export const getSetPinCodeSchema = (resetMode: boolean) => {
 
   return PinCodePasswordSchema;
 };
-
-export type EnterPinCodeType = z.infer<typeof EnterPinCodeSchema>;
