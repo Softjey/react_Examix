@@ -105,9 +105,9 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
           >
             <Box display="flex" gap={1} flexWrap="wrap">
               <QuestionTypeSelect
+                defaultValue={type}
                 disabled={disabled}
                 {...register(`questions.${questionIndex}.type`)}
-                ref={null}
               />
 
               <ErrorPopover

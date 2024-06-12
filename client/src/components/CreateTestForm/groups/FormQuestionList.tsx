@@ -1,31 +1,79 @@
 import { Box, BoxProps, Typography } from '@mui/material';
 import { FieldArrayWithId } from 'react-hook-form';
-import { useEffect, useRef } from 'react';
+import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { CreateTestFormType } from '../schemas/createTestFormValidationSchemas';
 import QuestionCard from '../items/QuestionCard';
 import useCreateTestForm from '../../../hooks/useCreateTestForm';
 
 interface Props extends BoxProps {
-  questions: FieldArrayWithId<CreateTestFormType, 'questions', 'id'>[];
+  questionFields: FieldArrayWithId<CreateTestFormType, 'questions', 'id'>[];
   onRemove: (index: number) => void;
+  shouldScroll: MutableRefObject<boolean>;
 }
 
-const FormQuestionList: React.FC<Props> = ({ questions, onRemove, ...props }) => {
+const FormQuestionList: React.FC<Props> = ({
+  shouldScroll,
+  questionFields,
+  onRemove,
+  ...props
+}) => {
   const {
     formState: { errors },
     watch,
+    setValue,
   } = useCreateTestForm();
 
   const lastItemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (lastItemRef.current && questions.length > 1) {
+    if (lastItemRef.current && shouldScroll.current) {
       lastItemRef.current.scrollIntoView({ behavior: 'smooth' });
+
+      // this is necessary because scrollIntoView must be called only when appended new question
+      // eslint-disable-next-line no-param-reassign
+      shouldScroll.current = false;
     }
-  }, [questions]);
+  }, [questionFields, shouldScroll]);
+
+  const [pasteId, setPasteId] = useState<string | null>(null);
+  const [transparentId, setTransparentId] = useState<string | null>(null);
+
+  const watchedQuestions = watch('questions');
+
+  const dragItem = useRef<number>();
+  const dragOverItem = useRef<number | null>(null);
+
+  const handleDragStart = (position: number) => {
+    dragItem.current = position;
+    setTransparentId(questionFields[position].id);
+  };
+
+  const handleDragEnter = (position: number) => {
+    dragOverItem.current = position;
+
+    setPasteId(questionFields[position].id);
+  };
+
+  const handleDragEnd = () => {
+    setPasteId(null);
+    setTransparentId(null);
+
+    const reorderedQuestions = [...watchedQuestions];
+
+    reorderedQuestions.splice(
+      dragOverItem.current!,
+      0,
+      reorderedQuestions.splice(dragItem.current!, 1)[0],
+    );
+
+    dragItem.current = dragOverItem.current!;
+    dragOverItem.current = null;
+
+    setValue('questions', reorderedQuestions);
+  };
 
   return (
-    <Box {...props}>
+    <Box onDrop={(e) => e.preventDefault()} onDragOver={(e) => e.preventDefault()} {...props}>
       {(errors.questions?.message || errors.questions?.root?.message) && (
         <Typography color="error" variant="body1">
           {errors.questions.message || errors.questions.root?.message}
@@ -33,24 +81,56 @@ const FormQuestionList: React.FC<Props> = ({ questions, onRemove, ...props }) =>
       )}
 
       <Box display="flex" flexDirection="column" alignItems="center" gap="24px">
-        {questions.map((field, index) => {
+        {questionFields.map((field, index) => {
           const onDelete = (openSnackBar: () => void) => {
-            if (questions.length < 2) {
+            if (questionFields.length < 2) {
               openSnackBar();
             } else {
               onRemove(index);
             }
           };
 
+          const showPasteBar = pasteId === field.id;
+          const isTransparent = transparentId === field.id;
+
           return (
-            <QuestionCard
-              ref={index === questions.length - 1 ? lastItemRef : null}
-              isFromServer={field.isFromServer}
+            <Box
               key={field.id}
-              questionIndex={index}
-              type={watch(`questions.${index}.type`)}
-              onDelete={onDelete}
-            />
+              position="relative"
+              sx={{
+                width: '100%',
+                ':before': showPasteBar
+                  ? {
+                      content: '""',
+                      position: 'absolute',
+                      width: '100%',
+                      top: -13,
+                      height: '3px',
+                      backgroundColor: (theme) => theme.palette.info.main,
+                    }
+                  : {},
+              }}
+            >
+              <QuestionCard
+                sx={
+                  isTransparent
+                    ? {
+                        opacity: 0.3,
+                      }
+                    : {}
+                }
+                draggable
+                onDragStart={() => handleDragStart(index)}
+                onDragEnter={() => handleDragEnter(index)}
+                onDragEnd={handleDragEnd}
+                ref={index === questionFields.length - 1 ? lastItemRef : null}
+                isFromServer={field.isFromServer}
+                key={field.id}
+                questionIndex={index}
+                type={watchedQuestions[index].type}
+                onDelete={onDelete}
+              />
+            </Box>
           );
         })}
       </Box>

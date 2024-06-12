@@ -1,18 +1,13 @@
 import { MenuItem, TextField, TextFieldProps } from '@mui/material';
+import { forwardRef } from 'react';
 import QuestionType from '../../../types/api/enums/Type';
 import underscoreToUpperToSentence from '../../../utils/underscoreToUpperToSentence';
 
 interface Props extends TextFieldProps<'standard'> {}
 
-const QuestionTypeSelect: React.FC<Props> = ({ ...rest }) => {
+const QuestionTypeSelect = forwardRef<HTMLDivElement, Props>(({ ...rest }, ref) => {
   return (
-    <TextField
-      defaultValue={QuestionType.SINGLE_CHOICE}
-      {...rest}
-      size="small"
-      select
-      sx={{ width: '158px' }}
-    >
+    <TextField ref={ref} {...rest} select size="small" sx={{ width: '158px' }}>
       {(Object.values(QuestionType) as Array<keyof typeof QuestionType>).map((type) => (
         <MenuItem
           disabled={type === QuestionType.SHORT_ANSWER || type === QuestionType.TRUE_FALSE}
@@ -24,6 +19,6 @@ const QuestionTypeSelect: React.FC<Props> = ({ ...rest }) => {
       ))}
     </TextField>
   );
-};
+});
 
 export default QuestionTypeSelect;
