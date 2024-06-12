@@ -12,7 +12,6 @@
 html {
   font-family: 'Roboto', sans-serif;
   font-size: 16px;
-  background: #f3f6f999;
   overflow: auto;
   scrollbar-gutter: stable;
 }
