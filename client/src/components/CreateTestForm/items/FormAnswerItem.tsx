@@ -35,11 +35,12 @@ const FormAnswerItem: React.FC<Props> = ({
   const { loading } = useCreateTest();
   const disabled = loading || isFromServer;
 
-  const isCorrect = watch(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`);
+  const isCorrectPath = `questions.${questionIndex}.answers.${answerIndex}.isCorrect` as const;
+  const isCorrect = watch(isCorrectPath);
 
   const onCheckBoxChange = (e: ChangeEvent<HTMLInputElement>) => {
     onCheckBoxClick();
-    setValue(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`, e.target.checked);
+    setValue(isCorrectPath, e.target.checked);
   };
 
   const isError = !!errors.questions?.[questionIndex]?.answers?.[answerIndex]?.title;
@@ -49,10 +50,11 @@ const FormAnswerItem: React.FC<Props> = ({
   return (
     <Box sx={{ display: 'flex', alignItems: 'start', ...sx }} {...props}>
       <RadioCheckBox
-        {...register(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`)}
+        {...register(isCorrectPath)}
         type={type}
         /* this is necessary because mui checkbox component
         is not working correctly with react-hook-form */
+        ref={null}
         checked={isCorrect}
         onChange={onCheckBoxChange}
         disabled={disabled}

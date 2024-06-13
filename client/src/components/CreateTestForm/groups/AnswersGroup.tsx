@@ -41,14 +41,14 @@ const AnswersGroup: React.FC<Props> = ({
 
   const isShowAddButton = fields.length >= 6 || isFromServer;
 
-  const isSingleChoise = questionType === QuestionType.SINGLE_CHOICE;
+  const isSingleChoice = questionType === QuestionType.SINGLE_CHOICE;
 
   const answersPath = `questions.${questionIndex}.answers` as const;
 
   const updateCorrect = (index: number) => {
     const answers = watch(answersPath);
 
-    if (isSingleChoise) {
+    if (isSingleChoice) {
       if (answers.some((item, i) => item.isCorrect && i !== index)) {
         // If any checkbox is checked and it's not the current one, uncheck all checkboxes
         const answersWithOnlyCurrentChecked = answers.map((item, i) => {
@@ -68,7 +68,7 @@ const AnswersGroup: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (isSingleChoise) {
+    if (isSingleChoice) {
       const answers = watch(answersPath);
       // set the first one checked and the rest unchecked
       const answersWithOnlyFirstChecked = answers.map((item, index) => ({
