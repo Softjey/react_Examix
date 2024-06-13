@@ -10,6 +10,17 @@ interface Props extends CheckboxProps {
   type: QuestionType;
 }
 
+// FIXME:
+// error when use forwardRef
+/*
+A component is changing the controlled checked state of SwitchBase to be uncontrolled.
+Elements should not switch from uncontrolled to controlled (or vice versa).
+Decide between using a controlled or uncontrolled
+SwitchBase element for the lifetime of the component.
+The nature of the state is determined during the first render.
+It's considered controlled if the value is not `undefined`.
+*/
+
 const RadioCheckBox = forwardRef<HTMLButtonElement, Props>(({ type, ...props }, ref) => {
   const icon =
     type === QuestionType.SINGLE_CHOICE ? (
