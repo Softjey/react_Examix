@@ -119,7 +119,6 @@ const FormQuestionList: React.FC<Props> = ({
                       }
                     : {}
                 }
-                draggable
                 onDragStart={() => handleDragStart(index)}
                 onDragEnter={() => handleDragEnter(index)}
                 onDragEnd={handleDragEnd}

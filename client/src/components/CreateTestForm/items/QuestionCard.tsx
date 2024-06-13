@@ -53,6 +53,7 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
     const [snackBarMessage, setSnackBarMessage] = useState<string>('');
 
     const [isInfoOpened, setIsInfoOpened] = useState<boolean>(false);
+    const [draggable, setDraggable] = useState<boolean>(false);
 
     const onAnswerItemRemove = (index: number) => {
       if (fields.length > 2) {
@@ -79,6 +80,7 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
     return (
       <>
         <Card
+          draggable={draggable}
           ref={ref}
           onMouseEnter={isFromServer ? () => setIsInfoOpened(true) : undefined}
           onMouseLeave={isFromServer ? () => setIsInfoOpened(false) : undefined}
@@ -96,7 +98,15 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
           }}
           {...props}
         >
-          <DragBar />
+          <DragBar
+            sx={{
+              '&:active': {
+                cursor: 'grabbing',
+              },
+            }}
+            onMouseEnter={() => setDraggable(true)}
+            onMouseLeave={() => setDraggable(false)}
+          />
 
           <CardContent
             sx={{
