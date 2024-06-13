@@ -27,6 +27,8 @@ import Button from '../UI/buttons/Button';
 import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
 import Routes from '../../services/Router/Routes';
 import useQuestions from '../../hooks/queries/useQuestions';
+import WarningSnackBar from '../UI/WarningSnackBar';
+import { Nullable } from '../../types/utils/Nullable';
 
 interface Props {}
 
@@ -62,10 +64,22 @@ const CreateTestForm: React.FC<Props> = () => {
     name: 'questions',
   });
 
+  const [warningSnackBarOpen, setWarningSnackBarOpen] = useState<boolean>(false);
+  const [warningMessage, setWarningMessage] = useState<Nullable<string>>(null);
+
   const addQuestionCard = () => append(getDefaultQuestion(), { shouldFocus: false });
 
   const addQuestionCardFromServer = (value: Question) => {
     const { type, ...question } = value;
+
+    const formQuestions = methods.watch('questions') as QuestionFromServer[];
+    const isDuplicate = formQuestions.some((formQuestion) => formQuestion.id === question.id);
+
+    if (isDuplicate) {
+      setWarningSnackBarOpen(true);
+      setWarningMessage('This question has already been added');
+      return;
+    }
 
     append(
       {
@@ -166,6 +180,12 @@ const CreateTestForm: React.FC<Props> = () => {
         open={!!error}
         onClose={reset}
         errorMessage={error?.message || 'Error occurred'}
+      />
+
+      <WarningSnackBar
+        open={warningSnackBarOpen}
+        onClose={() => setWarningSnackBarOpen(false)}
+        warningMessage={warningMessage || undefined}
       />
 
       <QuestionsAutocompleteModal
