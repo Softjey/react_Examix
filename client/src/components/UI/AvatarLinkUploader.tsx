@@ -13,7 +13,7 @@ import { FieldValues, UseFormRegisterReturn, UseFormSetValue } from 'react-hook-
 import useAuth from '../../hooks/queries/useAuth';
 import useUpdateMe from '../../hooks/queries/useUpdateMe';
 import { Nullable } from '../../types/utils/Nullable';
-import isImageAcessable from '../../utils/isImageAcessable';
+import isImageAccessible from '../../utils/isImageAccessible';
 import isValidUrl from '../../utils/isValidUrl';
 import UserAvatar from './UserAvatar';
 
@@ -73,7 +73,7 @@ const AvatarLinkUploader: React.FC<Props> = ({
     const link = e.target.value;
 
     const getErrorMessage = async () => {
-      const isAccessible = await isImageAcessable(link);
+      const isAccessible = await isImageAccessible(link);
       const isUrl = isValidUrl(link);
 
       if (!isUrl) return 'The URL is not valid';

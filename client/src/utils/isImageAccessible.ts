@@ -1,4 +1,4 @@
-const isImageAcessable = (url: string): Promise<boolean> => {
+const isImageAccessible = (url: string): Promise<boolean> => {
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => resolve(true);
@@ -7,4 +7,4 @@ const isImageAcessable = (url: string): Promise<boolean> => {
   });
 };
 
-export default isImageAcessable;
+export default isImageAccessible;
