@@ -12,7 +12,7 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { FieldValues, UseFormRegisterReturn, UseFormSetValue } from 'react-hook-form';
 import { Nullable } from '../../../types/utils/Nullable';
-import isImageAcessable from '../../../utils/isImageAcessable';
+import isImageAccessible from '../../../utils/isImageAccessible';
 import isValidUrl from '../../../utils/isValidUrl';
 
 interface Props extends BoxProps {
@@ -54,11 +54,11 @@ const ImageLinkUploader: React.FC<Props> = ({
     setLoading(true);
 
     const getErrorMessage = async () => {
-      const isAcessable = await isImageAcessable(e.target.value);
+      const isAccessible = await isImageAccessible(e.target.value);
       const isUrl = isValidUrl(e.target.value);
 
       if (!isUrl) return 'The url is not valid';
-      if (!isAcessable) return 'Image is not acessable';
+      if (!isAccessible) return 'Image is not accessible';
       return null;
     };
 

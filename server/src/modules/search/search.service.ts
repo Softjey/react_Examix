@@ -11,7 +11,7 @@ export class SearchService {
     private readonly questionsService: QuestionsService,
   ) {}
 
-  async serachEverything({ search, limit }: { search: string; limit: number }) {
+  async searchEverything({ search, limit }: { search: string; limit: number }) {
     const exams = await this.examsHistoryService.getAll({ search, limit, searchTest: false });
     const tests = await this.testsService.getAll({ search, limit });
     const questions = await this.questionsService.getAll({ search, limit });
