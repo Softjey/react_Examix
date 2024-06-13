@@ -13,6 +13,7 @@ import ExamResultsTable from '../components/common/ExamResultsTable/ExamResultsT
 import useDeleteOngoingExam from '../hooks/queries/useDeleteOngoingExam';
 import useStartExam from '../hooks/queries/useStartExam';
 import LoadingButton from '../components/UI/buttons/LoadingButton';
+import ErrorSnackBar from '../components/UI/errors/ErrorSnackBar';
 
 interface Props extends HomeLayoutProps {}
 
@@ -35,12 +36,6 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
     return <LoadingPage layout="home" />;
   }
 
-  if (error) {
-    // TODO: Change to use Snackbar
-    // eslint-disable-next-line no-alert
-    alert(error.message);
-  }
-
   const { test, students, results } = exam;
 
   return (
@@ -59,7 +54,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
               </Typography>
             )}
 
-            <Stack direction="row" justifyContent="space-around">
+            <Stack direction="row" justifyContent="center" spacing={2}>
               {students?.length !== 0 && status === 'created' && (
                 <LoadingButton
                   loading={isLoading}
@@ -67,7 +62,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
                   color="secondary"
                   onClick={startExam}
                 >
-                  Start exam
+                  Start Exam
                 </LoadingButton>
               )}
 
@@ -78,7 +73,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
                   color="error"
                   onClick={deleteExam}
                 >
-                  Delete exam
+                  Delete Exam
                 </LoadingButton>
               )}
             </Stack>
@@ -91,6 +86,12 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
       <StudentsList variant="accordion" students={students ?? []} />
 
       {results && results.length > 0 && <ExamResultsTable questions={results} />}
+
+      <ErrorSnackBar
+        open={!!error}
+        errorMessage={error?.message}
+        onClose={() => starting.reset()}
+      />
     </HomeLayout>
   );
 });

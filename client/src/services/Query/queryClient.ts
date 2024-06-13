@@ -4,6 +4,7 @@ export default new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
+      refetchOnWindowFocus: false,
     },
     mutations: {
       retry: false,
