@@ -1,7 +1,3 @@
-/* eslint-disable implicit-arrow-linebreak */
-/* eslint-disable no-confusing-arrow */
-/* eslint-disable function-paren-newline */
-
 import { Box, BoxProps, Typography } from '@mui/material';
 import { FieldArrayWithId } from 'react-hook-form';
 import { useEffect } from 'react';
@@ -39,7 +35,7 @@ const AnswersGroup: React.FC<Props> = ({
 
   const { loading } = useCreateTest();
 
-  const isShowAddButton = fields.length >= 6 || isFromServer;
+  const isShowAddButton = fields.length < 6 && !isFromServer;
 
   const isSingleChoice = questionType === QuestionType.SINGLE_CHOICE;
 
@@ -58,9 +54,9 @@ const AnswersGroup: React.FC<Props> = ({
         setValue(answersPath, answersWithOnlyCurrentChecked);
       } else {
         // Otherwise, toggle the checkbox state
-        const answersWithCurrentToggled = answers.map((item, i) =>
-          i === index ? { ...item, isCorrect: !item.isCorrect } : item,
-        );
+        const answersWithCurrentToggled = answers.map((item, i) => {
+          return i === index ? { ...item, isCorrect: !item.isCorrect } : item;
+        });
 
         setValue(answersPath, answersWithCurrentToggled);
       }
@@ -102,7 +98,7 @@ const AnswersGroup: React.FC<Props> = ({
           />
         ))}
 
-        {isShowAddButton || (
+        {isShowAddButton && (
           <Box display="flex">
             <Button
               disabled={loading}
