@@ -9,7 +9,6 @@ import {
   CardProps,
   Collapse,
   Paper,
-  Snackbar,
   TextField,
   Typography,
 } from '@mui/material';
@@ -25,6 +24,7 @@ import useCreateTestForm from '../../../hooks/useCreateTestForm';
 import MaxScoreInput from '../../UI/inputs/MaxScoreInput';
 import ErrorPopover from '../../UI/errors/ErrorPopover';
 import CreateTestFormTimeLimitPicker from '../CreateTestFormTimeLimitPicker';
+import WarningSnackBar from '../../UI/WarningSnackBar';
 
 interface Props extends CardProps {
   type: QuestionType;
@@ -184,22 +184,11 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
           </CardActions>
         </Card>
 
-        <Snackbar
+        <WarningSnackBar
+          warningMessage={snackBarMessage}
           open={isSnackBarOpened}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          autoHideDuration={3000}
-          onClose={(_, reason) => {
-            if (reason === 'clickaway') {
-              return;
-            }
-
-            setIsSnackBarOpened(false);
-          }}
-        >
-          <Alert onClose={() => setIsSnackBarOpened(false)} variant="filled" severity="warning">
-            {snackBarMessage}
-          </Alert>
-        </Snackbar>
+          onClose={() => setIsSnackBarOpened(false)}
+        />
       </>
     );
   },

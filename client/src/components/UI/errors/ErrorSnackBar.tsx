@@ -2,20 +2,18 @@ import { Alert, Snackbar, SnackbarProps } from '@mui/material';
 
 interface Props extends SnackbarProps {
   errorMessage?: string;
-  description?: string;
-  open: boolean;
   onClose: () => void;
 }
 
 const ErrorSnackBar: React.FC<Props> = ({
+  children: _,
   errorMessage,
-  description,
   onClose,
   open,
   sx,
   ...props
 }) => {
-  const handleClose = (_: React.SyntheticEvent | Event, reason?: string) => {
+  const handleClose = (__: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
