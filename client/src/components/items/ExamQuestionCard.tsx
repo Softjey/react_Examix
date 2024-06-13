@@ -1,4 +1,4 @@
-import { StackProps, CardProps, CircularProgress } from '@mui/material';
+import { StackProps, CardProps, CircularProgress, Chip } from '@mui/material';
 import { Card, CardHeader, CardContent } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Typography, CardActions, Stack } from '@mui/material';
@@ -8,6 +8,7 @@ import { StudentAnswer } from '../../types/api/entities/question';
 import AnswerGroup from '../UI/AnswersGroup/AnswersGroup';
 import Timer from '../UI/Timer';
 import DottedText from '../UI/DottedText/DottedText';
+import underscoreToUpperToSentence from '../../utils/underscoreToUpperToSentence';
 
 interface Props extends StackProps {
   question: ExamCurrentQuestion;
@@ -93,7 +94,16 @@ const ExamQuestionCard: React.FC<Props> = (props) => {
           )}
         </CardContent>
 
-        <CardActions sx={{ pl: 2 }}>
+        <CardActions
+          sx={{ pl: 2, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 1 }}
+        >
+          <Chip
+            sx={{ opacity }}
+            size="small"
+            color="info"
+            label={underscoreToUpperToSentence(type)}
+          />
+
           <AnswerGroup
             disabled={disabled}
             answers={answers}
@@ -101,6 +111,7 @@ const ExamQuestionCard: React.FC<Props> = (props) => {
             questionType={type}
           />
         </CardActions>
+
         {answered && (
           <Typography variant="body2" color={(t) => t.palette.warning.light}>
             You already answered this question.
