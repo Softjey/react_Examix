@@ -1,4 +1,4 @@
-import axiosCLient from 'axios';
+import axiosCLient, { AxiosError } from 'axios';
 import { AuthResponse } from './types/auth';
 import { CreateUserDto, CreateUserResponse } from './types/create-user';
 import { WithMessage } from './types/utils';
@@ -161,7 +161,11 @@ const ApiClient = new Proxy(RawApiClient, {
       return (...args: unknown[]) => {
         const originalFn = target[prop] as (...args: unknown[]) => Promise<unknown>;
 
-        return originalFn.apply(target, args).catch((error: Error) => {
+        return originalFn.apply(target, args).catch((error: AxiosError) => {
+          if (error.code === 'ERR_NETWORK') {
+            throw new ApiError('No internet connection😢.');
+          }
+
           throw new ApiError(error);
         });
       };
