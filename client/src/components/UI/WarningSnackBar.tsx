@@ -1,8 +1,8 @@
-import { Alert, Snackbar, SnackbarProps } from '@mui/material';
+import { Alert, AlertProps, Snackbar, SnackbarProps } from '@mui/material';
 
 interface Props extends Omit<SnackbarProps, 'children'> {
   onClose: () => void;
-  children: React.ReactNode;
+  children: AlertProps['children'];
 }
 
 const WarningSnackBar: React.FC<Props> = ({ children, open, onClose, ...props }) => {
