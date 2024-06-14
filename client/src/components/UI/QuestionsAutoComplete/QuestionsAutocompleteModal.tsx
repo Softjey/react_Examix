@@ -16,6 +16,7 @@ const QuestionsAutocompleteModal: React.FC<Props> = ({ open, onClose, autoComple
 
   return (
     <Modal
+      disableScrollLock
       open={open}
       onClose={onClose}
       sx={{ display: 'flex', justifyContent: 'center', alignItems: 'start' }}

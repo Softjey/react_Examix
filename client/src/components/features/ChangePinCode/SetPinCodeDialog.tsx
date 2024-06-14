@@ -56,7 +56,9 @@ const SetPinCodeDialog: React.FC<Props> = ({ onClose, resetMode = false, ...rest
         </Button>
       </Stack>
 
-      <ErrorSnackBar open={!!error} onClose={resetError} errorMessage={error?.message} />
+      <ErrorSnackBar open={!!error} onClose={resetError}>
+        {error?.message}
+      </ErrorSnackBar>
     </Dialog>
   );
 };
