@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Fab, Stack, TextField, Typography } from '@mui/material';
+import { Stack, TextField, Typography } from '@mui/material';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,11 +7,10 @@ import Button from '../components/UI/buttons/Button';
 import useAuth from '../hooks/queries/useAuth';
 import { usePinCode } from '../store/contexts/PinCodeContext';
 import SetPinCodeDialog from '../components/features/ChangePinCode/SetPinCodeDialog';
-import {
-  EnterPinCodeType,
-  EnterPinCodeSchema,
-} from '../components/features/ChangePinCode/PinCodeSchemas';
+import { EnterPinCodeType } from '../components/features/ChangePinCode/PinCodeSchemas';
+import { EnterPinCodeSchema } from '../components/features/ChangePinCode/PinCodeSchemas';
 import ErrorSnackBar from '../components/UI/errors/ErrorSnackBar';
+import QuizLayout from '../components/layouts/QuizLayout';
 
 interface Props {}
 
@@ -21,61 +20,27 @@ const LockedPage: React.FC<Props> = () => {
   const [open, setOpen] = useState<boolean>(false);
   const { unlock, unlockMutation } = usePinCode();
   const { error, isError, reset } = unlockMutation;
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<EnterPinCodeType>({
+  const { register, handleSubmit, formState } = useForm<EnterPinCodeType>({
     resolver: zodResolver(EnterPinCodeSchema),
-    defaultValues: {
-      pinCode: '',
-    },
+    defaultValues: { pinCode: '' },
   });
+  const { errors } = formState;
 
   const onSubmit = handleSubmit((data) => {
     unlock(data.pinCode);
   });
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        minHeight: '100vh',
-        position: 'relative',
-      }}
-    >
-      <Box
-        onSubmit={onSubmit}
-        component="form"
-        noValidate
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: 3,
-        }}
-      >
-        <Typography sx={{ mb: 2 }} variant="h5">
-          {userName}
-        </Typography>
+    <QuizLayout centeredProps={{ width: 'fit-content' }}>
+      <Stack alignItems="center" spacing={2} onSubmit={onSubmit} component="form" noValidate>
+        <Typography variant="h5">{userName}</Typography>
 
-        <Stack
-          sx={{ mb: 1, width: 270 }}
-          display="flex"
-          flexDirection="row"
-          gap={1}
-          alignItems="start"
-          justifyContent="center"
-        >
+        <Stack gap={1} width={270} flexDirection="row">
           <TextField
+            aria-autocomplete="none"
             autoComplete="off"
-            sx={{
-              flexGrow: 1,
-            }}
+            type="password"
+            sx={{ flexGrow: 1 }}
             {...register('pinCode')}
             error={!!errors.pinCode}
             helperText={errors.pinCode?.message?.toString()}
@@ -83,23 +48,22 @@ const LockedPage: React.FC<Props> = () => {
             placeholder="Enter pin-code"
             size="small"
           />
-          <Fab
+          <Button
+            variant="contained"
             type="submit"
-            sx={{ boxShadow: 'none', height: 38, width: 38 }}
-            size="small"
-            color="primary"
+            sx={{ minWidth: 40, maxHeight: 40, paddingInline: 0 }}
           >
             <ArrowForwardRoundedIcon />
-          </Fab>
+          </Button>
         </Stack>
 
         <Button onClick={() => setOpen(true)} size="small" color="primary">
           Forgot pin-code
         </Button>
-      </Box>
+      </Stack>
       <SetPinCodeDialog resetMode open={open} onClose={() => setOpen(false)} />
       <ErrorSnackBar open={isError} errorMessage={error?.message} onClose={reset} />
-    </Box>
+    </QuizLayout>
   );
 };
 
