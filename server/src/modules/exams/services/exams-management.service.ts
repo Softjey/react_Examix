@@ -14,6 +14,7 @@ import { CurrentExamQuestion } from '../entities/current-exam-question.entity';
 
 @Injectable()
 export class ExamManagementService extends EventEmitter {
+  private timers = new Map<string, NodeJS.Timeout>();
   private readonly questionEventName: (examCode: string) => string;
   private readonly examFinishedEventName: (examCode: string) => string;
   private readonly examDeletedEventName: (examCode: string) => string;
@@ -156,7 +157,7 @@ export class ExamManagementService extends EventEmitter {
   }
 
   private async processQuestion(examCode: string) {
-    const exam = await this.examsCacheService.getExam(examCode).catch(() => null);
+    const exam: Exam | null = await this.examsCacheService.getExam(examCode).catch(() => null);
 
     if (!exam) {
       return this.deleteExam(examCode);
@@ -178,9 +179,11 @@ export class ExamManagementService extends EventEmitter {
     exam.currentQuestion = currentQuestion;
     this.emitQuestion(examCode, currentQuestion, exam.currentQuestionIndex);
 
-    await this.examsCacheService.setExam(examCode, exam);
+    const id = setTimeout(() => this.processQuestion(examCode), timeLimit);
 
-    setTimeout(() => this.processQuestion(examCode), timeLimit);
+    this.timers.set(examCode, id);
+
+    await this.examsCacheService.setExam(examCode, exam);
   }
 
   async answerQuestion(examCode: string, studentId: Student['clientId'], answers: StudentAnswer[]) {
@@ -192,7 +195,17 @@ export class ExamManagementService extends EventEmitter {
     }
 
     exam.students[studentId].results[questionId] = { answers };
+
+    const allStudentAnswered = Object.values(exam.students).every((student) => {
+      return student.results[questionId];
+    });
+
     await this.examsCacheService.setExam(examCode, exam);
+
+    if (allStudentAnswered) {
+      clearTimeout(this.timers.get(examCode));
+      this.processQuestion(examCode);
+    }
 
     return true;
   }
