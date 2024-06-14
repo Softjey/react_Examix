@@ -6,7 +6,7 @@ import Button from '../components/UI/buttons/Button';
 import Routes from '../services/Router/Routes';
 import { LayoutProps } from '../types/utils/LayoutProps';
 import ApiError from '../services/Api/ApiError';
-import sadSmile from '/images/sad-smile.svg';
+import sadSmile from '/images/error404.mp4';
 import { center } from '../styles/flex';
 
 type ErrorDetails = {
@@ -44,7 +44,7 @@ const ErrorPage: React.FC<Props> = (props) => {
   const content = (
     <Stack spacing={2} alignItems="center">
       <Stack direction="row" justifyContent="center" alignItems="center" spacing={8}>
-        <img src={sadSmile} alt="sad smile" css={{ height: '200px', width: 'auto' }} />
+        <img src={sadSmile} alt="404" css={{ height: '200px', width: 'auto' }} />
         <Typography fontWeight={400} variant="h2" color="error">
           {title}
         </Typography>
@@ -75,7 +75,7 @@ const ErrorPage: React.FC<Props> = (props) => {
       css={{ height: window.innerHeight, width: window.innerWidth }}
     >
       <Stack direction="column" justifyContent="center" alignItems="center">
-        <img src={sadSmile} alt="sad smile" css={{ height: '20vh', width: 'auto' }} />
+        <img src={sadSmile} alt="404" css={{ height: '20vh', width: 'auto' }} />
         <Typography fontWeight={400} variant="h3" color="error">
           {title}
         </Typography>
