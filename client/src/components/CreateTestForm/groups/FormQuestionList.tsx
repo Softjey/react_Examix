@@ -21,6 +21,7 @@ const FormQuestionList: React.FC<Props> = ({
     formState: { errors },
     watch,
     setValue,
+    trigger,
   } = useCreateTestForm();
 
   const lastItemRef = useRef<HTMLDivElement>(null);
@@ -74,6 +75,7 @@ const FormQuestionList: React.FC<Props> = ({
     dragOverItem.current = null;
 
     setValue('questions', reorderedQuestions);
+    trigger('questions');
   };
 
   return (
