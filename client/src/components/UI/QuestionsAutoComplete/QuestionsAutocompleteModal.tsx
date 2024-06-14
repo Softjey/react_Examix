@@ -24,7 +24,7 @@ const QuestionsAutocompleteModal: React.FC<Props> = ({ open, onClose, autoComple
         sx={{
           width: '80dvh',
           maxWidth: '600px',
-          backgroundColor: '#fff',
+          backgroundColor: (theme) => theme.palette.background.paper,
           padding: 4,
           borderRadius: 1,
           minHeight: autoCompleteOpen ? 520 : 0,

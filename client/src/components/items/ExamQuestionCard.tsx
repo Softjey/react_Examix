@@ -38,7 +38,7 @@ const ExamQuestionCard: React.FC<Props> = (props) => {
   return (
     <Stack {...rest}>
       <Timer
-        endDate={question.timeExpresAt}
+        endDate={question.timeExpiresAt}
         duration={question.timeLimit * 1000}
         restartDeps={[questionIndex]}
         onEnd={() => setTimesUp(true)}

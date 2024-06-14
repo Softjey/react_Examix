@@ -22,7 +22,7 @@ import { QuestionsParams, QuestionsResponse } from './types/questions';
 const axios = axiosCLient.create({
   baseURL: import.meta.env.VITE_SERVER_HTTP_URL,
   withCredentials: true,
-  // FIXME problem: while no internet connection the request pending infinitly
+  // FIXME problem: while no internet connection the request pending infinitely
   timeout: 5000,
   timeoutErrorMessage: 'The request took too long to complete.',
 });
