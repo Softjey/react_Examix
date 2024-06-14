@@ -64,7 +64,6 @@ const CreateTestForm: React.FC<Props> = () => {
     name: 'questions',
   });
 
-  const [warningSnackBarOpen, setWarningSnackBarOpen] = useState<boolean>(false);
   const [warningMessage, setWarningMessage] = useState<Nullable<string>>(null);
 
   const addQuestionCard = () => append(getDefaultQuestion(), { shouldFocus: false });
@@ -183,8 +182,8 @@ const CreateTestForm: React.FC<Props> = () => {
       />
 
       <WarningSnackBar
-        open={warningSnackBarOpen}
-        onClose={() => setWarningSnackBarOpen(false)}
+        open={warningMessage !== null}
+        onClose={() => setWarningMessage(null)}
         warningMessage={warningMessage || undefined}
       />
 
