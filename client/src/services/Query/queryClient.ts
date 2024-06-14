@@ -5,9 +5,11 @@ export default new QueryClient({
     queries: {
       retry: false,
       refetchOnWindowFocus: false,
+      networkMode: 'always',
     },
     mutations: {
       retry: false,
+      networkMode: 'always',
     },
   },
 });
