@@ -108,7 +108,7 @@ const AnswersGroup: React.FC<Props> = ({
                     width: 24,
                     height: 24,
                     marginX: '9px',
-                    color: loading ? theme.palette.action.disabled : theme.palette.info.main,
+                    color: loading ? theme.palette.action.disabled : theme.palette.primary.main,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
