@@ -26,6 +26,8 @@ import Button from '../UI/buttons/Button';
 import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
 import Routes from '../../services/Router/Routes';
 import useQuestions from '../../hooks/queries/useQuestions';
+import WarningSnackBar from '../UI/WarningSnackBar';
+import { Nullable } from '../../types/utils/Nullable';
 
 interface Props {}
 
@@ -38,6 +40,8 @@ const CreateTestForm: React.FC<Props> = () => {
 
   const [search, setSearch] = useState<string>('');
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
+  
+  const [warningMessage, setWarningMessage] = useState<Nullable<string>>(null);
 
   const { questions, ...restQueryParams } = useQuestions({
     search: search || undefined,
@@ -71,6 +75,14 @@ const CreateTestForm: React.FC<Props> = () => {
   const addQuestionCardFromServer = (value: Question) => {
     const { type, ...question } = value;
     const { maxScore, timeLimit } = getDefaultQuestion();
+
+    const formQuestions = methods.watch('questions') as QuestionFromServer[];
+    const isDuplicate = formQuestions.some((formQuestion) => formQuestion.id === question.id);
+
+    if (isDuplicate) {
+      setWarningMessage('This question has already been added');
+      return;
+    }
 
     append(
       {
@@ -174,11 +186,13 @@ const CreateTestForm: React.FC<Props> = () => {
         </LoadingButton>
       </Box>
 
-      <ErrorSnackBar
-        open={!!error}
-        onClose={reset}
-        errorMessage={error?.message || 'Error occurred'}
-      />
+      <ErrorSnackBar open={!!error} onClose={reset}>
+        {error?.message || 'Error occurred'}
+      </ErrorSnackBar>
+
+      <WarningSnackBar open={warningMessage !== null} onClose={() => setWarningMessage(null)}>
+        {warningMessage}
+      </WarningSnackBar>
 
       <QuestionsAutocompleteModal
         open={isModalOpened}
