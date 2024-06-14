@@ -98,7 +98,7 @@ const ImageLinkUploader: React.FC<Props> = ({
       >
         {!imageLink && <PhotoCameraIcon sx={{ fontSize: 48, color: 'gray' }} />}
       </Box>
-      <Modal open={open} onClose={onModalClose}>
+      <Modal disableScrollLock open={open} onClose={onModalClose}>
         <Box
           sx={{
             display: 'flex',

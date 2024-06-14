@@ -43,6 +43,7 @@ const ResetPasswordModal: React.FC<Props> = ({ open, onClose }) => {
   return (
     <>
       <Modal
+        disableScrollLock
         sx={{
           display: 'flex',
           justifyContent: 'center',

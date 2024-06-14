@@ -27,6 +27,7 @@ const DeleteAccount: React.FC<{ disabled?: boolean }> = ({ disabled = false }) =
       </Button>
 
       <Modal
+        disableScrollLock
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         aria-labelledby="delete-account-modal-title"

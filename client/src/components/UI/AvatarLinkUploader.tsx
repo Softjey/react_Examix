@@ -114,7 +114,7 @@ const AvatarLinkUploader: React.FC<Props> = ({
         user={user}
         sx={{ width: 60, height: 60, cursor: disabled ? 'unset' : 'pointer', ...props.sx }}
       />
-      <Modal open={open} onClose={onModalClose}>
+      <Modal disableScrollLock open={open} onClose={onModalClose}>
         <Box
           sx={{
             display: 'flex',
