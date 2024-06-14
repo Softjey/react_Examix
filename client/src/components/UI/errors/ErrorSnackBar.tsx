@@ -1,19 +1,12 @@
 import { Alert, Snackbar, SnackbarProps } from '@mui/material';
 
-interface Props extends SnackbarProps {
-  errorMessage?: string;
+interface Props extends Omit<SnackbarProps, 'children'> {
   onClose: () => void;
+  children: React.ReactNode;
 }
 
-const ErrorSnackBar: React.FC<Props> = ({
-  children: _,
-  errorMessage,
-  onClose,
-  open,
-  sx,
-  ...props
-}) => {
-  const handleClose = (__: React.SyntheticEvent | Event, reason?: string) => {
+const ErrorSnackBar: React.FC<Props> = ({ children, onClose, open, sx, ...props }) => {
+  const handleClose = (_: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -36,7 +29,7 @@ const ErrorSnackBar: React.FC<Props> = ({
         severity="error"
         sx={{ width: '100%', height: '100%', backgroundColor: '#F55555' }}
       >
-        {errorMessage}
+        {children}
       </Alert>
     </Snackbar>
   );

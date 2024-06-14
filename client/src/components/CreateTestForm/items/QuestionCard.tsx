@@ -50,7 +50,7 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
       name: `questions.${questionIndex}.answers`,
     });
 
-    const [snackBarMessage, setSnackBarMessage] = useState<Nullable<string>>('');
+    const [snackBarMessage, setSnackBarMessage] = useState<Nullable<string>>(null);
 
     const [isInfoOpened, setIsInfoOpened] = useState<boolean>(false);
 
@@ -181,11 +181,9 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
           </CardActions>
         </Card>
 
-        <WarningSnackBar
-          warningMessage={snackBarMessage || undefined}
-          open={snackBarMessage !== null}
-          onClose={() => setSnackBarMessage(null)}
-        />
+        <WarningSnackBar open={snackBarMessage !== null} onClose={() => setSnackBarMessage(null)}>
+          {snackBarMessage}
+        </WarningSnackBar>
       </>
     );
   },

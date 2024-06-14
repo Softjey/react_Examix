@@ -98,7 +98,9 @@ const LockedPage: React.FC<Props> = () => {
         </Button>
       </Box>
       <SetPinCodeDialog resetMode open={open} onClose={() => setOpen(false)} />
-      <ErrorSnackBar open={isError} errorMessage={error?.message} onClose={reset} />
+      <ErrorSnackBar open={isError} onClose={reset}>
+        {error?.message}
+      </ErrorSnackBar>
     </Box>
   );
 };

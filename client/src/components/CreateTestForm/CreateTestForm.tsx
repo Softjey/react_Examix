@@ -75,7 +75,6 @@ const CreateTestForm: React.FC<Props> = () => {
     const isDuplicate = formQuestions.some((formQuestion) => formQuestion.id === question.id);
 
     if (isDuplicate) {
-      setWarningSnackBarOpen(true);
       setWarningMessage('This question has already been added');
       return;
     }
@@ -175,17 +174,13 @@ const CreateTestForm: React.FC<Props> = () => {
         </LoadingButton>
       </Box>
 
-      <ErrorSnackBar
-        open={!!error}
-        onClose={reset}
-        errorMessage={error?.message || 'Error occurred'}
-      />
+      <ErrorSnackBar open={!!error} onClose={reset}>
+        {error?.message || 'Error occurred'}
+      </ErrorSnackBar>
 
-      <WarningSnackBar
-        open={warningMessage !== null}
-        onClose={() => setWarningMessage(null)}
-        warningMessage={warningMessage || undefined}
-      />
+      <WarningSnackBar open={warningMessage !== null} onClose={() => setWarningMessage(null)}>
+        {warningMessage}
+      </WarningSnackBar>
 
       <QuestionsAutocompleteModal
         open={isModalOpened}

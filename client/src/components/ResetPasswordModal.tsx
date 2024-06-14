@@ -97,7 +97,9 @@ const ResetPasswordModal: React.FC<Props> = ({ open, onClose }) => {
           )}
         </Box>
       </Modal>
-      <ErrorSnackBar open={isError} onClose={() => reset()} errorMessage={error?.message} />
+      <ErrorSnackBar open={isError} onClose={() => reset()}>
+        {error?.message}
+      </ErrorSnackBar>
     </>
   );
 };
