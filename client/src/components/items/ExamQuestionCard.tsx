@@ -1,4 +1,4 @@
-import { StackProps, CardProps, CircularProgress, Chip } from '@mui/material';
+import { StackProps, CardProps, CircularProgress } from '@mui/material';
 import { Card, CardHeader, CardContent } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Typography, CardActions, Stack } from '@mui/material';
@@ -8,7 +8,7 @@ import { StudentAnswer } from '../../types/api/entities/question';
 import AnswerGroup from '../UI/AnswersGroup/AnswersGroup';
 import Timer from '../UI/Timer';
 import DottedText from '../UI/DottedText/DottedText';
-import underscoreToUpperToSentence from '../../utils/underscoreToUpperToSentence';
+import QuestionType from '../../types/api/enums/Type';
 
 interface Props extends StackProps {
   question: ExamCurrentQuestion;
@@ -97,12 +97,9 @@ const ExamQuestionCard: React.FC<Props> = (props) => {
         <CardActions
           sx={{ pl: 2, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 1 }}
         >
-          <Chip
-            sx={{ opacity }}
-            size="small"
-            color="info"
-            label={underscoreToUpperToSentence(type)}
-          />
+          <Typography sx={{ opacity }} variant="body2" color="text.secondary">
+            {type === QuestionType.SINGLE_CHOICE ? 'Choose one option' : 'Select multiple options'}
+          </Typography>
 
           <AnswerGroup
             disabled={disabled}
