@@ -48,8 +48,12 @@ const FormQuestionList: React.FC<Props> = ({
     setTransparentId(questionFields[position].id);
   };
 
-  const handleDragEnter = (position: number) => {
+  const handleDragEnter = (position: number, e: React.DragEvent<HTMLDivElement>) => {
     dragOverItem.current = position;
+
+    if (e.dataTransfer.types.length > 0) {
+      return;
+    }
 
     setPasteId(questionFields[position].id);
   };
@@ -120,7 +124,7 @@ const FormQuestionList: React.FC<Props> = ({
                     : {}
                 }
                 onDragStart={() => handleDragStart(index)}
-                onDragEnter={() => handleDragEnter(index)}
+                onDragEnter={(e) => handleDragEnter(index, e)}
                 onDragEnd={handleDragEnd}
                 ref={index === questionFields.length - 1 ? lastItemRef : null}
                 isFromServer={field.isFromServer}

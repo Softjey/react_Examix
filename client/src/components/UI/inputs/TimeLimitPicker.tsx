@@ -7,7 +7,7 @@ interface Props extends TimePickerProps<Dayjs> {
 }
 
 const TimeLimitPicker = forwardRef<HTMLDivElement, Props>(
-  ({ error, value, onClose, maxTime, onChange, disabled, ...props }, ref) => {
+  ({ error, value, onClose, maxTime, onChange, disabled, slotProps, ...props }, ref) => {
     return (
       <TimePicker
         sx={{
@@ -32,7 +32,10 @@ const TimeLimitPicker = forwardRef<HTMLDivElement, Props>(
         onClose={onClose}
         onChange={onChange}
         disabled={disabled}
-        slotProps={{ actionBar: { actions: [] } }}
+        slotProps={{
+          actionBar: { actions: [] },
+          ...slotProps,
+        }}
         ref={ref}
         {...props}
       />

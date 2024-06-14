@@ -25,6 +25,7 @@ import useCreateTestForm from '../../../hooks/useCreateTestForm';
 import MaxScoreInput from '../../UI/inputs/MaxScoreInput';
 import ErrorPopover from '../../UI/errors/ErrorPopover';
 import CreateTestFormTimeLimitPicker from '../CreateTestFormTimeLimitPicker';
+import disableDragEvent from '../../../pages/CreateTestPage/utils/disableDragEvent';
 
 interface Props extends CardProps {
   type: QuestionType;
@@ -110,6 +111,9 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
 
           <CardContent
             sx={{
+              userSelect: 'none',
+              WebkitUserDrag: 'none',
+              userDrag: 'none',
               display: 'flex',
               gap: 1,
               flexDirection: 'column',
@@ -141,6 +145,9 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
                 errorMessage={errors.questions?.[questionIndex]?.maxScore?.message}
               >
                 <MaxScoreInput
+                  onDragStart={disableDragEvent}
+                  onDragEnd={disableDragEvent}
+                  onDragEnter={disableDragEvent}
                   {...register(`questions.${questionIndex}.maxScore`, { valueAsNumber: true })}
                   error={!!errors.questions?.[questionIndex]?.maxScore}
                   disabled={loading}
@@ -160,6 +167,9 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
             </Box>
 
             <TextField
+              onDragStart={disableDragEvent}
+              onDragEnd={disableDragEvent}
+              onDragEnter={disableDragEvent}
               error={!!errors.questions?.[questionIndex]?.title}
               helperText={errors.questions?.[questionIndex]?.title?.message?.toString()}
               {...register(`questions.${questionIndex}.title`)}

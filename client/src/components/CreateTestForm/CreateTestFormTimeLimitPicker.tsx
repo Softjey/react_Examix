@@ -4,6 +4,7 @@ import React from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import useCreateTestForm from '../../hooks/useCreateTestForm';
 import TimeLimitPicker from '../UI/inputs/TimeLimitPicker';
+import disableDragEvent from '../../pages/CreateTestPage/utils/disableDragEvent';
 
 interface Props extends TimePickerProps<Dayjs> {
   questionIndex: number;
@@ -31,6 +32,13 @@ const CreateTestFormTimeLimitPicker: React.FC<Props> = ({ questionIndex, error, 
             value={value}
             onClose={onBlur}
             onChange={onTimeLimitChange}
+            slotProps={{
+              textField: {
+                onDragStart: disableDragEvent,
+                onDragEnd: disableDragEvent,
+                onDragEnter: disableDragEvent,
+              },
+            }}
             disabled={disabled}
             error={error}
             ref={ref}

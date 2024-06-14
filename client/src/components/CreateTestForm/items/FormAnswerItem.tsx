@@ -5,6 +5,7 @@ import CloseButton from '../../UI/buttons/CloseButton';
 import RadioCheckBox from '../../UI/buttons/RadioCheckBox';
 import { useCreateTest } from '../../../pages/CreateTestPage/CreateTestContext';
 import useCreateTestForm from '../../../hooks/useCreateTestForm';
+import disableDragEvent from '../../../pages/CreateTestPage/utils/disableDragEvent';
 
 interface Props extends BoxProps {
   answerIndex: number;
@@ -60,6 +61,9 @@ const FormAnswerItem: React.FC<Props> = ({
         disabled={disabled}
       />
       <TextField
+        onDragStart={disableDragEvent}
+        onDragEnd={disableDragEvent}
+        onDragEnter={disableDragEvent}
         fullWidth
         {...register(`questions.${questionIndex}.answers.${answerIndex}.title`)}
         error={isError}
