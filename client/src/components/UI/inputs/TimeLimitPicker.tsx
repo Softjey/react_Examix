@@ -11,7 +11,7 @@ const TimeLimitPicker = forwardRef<HTMLDivElement, Props>(
     return (
       <TimePicker
         sx={{
-          maxWidth: '105px',
+          maxWidth: '126px',
           '.MuiInputBase-input': {
             paddingTop: 1,
             paddingBottom: 1,
@@ -23,8 +23,8 @@ const TimeLimitPicker = forwardRef<HTMLDivElement, Props>(
             top: '-8px',
           },
         }}
-        views={['minutes', 'seconds']}
-        format="mm:ss"
+        views={['hours', 'minutes', 'seconds']}
+        format="HH:mm:ss"
         value={value}
         timeSteps={{ minutes: 1, seconds: 5 }}
         maxTime={maxTime}

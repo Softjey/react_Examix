@@ -3,7 +3,6 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
 import { useRef, useState } from 'react';
-import dayjs from 'dayjs';
 import {
   CreateTestFormType,
   CreateTestSchema,
@@ -71,14 +70,15 @@ const CreateTestForm: React.FC<Props> = () => {
 
   const addQuestionCardFromServer = (value: Question) => {
     const { type, ...question } = value;
+    const { maxScore, timeLimit } = getDefaultQuestion();
 
     append(
       {
         ...question,
         type: type as AvailableQuestionType,
         isFromServer: true,
-        maxScore: 0,
-        timeLimit: dayjs().startOf('hour'),
+        maxScore,
+        timeLimit,
       },
       { shouldFocus: false },
     );
