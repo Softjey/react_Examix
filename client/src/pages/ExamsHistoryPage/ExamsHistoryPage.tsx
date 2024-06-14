@@ -8,7 +8,7 @@ import ExamsFilters from '../../components/forms/ExamsFilters';
 interface Props extends HomeLayoutProps {}
 
 const ExamsHistoryPage: React.FC<Props> = ({ ...rest }) => {
-  const { exams, pagesAmount, isPending, isError, ...restParams } = useExamsHistoryPage();
+  const { exams, pagesAmount, isPending, error, ...restParams } = useExamsHistoryPage();
   const { params, handleFiltersUpdate, handlePageChange } = restParams;
 
   return (
@@ -18,12 +18,12 @@ const ExamsHistoryPage: React.FC<Props> = ({ ...rest }) => {
         onFiltersUpdate={handleFiltersUpdate}
       />
 
-      {isError && (
+      {error && (
         <Alert severity="error" sx={{ mt: 6 }}>
-          An error occurred while loading exams
+          {error.message}
         </Alert>
       )}
-      {!isError && (
+      {!error && (
         <ExamsList loadingProps={{ sx: { pt: '60px' } }} exams={exams} isLoading={isPending} />
       )}
 
