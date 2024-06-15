@@ -16,7 +16,7 @@ html {
   scrollbar-gutter: stable;
 }
 
-/* disable defaoult autofill styles */
+/* disable default autofill styles */
 
 input:-webkit-autofill,
 textarea:-webkit-autofill,

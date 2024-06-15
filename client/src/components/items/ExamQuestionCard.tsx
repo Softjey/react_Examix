@@ -8,6 +8,7 @@ import { StudentAnswer } from '../../types/api/entities/question';
 import AnswerGroup from '../UI/AnswersGroup/AnswersGroup';
 import Timer from '../UI/Timer';
 import DottedText from '../UI/DottedText/DottedText';
+import QuestionType from '../../types/api/enums/Type';
 
 interface Props extends StackProps {
   question: ExamCurrentQuestion;
@@ -38,7 +39,7 @@ const ExamQuestionCard: React.FC<Props> = (props) => {
   return (
     <Stack {...rest}>
       <Timer
-        endDate={question.timeExpresAt}
+        endDate={question.timeExpiresAt}
         duration={question.timeLimit * 1000}
         restartDeps={[questionIndex]}
         onEnd={() => setTimesUp(true)}
@@ -93,7 +94,13 @@ const ExamQuestionCard: React.FC<Props> = (props) => {
           )}
         </CardContent>
 
-        <CardActions sx={{ pl: 2 }}>
+        <CardActions
+          sx={{ pl: 2, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 1 }}
+        >
+          <Typography sx={{ opacity }} variant="body2" color="text.secondary">
+            {type === QuestionType.SINGLE_CHOICE ? 'Choose one option' : 'Select multiple options'}
+          </Typography>
+
           <AnswerGroup
             disabled={disabled}
             answers={answers}
@@ -101,6 +108,7 @@ const ExamQuestionCard: React.FC<Props> = (props) => {
             questionType={type}
           />
         </CardActions>
+
         {answered && (
           <Typography variant="body2" color={(t) => t.palette.warning.light}>
             You already answered this question.

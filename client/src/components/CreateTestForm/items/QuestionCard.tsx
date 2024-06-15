@@ -9,7 +9,6 @@ import {
   CardProps,
   Collapse,
   Paper,
-  Snackbar,
   TextField,
   Typography,
 } from '@mui/material';
@@ -25,6 +24,8 @@ import useCreateTestForm from '../../../hooks/useCreateTestForm';
 import MaxScoreInput from '../../UI/inputs/MaxScoreInput';
 import ErrorPopover from '../../UI/errors/ErrorPopover';
 import CreateTestFormTimeLimitPicker from '../CreateTestFormTimeLimitPicker';
+import WarningSnackBar from '../../UI/WarningSnackBar';
+import { Nullable } from '../../../types/utils/Nullable';
 
 interface Props extends CardProps {
   type: QuestionType;
@@ -49,8 +50,7 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
       name: `questions.${questionIndex}.answers`,
     });
 
-    const [isSnackBarOpened, setIsSnackBarOpened] = useState<boolean>(false);
-    const [snackBarMessage, setSnackBarMessage] = useState<string>('');
+    const [snackBarMessage, setSnackBarMessage] = useState<Nullable<string>>(null);
 
     const [isInfoOpened, setIsInfoOpened] = useState<boolean>(false);
 
@@ -59,7 +59,6 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
         remove(index);
       } else {
         setSnackBarMessage('Minimum number of answers is 2');
-        setIsSnackBarOpened(true);
       }
     };
 
@@ -68,7 +67,6 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
         append({ title: '', isCorrect: false }, { shouldFocus: false });
       } else {
         setSnackBarMessage('Maximum number of answers reached');
-        setIsSnackBarOpened(true);
       }
     };
 
@@ -137,7 +135,6 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
                 onClick={() =>
                   onDelete(() => {
                     setSnackBarMessage('Minimum number of questions is 1');
-                    setIsSnackBarOpened(true);
                   })
                 }
               />
@@ -184,22 +181,9 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
           </CardActions>
         </Card>
 
-        <Snackbar
-          open={isSnackBarOpened}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          autoHideDuration={3000}
-          onClose={(_, reason) => {
-            if (reason === 'clickaway') {
-              return;
-            }
-
-            setIsSnackBarOpened(false);
-          }}
-        >
-          <Alert onClose={() => setIsSnackBarOpened(false)} variant="filled" severity="warning">
-            {snackBarMessage}
-          </Alert>
-        </Snackbar>
+        <WarningSnackBar open={snackBarMessage !== null} onClose={() => setSnackBarMessage(null)}>
+          {snackBarMessage}
+        </WarningSnackBar>
       </>
     );
   },

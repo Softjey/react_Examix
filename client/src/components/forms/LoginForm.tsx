@@ -39,7 +39,9 @@ const LoginForm: React.FC<Props> = ({
       >
         {submitButtonText}
       </LoadingButton>
-      <ErrorSnackBar errorMessage={errorMessage!} open={!!errorMessage} onClose={onErrorClose} />
+      <ErrorSnackBar open={!!errorMessage} onClose={onErrorClose}>
+        {errorMessage}
+      </ErrorSnackBar>
     </Box>
   );
 };
