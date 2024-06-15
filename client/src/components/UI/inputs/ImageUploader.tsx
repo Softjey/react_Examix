@@ -64,7 +64,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = (props) => {
           </IconButton>
         )}
       </Box>
-      <Modal open={open} onClose={() => setOpen(false)}>
+      <Modal disableScrollLock open={open} onClose={() => setOpen(false)}>
         <Box
           sx={{
             position: 'absolute',

@@ -87,11 +87,9 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
 
       {results && results.length > 0 && <ExamResultsTable questions={results} />}
 
-      <ErrorSnackBar
-        open={!!error}
-        errorMessage={error?.message}
-        onClose={() => starting.reset()}
-      />
+      <ErrorSnackBar open={!!error} onClose={() => starting.reset()}>
+        {error?.message}
+      </ErrorSnackBar>
     </HomeLayout>
   );
 });
