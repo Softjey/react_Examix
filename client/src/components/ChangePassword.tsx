@@ -4,11 +4,12 @@ import useForgotPassword from '../hooks/queries/useForgotPassword';
 import useAuth from '../hooks/queries/useAuth';
 import prettifyDuration from '../utils/time/prettifyDuration';
 import LoadingButton from './UI/buttons/LoadingButton';
+import { Nullable } from '../types/utils/Nullable';
 
 const ChangePasswordButton: React.FC = () => {
   const { data: user } = useAuth();
   const { sendRecoveryEmail, isPending } = useForgotPassword();
-  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
+  const [snackbarMessage, setSnackbarMessage] = useState<Nullable<string>>(null);
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
   const [timer, setTimer] = useState<number>(60);
   const [disableButton, setDisableButton] = useState(false);
@@ -56,7 +57,6 @@ const ChangePasswordButton: React.FC = () => {
         onError: () => {
           setSnackbarSeverity('error');
           setSnackbarMessage('Failed to send password reset email.');
-          setDisableButton(false);
         },
       },
     );
@@ -71,8 +71,8 @@ const ChangePasswordButton: React.FC = () => {
       >
         {disableButton ? `Change (${prettifyDuration(timer * 1000)})` : 'Change'}
       </LoadingButton>
-      <Snackbar open={snackbarMessage !== null} onClose={handleClose} autoHideDuration={6000}>
-        <Alert elevation={1} variant="standard" onClose={handleClose} severity={snackbarSeverity}>
+      <Snackbar open={snackbarMessage !== null} autoHideDuration={3000}>
+        <Alert variant="standard" onClose={handleClose} severity={snackbarSeverity}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
