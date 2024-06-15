@@ -1,8 +1,8 @@
+import React, { useState } from 'react';
 import { Box, Stack, TextField, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
-import { useState } from 'react';
 import dayjs from 'dayjs';
 import {
   CreateTestFormType,
@@ -157,9 +157,11 @@ const CreateTestForm: React.FC<Props> = () => {
           </Button>
         </Stack>
 
-        <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
-          Create Test
-        </LoadingButton>
+        <Box position="fixed" width="59%" bottom={28} display="flex" justifyContent="end">
+          <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
+            Create Test
+          </LoadingButton>
+        </Box>
       </Box>
 
       <ErrorSnackBar
