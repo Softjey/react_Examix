@@ -1,4 +1,4 @@
-import { Box, BoxProps, Typography } from '@mui/material';
+import { Box, BoxProps, Stack, Typography } from '@mui/material';
 import { FieldArrayWithId } from 'react-hook-form';
 import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { CreateTestFormType } from '../schemas/createTestFormValidationSchemas';
@@ -63,13 +63,17 @@ const FormQuestionList: React.FC<Props> = ({
     setPasteId(null);
     setTransparentId(null);
 
-    const reorderedQuestions = [...watchedQuestions];
+    const itemToMove = [...watchedQuestions][dragItem.current!];
 
-    reorderedQuestions.splice(
-      dragOverItem.current!,
-      0,
-      reorderedQuestions.splice(dragItem.current!, 1)[0],
+    const questionsWithoutItemToMove = [...watchedQuestions].filter(
+      (_, index) => index !== dragItem.current!,
     );
+
+    const reorderedQuestions = [
+      ...questionsWithoutItemToMove.slice(0, dragOverItem.current!),
+      itemToMove,
+      ...questionsWithoutItemToMove.slice(dragOverItem.current!),
+    ];
 
     dragItem.current = dragOverItem.current!;
     dragOverItem.current = null;
@@ -86,7 +90,7 @@ const FormQuestionList: React.FC<Props> = ({
         </Typography>
       )}
 
-      <Box display="flex" flexDirection="column" alignItems="center" gap="24px">
+      <Stack alignItems="center" gap="24px">
         {questionFields.map((field, index) => {
           const onDelete = (openSnackBar: () => void) => {
             if (questionFields.length < 2) {
@@ -138,7 +142,7 @@ const FormQuestionList: React.FC<Props> = ({
             </Box>
           );
         })}
-      </Box>
+      </Stack>
     </Box>
   );
 };
