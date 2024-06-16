@@ -1,4 +1,4 @@
-import { Box, BoxProps, Stack, Typography } from '@mui/material';
+import { Box, BoxProps, Stack, SxProps, Theme, Typography } from '@mui/material';
 import { FieldArrayWithId } from 'react-hook-form';
 import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { CreateTestFormType } from '../schemas/createTestFormValidationSchemas';
@@ -103,32 +103,30 @@ const FormQuestionList: React.FC<Props> = ({
           const showPasteBar = pasteId === field.id;
           const isTransparent = transparentId === field.id;
 
+          const transparentSx: SxProps<Theme> | undefined = () => ({
+            opacity: 0.3,
+          });
+
+          const pasteBarSx: SxProps<Theme> | undefined = () => ({
+            content: '""',
+            position: 'absolute',
+            width: '100%',
+            top: -13,
+            height: '3px',
+            backgroundColor: (theme) => theme.palette.info.main,
+          });
+
           return (
             <Box
               key={field.id}
-              position="relative"
               sx={{
+                position: 'relative',
                 width: '100%',
-                ':before': showPasteBar
-                  ? {
-                      content: '""',
-                      position: 'absolute',
-                      width: '100%',
-                      top: -13,
-                      height: '3px',
-                      backgroundColor: (theme) => theme.palette.info.main,
-                    }
-                  : {},
+                ':before': showPasteBar ? pasteBarSx : {},
               }}
             >
               <QuestionCard
-                sx={
-                  isTransparent
-                    ? {
-                        opacity: 0.3,
-                      }
-                    : {}
-                }
+                sx={isTransparent ? transparentSx : {}}
                 onDragStart={() => handleDragStart(index)}
                 onDragEnter={(e) => handleDragEnter(index, e)}
                 onDragEnd={handleDragEnd}
