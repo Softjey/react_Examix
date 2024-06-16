@@ -2,13 +2,13 @@
 /* eslint-disable implicit-arrow-linebreak */
 import {
   Alert,
-  Box,
   Card,
   CardActions,
   CardContent,
   CardProps,
   Collapse,
   Paper,
+  Stack,
   TextField,
   Typography,
 } from '@mui/material';
@@ -119,7 +119,7 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
               paddingTop: 0,
             }}
           >
-            <Box display="flex" gap={1} flexWrap="wrap">
+            <Stack direction="row" gap={1} flexWrap="wrap">
               <QuestionTypeSelect
                 defaultValue={type}
                 disabled={disabled}
@@ -161,7 +161,7 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
                   })
                 }
               />
-            </Box>
+            </Stack>
 
             <TextField
               onDragStart={disableDragEvent}

@@ -1,4 +1,4 @@
-import { Box, BoxProps, Typography } from '@mui/material';
+import { Box, BoxProps, Stack, Typography } from '@mui/material';
 import { FieldArrayWithId } from 'react-hook-form';
 import { useEffect, useRef } from 'react';
 import { CreateTestFormType } from '../schemas/createTestFormValidationSchemas';
@@ -32,7 +32,7 @@ const QuestionsGroup: React.FC<Props> = ({ fields, onRemove, ...props }) => {
         </Typography>
       )}
 
-      <Box display="flex" flexDirection="column" alignItems="center" gap="24px">
+      <Stack alignItems="center" gap="24px">
         {fields.map((field, index) => {
           const onDelete = (openSnackBar: () => void) => {
             if (fields.length < 2) {
@@ -53,7 +53,7 @@ const QuestionsGroup: React.FC<Props> = ({ fields, onRemove, ...props }) => {
             />
           );
         })}
-      </Box>
+      </Stack>
     </Box>
   );
 };
