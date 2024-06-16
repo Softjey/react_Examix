@@ -4,11 +4,17 @@ import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { CreateTestFormType } from '../schemas/createTestFormValidationSchemas';
 import QuestionCard from '../items/QuestionCard';
 import useCreateTestForm from '../../../hooks/useCreateTestForm';
+import { Nullable } from '../../../types/utils/Nullable';
 
 interface Props extends BoxProps {
   questionFields: FieldArrayWithId<CreateTestFormType, 'questions', 'id'>[];
   onRemove: (index: number) => void;
   shouldScroll: MutableRefObject<boolean>;
+}
+
+interface DragItem {
+  position: Nullable<number>;
+  id: Nullable<string>;
 }
 
 const FormQuestionList: React.FC<Props> = ({
@@ -36,47 +42,44 @@ const FormQuestionList: React.FC<Props> = ({
     }
   }, [questionFields, shouldScroll]);
 
-  const [pasteId, setPasteId] = useState<string | null>(null);
-  const [transparentId, setTransparentId] = useState<string | null>(null);
+  const [dragItem, setDragItem] = useState<DragItem>({ position: null, id: null });
+  const [dragOverItem, setDragOverItem] = useState<DragItem>({ position: null, id: null });
 
   const watchedQuestions = watch('questions');
 
-  const dragItem = useRef<number>();
-  const dragOverItem = useRef<number | null>(null);
-
   const handleDragStart = (position: number) => {
-    dragItem.current = position;
-    setTransparentId(questionFields[position].id);
+    setDragItem({
+      position,
+      id: questionFields[position].id,
+    });
   };
 
   const handleDragEnter = (position: number, e: React.DragEvent<HTMLDivElement>) => {
-    dragOverItem.current = position;
-
     if (e.dataTransfer.types.length > 0) {
       return;
     }
 
-    setPasteId(questionFields[position].id);
+    setDragOverItem({
+      position,
+      id: questionFields[position].id,
+    });
   };
 
   const handleDragEnd = () => {
-    setPasteId(null);
-    setTransparentId(null);
+    setDragItem({ position: null, id: null });
+    setDragOverItem({ position: null, id: null });
 
-    const itemToMove = [...watchedQuestions][dragItem.current!];
+    const itemToMove = [...watchedQuestions][dragItem.position!];
 
     const questionsWithoutItemToMove = [...watchedQuestions].filter(
-      (_, index) => index !== dragItem.current!,
+      (_, index) => index !== dragItem.position!,
     );
 
     const reorderedQuestions = [
-      ...questionsWithoutItemToMove.slice(0, dragOverItem.current!),
+      ...questionsWithoutItemToMove.slice(0, dragOverItem.position!),
       itemToMove,
-      ...questionsWithoutItemToMove.slice(dragOverItem.current!),
+      ...questionsWithoutItemToMove.slice(dragOverItem.position!),
     ];
-
-    dragItem.current = dragOverItem.current!;
-    dragOverItem.current = null;
 
     setValue('questions', reorderedQuestions);
     trigger('questions');
@@ -100,12 +103,8 @@ const FormQuestionList: React.FC<Props> = ({
             }
           };
 
-          const showPasteBar = pasteId === field.id;
-          const isTransparent = transparentId === field.id;
-
-          const transparentSx: SxProps<Theme> | undefined = () => ({
-            opacity: 0.3,
-          });
+          const showPasteBar = dragOverItem.id === field.id;
+          const isTransparent = dragItem.id === field.id;
 
           const pasteBarSx: SxProps<Theme> | undefined = () => ({
             content: '""',
@@ -126,7 +125,7 @@ const FormQuestionList: React.FC<Props> = ({
               }}
             >
               <QuestionCard
-                sx={isTransparent ? transparentSx : {}}
+                sx={isTransparent ? { opacity: 0.3 } : {}}
                 onDragStart={() => handleDragStart(index)}
                 onDragEnter={(e) => handleDragEnter(index, e)}
                 onDragEnd={handleDragEnd}
