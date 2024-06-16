@@ -1,4 +1,4 @@
-import { Box, Stack, TextField, Typography } from '@mui/material';
+import { Stack, TextField, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
@@ -40,7 +40,7 @@ const CreateTestForm: React.FC<Props> = () => {
 
   const [search, setSearch] = useState<string>('');
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
-  
+
   const [warningMessage, setWarningMessage] = useState<Nullable<string>>(null);
 
   const { questions, ...restQueryParams } = useQuestions({
@@ -72,8 +72,7 @@ const CreateTestForm: React.FC<Props> = () => {
     shouldScroll.current = true;
   };
 
-  const addQuestionCardFromServer = (value: Question) => {
-    const { type, ...question } = value;
+  const addQuestionCardFromServer = ({ type, ...question }: Question) => {
     const { maxScore, timeLimit } = getDefaultQuestion();
 
     const formQuestions = methods.watch('questions') as QuestionFromServer[];
@@ -134,12 +133,10 @@ const CreateTestForm: React.FC<Props> = () => {
 
   return (
     <FormProvider {...methods}>
-      <Box
+      <Stack
         component="form"
         noValidate
         onSubmit={onSubmit}
-        display="flex"
-        flexDirection="column"
         alignItems="center"
         padding="15px 30px"
         gap="32px"
@@ -157,7 +154,7 @@ const CreateTestForm: React.FC<Props> = () => {
           onRemove={remove}
         />
 
-        <Stack width="100%" flexDirection="row" justifyContent="start" gap={2}>
+        <Stack width="100%" direction="row" justifyContent="start" gap={2}>
           <Button
             sx={{ textTransform: 'none' }}
             variant="outlined"
@@ -184,7 +181,7 @@ const CreateTestForm: React.FC<Props> = () => {
         <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
           Create Test
         </LoadingButton>
-      </Box>
+      </Stack>
 
       <ErrorSnackBar open={!!error} onClose={reset}>
         {error?.message || 'Error occurred'}
