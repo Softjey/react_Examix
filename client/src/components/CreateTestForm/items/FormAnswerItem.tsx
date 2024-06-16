@@ -36,7 +36,9 @@ const FormAnswerItem: React.FC<Props> = ({
   const { loading } = useCreateTest();
   const disabled = loading || isFromServer;
 
-  const isCorrectPath = `questions.${questionIndex}.answers.${answerIndex}.isCorrect` as const;
+  const isCorrectPath: Parameters<typeof register>[0] =
+    `questions.${questionIndex}.answers.${answerIndex}.isCorrect`;
+
   const isCorrect = watch(isCorrectPath);
 
   const onCheckBoxChange = (e: ChangeEvent<HTMLInputElement>) => {
