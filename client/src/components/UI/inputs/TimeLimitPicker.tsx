@@ -7,11 +7,11 @@ interface Props extends TimePickerProps<Dayjs> {
 }
 
 const TimeLimitPicker = forwardRef<HTMLDivElement, Props>(
-  ({ error, value, onClose, maxTime, onChange, disabled, ...props }, ref) => {
+  ({ error, value, onClose, maxTime, onChange, disabled, slotProps, ...props }, ref) => {
     return (
       <TimePicker
         sx={{
-          maxWidth: '105px',
+          maxWidth: '126px',
           '.MuiInputBase-input': {
             paddingTop: 1,
             paddingBottom: 1,
@@ -23,8 +23,8 @@ const TimeLimitPicker = forwardRef<HTMLDivElement, Props>(
             top: '-8px',
           },
         }}
-        views={['minutes', 'seconds']}
-        format="mm:ss"
+        views={['hours', 'minutes', 'seconds']}
+        format="HH:mm:ss"
         value={value}
         timeSteps={{ minutes: 1, seconds: 5 }}
         maxTime={maxTime}
@@ -32,7 +32,10 @@ const TimeLimitPicker = forwardRef<HTMLDivElement, Props>(
         onClose={onClose}
         onChange={onChange}
         disabled={disabled}
-        slotProps={{ actionBar: { actions: [] } }}
+        slotProps={{
+          actionBar: { actions: [] },
+          ...slotProps,
+        }}
         ref={ref}
         {...props}
       />

@@ -1,9 +1,8 @@
-import { Box, Stack, TextField, Typography } from '@mui/material';
+import { Stack, TextField, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
-import { useState } from 'react';
-import dayjs from 'dayjs';
+import { useRef, useState } from 'react';
 import {
   CreateTestFormType,
   CreateTestSchema,
@@ -42,6 +41,8 @@ const CreateTestForm: React.FC<Props> = () => {
   const [search, setSearch] = useState<string>('');
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
 
+  const [warningMessage, setWarningMessage] = useState<Nullable<string>>(null);
+
   const { questions, ...restQueryParams } = useQuestions({
     search: search || undefined,
     limit: 20,
@@ -59,17 +60,20 @@ const CreateTestForm: React.FC<Props> = () => {
     mode: 'onBlur',
   });
 
+  const shouldScroll = useRef<boolean>(false);
+
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
     name: 'questions',
   });
 
-  const [warningMessage, setWarningMessage] = useState<Nullable<string>>(null);
+  const addQuestionCard = () => {
+    append(getDefaultQuestion(), { shouldFocus: false });
+    shouldScroll.current = true;
+  };
 
-  const addQuestionCard = () => append(getDefaultQuestion(), { shouldFocus: false });
-
-  const addQuestionCardFromServer = (value: Question) => {
-    const { type, ...question } = value;
+  const addQuestionCardFromServer = ({ type, ...question }: Question) => {
+    const { maxScore, timeLimit } = getDefaultQuestion();
 
     const formQuestions = methods.watch('questions') as QuestionFromServer[];
     const isDuplicate = formQuestions.some((formQuestion) => formQuestion.id === question.id);
@@ -84,11 +88,13 @@ const CreateTestForm: React.FC<Props> = () => {
         ...question,
         type: type as AvailableQuestionType,
         isFromServer: true,
-        maxScore: 0,
-        timeLimit: dayjs().startOf('hour'),
+        maxScore,
+        timeLimit,
       },
       { shouldFocus: false },
     );
+
+    shouldScroll.current = true;
   };
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -127,12 +133,10 @@ const CreateTestForm: React.FC<Props> = () => {
 
   return (
     <FormProvider {...methods}>
-      <Box
+      <Stack
         component="form"
         noValidate
         onSubmit={onSubmit}
-        display="flex"
-        flexDirection="column"
         alignItems="center"
         padding="15px 30px"
         gap="32px"
@@ -143,9 +147,14 @@ const CreateTestForm: React.FC<Props> = () => {
           Questions
         </Typography>
 
-        <FormQuestionList width="100%" questions={fields} onRemove={remove} />
+        <FormQuestionList
+          shouldScroll={shouldScroll}
+          width="100%"
+          questionFields={fields}
+          onRemove={remove}
+        />
 
-        <Stack width="100%" flexDirection="row" justifyContent="start" gap={2}>
+        <Stack width="100%" direction="row" justifyContent="start" gap={2}>
           <Button
             sx={{ textTransform: 'none' }}
             variant="outlined"
@@ -172,7 +181,7 @@ const CreateTestForm: React.FC<Props> = () => {
         <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
           Create Test
         </LoadingButton>
-      </Box>
+      </Stack>
 
       <ErrorSnackBar open={!!error} onClose={reset}>
         {error?.message || 'Error occurred'}
