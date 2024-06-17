@@ -71,8 +71,8 @@ const ChangePasswordButton: React.FC = () => {
       >
         {disableButton ? `Change (${prettifyDuration(timer * 1000)})` : 'Change'}
       </LoadingButton>
-      <Snackbar open={snackbarMessage !== null} autoHideDuration={3000}>
-        <Alert variant="standard" onClose={handleClose} severity={snackbarSeverity}>
+      <Snackbar open={snackbarMessage !== null} autoHideDuration={3000} onClose={handleClose}>
+        <Alert variant="standard" severity={snackbarSeverity} onClose={handleClose}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
