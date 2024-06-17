@@ -28,10 +28,9 @@ const FormQuestionList: React.FC<Props> = ({
   const lastItemRef = useRef<HTMLDivElement>(null);
 
   const { errors } = formState;
+  const errorMessage = errors.questions?.message || errors.questions?.root?.message;
 
   const watchedQuestions = watch('questions');
-
-  const errorMessage = errors.questions?.message || errors.questions?.root?.message;
 
   useEffect(() => {
     if (lastItemRef.current && shouldScroll.current) {
@@ -65,20 +64,17 @@ const FormQuestionList: React.FC<Props> = ({
     }
   };
 
-  const isShowPasteBar = (fieldId: string) => {
-    if (dragTargetItemIndex === null) {
-      return false;
-    }
+  const showPasteBar = (fieldId: string) => {
+    const isShowPasteBar =
+      dragTargetItemIndex !== null && questionFields[dragTargetItemIndex].id === fieldId;
 
-    return questionFields[dragTargetItemIndex].id === fieldId;
+    return isShowPasteBar ? pasteBarSx : {};
   };
 
-  const isTransparent = (fieldId: string) => {
-    if (dragItemIndex === null) {
-      return false;
-    }
+  const makeTransparent = (fieldId: string) => {
+    const isTransparent = dragItemIndex !== null && questionFields[dragItemIndex].id === fieldId;
 
-    return questionFields[dragItemIndex].id === fieldId;
+    return isTransparent ? { opacity: 0.3 } : {};
   };
 
   const getDeleteFunc = (index: number) => {
@@ -106,11 +102,11 @@ const FormQuestionList: React.FC<Props> = ({
             sx={{
               position: 'relative',
               width: '100%',
-              '&:before': isShowPasteBar(field.id) ? pasteBarSx : {},
+              '&:before': showPasteBar(field.id),
             }}
           >
             <QuestionCard
-              sx={isTransparent(field.id) ? { opacity: 0.3 } : {}}
+              sx={makeTransparent(field.id)}
               onDragStart={() => handleDragStart(index)}
               onDragEnter={(e) => handleDragEnter(index, e)}
               onDragEnd={handleDragEnd}
