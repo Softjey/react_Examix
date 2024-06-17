@@ -9,5 +9,8 @@ export default {
     'http://localhost:5173',
     'https://softjey.github.io',
     'https://junk-debug.github.io',
+    'https://oleksandranochovna.github.io',
+    'https://daniel3886.github.io',
+    'https://inorf.github.io',
   ],
 };
