@@ -6,7 +6,7 @@ export default function reorderQuestions(
   targetIndex: number,
 ) {
   const itemToMove = questions[indexToMove];
-  const questionsWithoutItemToMove = [...questions].filter((_, index) => index !== indexToMove);
+  const questionsWithoutItemToMove = questions.filter((_, index) => index !== indexToMove);
 
   return [
     ...questionsWithoutItemToMove.slice(0, targetIndex),
