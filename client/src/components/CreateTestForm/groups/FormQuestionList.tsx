@@ -1,11 +1,12 @@
-import { Box, BoxProps, Stack, SxProps, Theme, Typography } from '@mui/material';
+import { Box, BoxProps, Stack, Typography } from '@mui/material';
 import { FieldArrayWithId } from 'react-hook-form';
 import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { CreateTestFormType } from '../schemas/createTestFormValidationSchemas';
 import QuestionCard from '../items/QuestionCard';
 import useCreateTestForm from '../../../hooks/useCreateTestForm';
 import { Nullable } from '../../../types/utils/Nullable';
-import reorderQuestions from '../utils/reorderQuestions';
+import reorderItems from '../utils/reorderItems';
+import pasteBarSx from '../utils/pasteBarSx';
 
 interface Props extends BoxProps {
   questionFields: FieldArrayWithId<CreateTestFormType, 'questions', 'id'>[];
@@ -19,14 +20,18 @@ const FormQuestionList: React.FC<Props> = ({
   onRemove,
   ...props
 }) => {
-  const {
-    formState: { errors },
-    watch,
-    setValue,
-    trigger,
-  } = useCreateTestForm();
+  const { watch, setValue, trigger, formState } = useCreateTestForm();
+
+  const [dragItemIndex, setDragItemIndex] = useState<Nullable<number>>(null);
+  const [dragTargetItemIndex, setDragTargetItemIndex] = useState<Nullable<number>>(null);
 
   const lastItemRef = useRef<HTMLDivElement>(null);
+
+  const { errors } = formState;
+
+  const watchedQuestions = watch('questions');
+
+  const errorMessage = errors.questions?.message || errors.questions?.root?.message;
 
   useEffect(() => {
     if (lastItemRef.current && shouldScroll.current) {
@@ -38,94 +43,86 @@ const FormQuestionList: React.FC<Props> = ({
     }
   }, [questionFields, shouldScroll]);
 
-  const [dragItemIndex, setDragItemIndex] = useState<Nullable<number>>(null);
-  const [dragTargetItemIndex, setDragTargetItemIndex] = useState<Nullable<number>>(null);
-
-  const watchedQuestions = watch('questions');
-
   const handleDragStart = (position: number) => {
     setDragItemIndex(position);
   };
 
   const handleDragEnter = (position: number, e: React.DragEvent<HTMLDivElement>) => {
-    if (e.dataTransfer.types.length > 0) {
-      return;
+    if (e.dataTransfer.types.length <= 0) {
+      setDragTargetItemIndex(position);
     }
-
-    setDragTargetItemIndex(position);
   };
 
   const handleDragEnd = () => {
     setDragItemIndex(null);
     setDragTargetItemIndex(null);
 
-    const reorderedQuestions = reorderQuestions(
-      [...watchedQuestions],
-      dragItemIndex!,
-      dragTargetItemIndex!,
-    );
+    if (dragItemIndex !== null && dragTargetItemIndex !== null) {
+      const reorderedQuestions = reorderItems(watchedQuestions, dragItemIndex, dragTargetItemIndex);
 
-    setValue('questions', reorderedQuestions);
-    trigger('questions');
+      setValue('questions', reorderedQuestions);
+      trigger('questions');
+    }
+  };
+
+  const isShowPasteBar = (fieldId: string) => {
+    if (dragTargetItemIndex === null) {
+      return false;
+    }
+
+    return questionFields[dragTargetItemIndex].id === fieldId;
+  };
+
+  const isTransparent = (fieldId: string) => {
+    if (dragItemIndex === null) {
+      return false;
+    }
+
+    return questionFields[dragItemIndex].id === fieldId;
+  };
+
+  const getDeleteFunc = (index: number) => {
+    return (openSnackBar: () => void) => {
+      if (questionFields.length < 2) {
+        openSnackBar();
+      } else {
+        onRemove(index);
+      }
+    };
   };
 
   return (
     <Box onDrop={(e) => e.preventDefault()} onDragOver={(e) => e.preventDefault()} {...props}>
-      {(errors.questions?.message || errors.questions?.root?.message) && (
+      {errorMessage && (
         <Typography color="error" variant="body1">
-          {errors.questions.message || errors.questions.root?.message}
+          {errorMessage}
         </Typography>
       )}
 
-      <Stack alignItems="center" gap="24px">
-        {questionFields.map((field, index) => {
-          const onDelete = (openSnackBar: () => void) => {
-            if (questionFields.length < 2) {
-              openSnackBar();
-            } else {
-              onRemove(index);
-            }
-          };
-
-          const showPasteBar =
-            dragTargetItemIndex !== null && questionFields[dragTargetItemIndex!].id === field.id;
-
-          const isTransparent =
-            dragItemIndex !== null && questionFields[dragItemIndex!].id === field.id;
-
-          const pasteBarSx: SxProps<Theme> | undefined = () => ({
-            content: '""',
-            position: 'absolute',
-            width: '100%',
-            top: -13,
-            height: '3px',
-            backgroundColor: (theme) => theme.palette.info.main,
-          });
-
-          return (
-            <Box
+      <Stack alignItems="center" spacing={3}>
+        {questionFields.map((field, index) => (
+          <Box
+            key={field.id}
+            sx={{
+              position: 'relative',
+              width: '100%',
+              '&:before': isShowPasteBar(field.id) ? pasteBarSx : {},
+            }}
+          >
+            <QuestionCard
+              sx={isTransparent(field.id) ? { opacity: 0.3 } : {}}
+              onDragStart={() => handleDragStart(index)}
+              onDragEnter={(e) => handleDragEnter(index, e)}
+              onDragEnd={handleDragEnd}
+              ref={index === questionFields.length - 1 ? lastItemRef : null}
+              isFromServer={field.isFromServer}
               key={field.id}
-              sx={{
-                position: 'relative',
-                width: '100%',
-                ':before': showPasteBar ? pasteBarSx : {},
-              }}
-            >
-              <QuestionCard
-                sx={isTransparent ? { opacity: 0.3 } : {}}
-                onDragStart={() => handleDragStart(index)}
-                onDragEnter={(e) => handleDragEnter(index, e)}
-                onDragEnd={handleDragEnd}
-                ref={index === questionFields.length - 1 ? lastItemRef : null}
-                isFromServer={field.isFromServer}
-                key={field.id}
-                questionIndex={index}
-                type={watchedQuestions[index].type}
-                onDelete={onDelete}
-              />
-            </Box>
-          );
-        })}
+              questionIndex={index}
+              type={watchedQuestions[index].type}
+              onDelete={getDeleteFunc(index)}
+            />
+          </Box>
+        ))}
       </Stack>
     </Box>
   );
