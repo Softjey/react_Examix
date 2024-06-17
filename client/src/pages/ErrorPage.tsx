@@ -6,8 +6,7 @@ import Button from '../components/UI/buttons/Button';
 import Routes from '../services/Router/Routes';
 import { LayoutProps } from '../types/utils/LayoutProps';
 import ApiError from '../services/Api/ApiError';
-import Error404W from '/images/icon-404-w.png';
-import Error404D from '/images/icon-404-d.png';
+import ErrorPicture from '/images/ErrorPicture.png';
 import { center } from '../styles/flex';
 
 type ErrorDetails = {
@@ -26,6 +25,7 @@ const ErrorPage: React.FC<Props> = (props) => {
   const { layout, error, errorDetails, actions, onGoHome, ...rest } = props;
   let status;
   let message;
+  const message2 = 'Right now we trying to fix it!';
   let title;
 
   if (error instanceof ApiError) {
@@ -38,8 +38,8 @@ const ErrorPage: React.FC<Props> = (props) => {
     title = errorDetails.title;
   } else {
     status = null;
-    message = 'Oops! Something went wrong.';
-    title = 'Unknown error';
+    message = 'Something went wrong.';
+    title = 'Oops!';
   }
 
   const content = (
@@ -49,16 +49,19 @@ const ErrorPage: React.FC<Props> = (props) => {
       alignItems="center"
       css={{ height: window.innerHeight, width: window.innerWidth }}
     >
-      <Stack direction="column" justifyContent="center" alignItems="center" spacing={6}>
-        <img src={Error404W} alt="404" css={{ height: '20vh', width: 'auto' }} />
-        <Typography fontWeight={400} variant="h3" color="purple">
+      <Stack direction="column" justifyContent="center" alignItems="center" spacing={4}>
+        <img src={ErrorPicture} alt="ErrorPicture" css={{ height: '14vh', width: 'auto' }} />
+        <Typography fontWeight={400} variant="h2" color="#AD19D5">
           {title}
         </Typography>
       </Stack>
 
-      <Typography variant="h6">{message}</Typography>
+      <Stack direction="column" justifyContent="center" alignItems="center" spacing={1}>
+        <Typography variant="h6">{message}</Typography>
+        <Typography variant="h6">{message2}</Typography>
+      </Stack>
 
-      <Stack direction="row" spacing={3} alignItems="center">
+      <Stack direction="row" spacing={2} alignItems="center">
         {actions}
 
         <Button
