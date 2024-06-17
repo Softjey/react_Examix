@@ -19,15 +19,14 @@ import Subject from '../../types/api/enums/Subject';
 import { AvailableQuestionType } from '../../types/api/enums/Type';
 import QuestionsAutocompleteModal from '../UI/QuestionsAutoComplete/QuestionsAutocompleteModal';
 import LoadingButton from '../UI/buttons/LoadingButton';
-import ErrorSnackBar from '../UI/errors/ErrorSnackBar';
 import TestInfo from './TestInfo';
 import FormQuestionList from './groups/FormQuestionList';
 import Button from '../UI/buttons/Button';
 import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
 import Routes from '../../services/Router/Routes';
 import useQuestions from '../../hooks/queries/useQuestions';
-import WarningSnackBar from '../UI/WarningSnackBar';
 import { Nullable } from '../../types/utils/Nullable';
+import AlertSnackbar from '../UI/AlertSnackbar';
 
 interface Props {}
 
@@ -183,13 +182,17 @@ const CreateTestForm: React.FC<Props> = () => {
         </LoadingButton>
       </Stack>
 
-      <ErrorSnackBar open={!!error} onClose={reset}>
+      <AlertSnackbar severity="error" open={!!error} onClose={reset}>
         {error?.message || 'Error occurred'}
-      </ErrorSnackBar>
+      </AlertSnackbar>
 
-      <WarningSnackBar open={warningMessage !== null} onClose={() => setWarningMessage(null)}>
+      <AlertSnackbar
+        severity="warning"
+        open={warningMessage !== null}
+        onClose={() => setWarningMessage(null)}
+      >
         {warningMessage}
-      </WarningSnackBar>
+      </AlertSnackbar>
 
       <QuestionsAutocompleteModal
         open={isModalOpened}

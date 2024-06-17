@@ -25,8 +25,8 @@ import MaxScoreInput from '../../UI/inputs/MaxScoreInput';
 import ErrorPopover from '../../UI/errors/ErrorPopover';
 import CreateTestFormTimeLimitPicker from '../CreateTestFormTimeLimitPicker';
 import disableDragEvent from '../../../pages/CreateTestPage/utils/disableDragEvent';
-import WarningSnackBar from '../../UI/WarningSnackBar';
 import { Nullable } from '../../../types/utils/Nullable';
+import AlertSnackbar from '../../UI/AlertSnackbar';
 
 interface Props extends CardProps {
   type: QuestionType;
@@ -207,9 +207,13 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
           </CardActions>
         </Card>
 
-        <WarningSnackBar open={snackBarMessage !== null} onClose={() => setSnackBarMessage(null)}>
+        <AlertSnackbar
+          severity="warning"
+          open={snackBarMessage !== null}
+          onClose={() => setSnackBarMessage(null)}
+        >
           {snackBarMessage}
-        </WarningSnackBar>
+        </AlertSnackbar>
       </>
     );
   },

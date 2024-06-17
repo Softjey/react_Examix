@@ -9,8 +9,8 @@ import { usePinCode } from '../store/contexts/PinCodeContext';
 import SetPinCodeDialog from '../components/features/ChangePinCode/SetPinCodeDialog';
 import { EnterPinCodeType } from '../components/features/ChangePinCode/PinCodeSchemas';
 import { EnterPinCodeSchema } from '../components/features/ChangePinCode/PinCodeSchemas';
-import ErrorSnackBar from '../components/UI/errors/ErrorSnackBar';
 import QuizLayout from '../components/layouts/QuizLayout';
+import AlertSnackbar from '../components/UI/AlertSnackbar';
 
 interface Props {}
 
@@ -62,9 +62,9 @@ const LockedPage: React.FC<Props> = () => {
         </Button>
       </Stack>
       <SetPinCodeDialog resetMode open={open} onClose={() => setOpen(false)} />
-      <ErrorSnackBar open={isError} onClose={reset}>
+      <AlertSnackbar severity="error" open={isError} onClose={reset}>
         {error?.message}
-      </ErrorSnackBar>
+      </AlertSnackbar>
     </QuizLayout>
   );
 };
