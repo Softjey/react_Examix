@@ -6,7 +6,7 @@ import Authenticated from '../../components/hocs/Authenticated';
 import HomePage from '../../pages/HomePage';
 import TestsLibraryPage from '../../pages/TestsLibraryPage/TestsLibraryPage';
 import OnlyPublic from '../../components/hocs/OnlyPublic';
-import ExamsHistoryPage from '../../pages/ExamsHistoryPage/ExamsHistoryPage';
+import ExamsHistoryPage from '../../pages/ErrorPage';
 import CreateTestPage from '../../pages/CreateTestPage/CreateTestPage';
 import SettingsPage from '../../pages/SettingsPage';
 import TestPage from '../../pages/TestPage';
