@@ -5,9 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import useForgotPassword from '../hooks/queries/useForgotPassword';
 import LoadingButton from './UI/buttons/LoadingButton';
-import ErrorSnackBar from './UI/errors/ErrorSnackBar';
 import { Nullable } from '../types/utils/Nullable';
 import Button from './UI/buttons/Button';
+import AlertSnackbar from './UI/AlertSnackbar';
 
 interface Props extends Omit<ModalProps, 'children'> {}
 
@@ -96,9 +96,9 @@ const ResetPasswordModal: React.FC<Props> = ({ open, onClose }) => {
           )}
         </Stack>
       </Modal>
-      <ErrorSnackBar open={isError} onClose={() => reset()}>
+      <AlertSnackbar severity="error" open={isError} onClose={() => reset()}>
         {error?.message}
-      </ErrorSnackBar>
+      </AlertSnackbar>
     </>
   );
 };
