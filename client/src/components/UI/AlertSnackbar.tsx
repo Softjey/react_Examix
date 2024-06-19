@@ -9,26 +9,28 @@ interface Props extends Omit<SnackbarProps, 'children'> {
   alertProps?: AlertProps;
 }
 
-const getDefaultAnchorOrigin = (
-  severity: AlertProps['severity'],
-): SnackbarProps['anchorOrigin'] => {
-  switch (severity) {
-    case 'error':
-    case 'warning':
-      return { vertical: 'top', horizontal: 'right' };
-    default:
-      return { vertical: 'bottom', horizontal: 'left' };
-  }
-};
-
-const getDefaultVariant = (severity: AlertProps['severity']) => {
-  switch (severity) {
-    case 'error':
-    case 'warning':
-      return 'filled';
-    default:
-      return undefined;
-  }
+const defaultVarianAndAnchorOrigin: {
+  [key: string]: {
+    variant: AlertProps['variant'];
+    anchorOrigin: SnackbarProps['anchorOrigin'];
+  };
+} = {
+  error: {
+    variant: 'filled',
+    anchorOrigin: { vertical: 'top', horizontal: 'right' },
+  },
+  warning: {
+    variant: 'filled',
+    anchorOrigin: { vertical: 'top', horizontal: 'right' },
+  },
+  info: {
+    variant: undefined,
+    anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
+  },
+  success: {
+    variant: undefined,
+    anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
+  },
 };
 
 const getFilledErrorSx = (variant: AlertProps['variant'], severity: AlertProps['severity']) => {
@@ -46,8 +48,8 @@ const AlertSnackbar: React.FC<Props> = ({
   onClose,
   autoHideDuration = 3000,
   severity = 'info',
-  variant = getDefaultVariant(severity),
-  anchorOrigin = getDefaultAnchorOrigin(severity),
+  variant = defaultVarianAndAnchorOrigin[severity].variant,
+  anchorOrigin = defaultVarianAndAnchorOrigin[severity].anchorOrigin,
   alertProps: { sx: alertSx, ...alertProps } = {},
   ...props
 }) => {
