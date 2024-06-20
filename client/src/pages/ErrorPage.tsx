@@ -25,7 +25,6 @@ const ErrorPage: React.FC<Props> = (props) => {
   const { layout, error, errorDetails, actions, onGoHome, ...rest } = props;
   let status;
   let message;
-  const message2 = 'Right now we trying to fix it!';
   let title;
 
   if (error instanceof ApiError) {
@@ -51,14 +50,22 @@ const ErrorPage: React.FC<Props> = (props) => {
     >
       <Stack direction="column" justifyContent="center" alignItems="center" spacing={4}>
         <img src={ErrorPicture} alt="ErrorPicture" css={{ height: '14vh', width: 'auto' }} />
-        <Typography fontWeight={400} variant="h2" color="#AD19D5">
+        <Typography
+          textAlign="center"
+          fontWeight={400}
+          variant="h3"
+          color="#AD19D5"
+          paddingLeft="5%"
+          paddingRight="5%"
+        >
           {title}
         </Typography>
       </Stack>
 
       <Stack direction="column" justifyContent="center" alignItems="center" spacing={1}>
-        <Typography variant="h6">{message}</Typography>
-        <Typography variant="h6">{message2}</Typography>
+        <Typography textAlign="center" paddingLeft="5%" paddingRight="5%" variant="h6">
+          {message}
+        </Typography>
       </Stack>
 
       <Stack direction="row" spacing={2} alignItems="center">
