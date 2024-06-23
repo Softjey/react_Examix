@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Typography } from '@mui/material';
 import { Stack } from '@mui/material';
@@ -8,12 +8,14 @@ import studentExamStore from '../../store/ExamStore/StudentExamStore';
 import Routes from '../../services/Router/Routes';
 import getRandom from '../../utils/getRandom';
 import Button from '../../components/UI/buttons/Button';
+import usePublicFolder from '../../hooks/usePublicFolder';
 
 interface Props {}
 
 const ExamFinishedPage: React.FC<Props> = observer(() => {
-  const [randomNum] = useState(() => getRandom(1, 19));
   const navigate = useNavigate();
+  const randomNum = useMemo(() => getRandom(1, 19), []);
+  const gifSrc = usePublicFolder(`gifs/exam-finished/${randomNum}.gif`);
 
   const handleGoHomeClick = () => {
     studentExamStore.resetExam();
@@ -42,7 +44,7 @@ const ExamFinishedPage: React.FC<Props> = observer(() => {
         </Typography>
 
         <img
-          src={`public/gifs/exam-finished/${randomNum}.gif`}
+          src={gifSrc}
           alt="Test completed. Good job!"
           css={{ maxHeight: '300px', maxWidth: '100%' }}
         />
