@@ -20,19 +20,15 @@ interface Props extends StackProps {
 const ExamQuestionCard: React.FC<Props> = (props) => {
   const { question, questionsAmount, cardProps, onAnswer, ...rest } = props;
   const [timesUp, setTimesUp] = useState(false);
-  const [answered, setAnswered] = useState(false);
   const { title, answers, maxScore, type, index } = question;
-  const disabled = timesUp || answered;
   const opacity = timesUp ? 0.5 : 1;
   const questionIndex = index + 1;
 
   const handleAnswer = (newAnswers: StudentAnswer[]) => {
     onAnswer(newAnswers);
-    setAnswered(true);
   };
 
   useEffect(() => {
-    setAnswered(false);
     setTimesUp(false);
   }, [questionIndex]);
 
@@ -70,50 +66,45 @@ const ExamQuestionCard: React.FC<Props> = (props) => {
             </Stack>
           </Stack>
         )}
-
         <CardHeader title={title} sx={{ paddingBlock: 1, opacity }} />
 
-        <CardContent
-          component={Stack}
-          sx={{ paddingBlock: 0, opacity }}
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Typography variant="body1" color="text.secondary">
-            Max score: {maxScore}
+        <CardContent component={Stack} sx={{ paddingBlock: 0, opacity }}>
+          <Typography variant="caption" color={(t) => t.palette.text.secondary}>
+            You can change your answer until time's up or everyone has responded.
           </Typography>
 
-          {questionsAmount && (
-            <CircularProgressWithLabel
-              size={50}
-              thickness={3}
-              value={(questionIndex / questionsAmount) * 100}
-              label={`${questionIndex}/${questionsAmount}`}
-            />
-          )}
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography variant="body1" color="text.secondary">
+              Max score: {maxScore}
+            </Typography>
+
+            {questionsAmount && (
+              <CircularProgressWithLabel
+                size={50}
+                thickness={3}
+                value={(questionIndex / questionsAmount) * 100}
+                label={`${questionIndex}/${questionsAmount}`}
+              />
+            )}
+          </Stack>
         </CardContent>
 
-        <CardActions
-          sx={{ pl: 2, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 1 }}
-        >
-          <Typography sx={{ opacity }} variant="body2" color="text.secondary">
-            {type === QuestionType.SINGLE_CHOICE ? 'Choose one option' : 'Select multiple options'}
-          </Typography>
+        <CardActions>
+          <Stack gap={1} mt={2} pl={2} alignItems="flex-start" width="100%">
+            <Typography sx={{ opacity }} variant="body2" color="text.secondary">
+              {type === QuestionType.SINGLE_CHOICE
+                ? 'Choose one option'
+                : 'Select multiple options'}
+            </Typography>
 
-          <AnswerGroup
-            disabled={disabled}
-            answers={answers}
-            onAnswer={handleAnswer}
-            questionType={type}
-          />
+            <AnswerGroup
+              disabled={timesUp}
+              answers={answers}
+              onAnswer={handleAnswer}
+              questionType={type}
+            />
+          </Stack>
         </CardActions>
-
-        {answered && (
-          <Typography variant="body2" color={(t) => t.palette.warning.light}>
-            You already answered this question.
-          </Typography>
-        )}
       </Card>
     </Stack>
   );
