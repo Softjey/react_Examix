@@ -6,6 +6,6 @@ export interface Exam {
   id: number;
   authorId: User['id'];
   createdAt: string;
-  test: Pick<Test, 'id' | 'name' | 'image' | 'description' | 'subject' | 'createdAt'>;
+  test: Test;
   results: Pick<Result, 'studentName'>[];
 }
