@@ -2,13 +2,13 @@
 /* eslint-disable implicit-arrow-linebreak */
 import {
   Alert,
-  Box,
   Card,
   CardActions,
   CardContent,
   CardProps,
   Collapse,
   Paper,
+  Stack,
   TextField,
   Typography,
 } from '@mui/material';
@@ -24,8 +24,9 @@ import useCreateTestForm from '../../../hooks/useCreateTestForm';
 import MaxScoreInput from '../../UI/inputs/MaxScoreInput';
 import ErrorPopover from '../../UI/errors/ErrorPopover';
 import CreateTestFormTimeLimitPicker from '../CreateTestFormTimeLimitPicker';
-import WarningSnackBar from '../../UI/WarningSnackBar';
+import disableDragEvent from '../../../pages/CreateTestPage/utils/disableDragEvent';
 import { Nullable } from '../../../types/utils/Nullable';
+import AlertSnackbar from '../../UI/AlertSnackbar';
 
 interface Props extends CardProps {
   type: QuestionType;
@@ -35,7 +36,7 @@ interface Props extends CardProps {
 }
 
 const QuestionCard = forwardRef<HTMLDivElement, Props>(
-  ({ isFromServer, onDelete, type, questionIndex, ...props }, ref) => {
+  ({ isFromServer, onDelete, type, questionIndex, sx: cardSx, ...props }, ref) => {
     const {
       register,
       control,
@@ -53,6 +54,7 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
     const [snackBarMessage, setSnackBarMessage] = useState<Nullable<string>>(null);
 
     const [isInfoOpened, setIsInfoOpened] = useState<boolean>(false);
+    const [draggable, setDraggable] = useState<boolean>(false);
 
     const onAnswerItemRemove = (index: number) => {
       if (fields.length > 2) {
@@ -70,12 +72,17 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
       }
     };
 
+    const { ref: questionTypeRef, ...questionTypeReg } = register(
+      `questions.${questionIndex}.type`,
+    );
+
     return (
       <>
         <Card
+          draggable={draggable}
           ref={ref}
-          onMouseEnter={() => setIsInfoOpened(true)}
-          onMouseLeave={() => setIsInfoOpened(false)}
+          onMouseEnter={isFromServer ? () => setIsInfoOpened(true) : undefined}
+          onMouseLeave={isFromServer ? () => setIsInfoOpened(false) : undefined}
           component={Paper}
           elevation={2}
           sx={{
@@ -86,13 +93,25 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
               opacity: 0.7,
               visibility: 'visible',
             },
+            ...cardSx,
           }}
           {...props}
         >
-          <DragBar sx={{ cursor: 'not-allowed' }} title="This feature is unavailable" />
+          <DragBar
+            sx={{
+              '&:active': {
+                cursor: 'grabbing',
+              },
+            }}
+            onMouseEnter={() => setDraggable(true)}
+            onMouseLeave={() => setDraggable(false)}
+          />
 
           <CardContent
             sx={{
+              userSelect: 'none',
+              WebkitUserDrag: 'none',
+              userDrag: 'none',
               display: 'flex',
               gap: 1,
               flexDirection: 'column',
@@ -100,11 +119,12 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
               paddingTop: 0,
             }}
           >
-            <Box display="flex" gap={1} flexWrap="wrap">
+            <Stack direction="row" gap={1} flexWrap="wrap">
               <QuestionTypeSelect
+                defaultValue={type}
                 disabled={disabled}
-                {...register(`questions.${questionIndex}.type`)}
-                ref={null}
+                {...questionTypeReg}
+                inputRef={questionTypeRef}
               />
 
               <ErrorPopover
@@ -123,6 +143,9 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
                 errorMessage={errors.questions?.[questionIndex]?.maxScore?.message}
               >
                 <MaxScoreInput
+                  onDragStart={disableDragEvent}
+                  onDragEnd={disableDragEvent}
+                  onDragEnter={disableDragEvent}
                   {...register(`questions.${questionIndex}.maxScore`, { valueAsNumber: true })}
                   error={!!errors.questions?.[questionIndex]?.maxScore}
                   disabled={loading}
@@ -138,9 +161,12 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
                   })
                 }
               />
-            </Box>
+            </Stack>
 
             <TextField
+              onDragStart={disableDragEvent}
+              onDragEnd={disableDragEvent}
+              onDragEnter={disableDragEvent}
               error={!!errors.questions?.[questionIndex]?.title}
               helperText={errors.questions?.[questionIndex]?.title?.message?.toString()}
               {...register(`questions.${questionIndex}.title`)}
@@ -181,9 +207,13 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
           </CardActions>
         </Card>
 
-        <WarningSnackBar open={snackBarMessage !== null} onClose={() => setSnackBarMessage(null)}>
+        <AlertSnackbar
+          severity="warning"
+          open={snackBarMessage !== null}
+          onClose={() => setSnackBarMessage(null)}
+        >
           {snackBarMessage}
-        </WarningSnackBar>
+        </AlertSnackbar>
       </>
     );
   },

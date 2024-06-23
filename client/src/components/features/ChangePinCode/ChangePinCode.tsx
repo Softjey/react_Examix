@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Switch from '@mui/material/Switch';
-import { Button, Box } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import SetPinCodeDialog from './SetPinCodeDialog';
 import { usePinCode } from '../../../store/contexts/PinCodeContext';
 
@@ -26,7 +26,7 @@ const ChangePinCode: React.FC = () => {
 
   return (
     <>
-      <Box display="flex" alignItems="center">
+      <Stack direction="row" alignItems="center">
         {pinCodeIsSet && (
           <Button
             sx={{ mr: 2, padding: '4px 8px', fontSize: '0.75rem' }}
@@ -39,7 +39,7 @@ const ChangePinCode: React.FC = () => {
         )}
 
         <Switch checked={pinCodeIsSet} onChange={handlePinToggle} />
-      </Box>
+      </Stack>
 
       <SetPinCodeDialog resetMode={resetMode} open={setPinDialogOpen} onClose={handleDialogClose} />
     </>

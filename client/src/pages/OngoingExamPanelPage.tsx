@@ -13,7 +13,7 @@ import ExamResultsTable from '../components/common/ExamResultsTable/ExamResultsT
 import useDeleteOngoingExam from '../hooks/queries/useDeleteOngoingExam';
 import useStartExam from '../hooks/queries/useStartExam';
 import LoadingButton from '../components/UI/buttons/LoadingButton';
-import ErrorSnackBar from '../components/UI/errors/ErrorSnackBar';
+import AlertSnackbar from '../components/UI/AlertSnackbar';
 
 interface Props extends HomeLayoutProps {}
 
@@ -87,9 +87,9 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
 
       {results && results.length > 0 && <ExamResultsTable questions={results} />}
 
-      <ErrorSnackBar open={!!error} onClose={() => starting.reset()}>
+      <AlertSnackbar severity="error" open={!!error} onClose={() => starting.reset()}>
         {error?.message}
-      </ErrorSnackBar>
+      </AlertSnackbar>
     </HomeLayout>
   );
 });

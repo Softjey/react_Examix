@@ -1,13 +1,13 @@
-import { Box, Modal, ModalProps, TextField, Typography } from '@mui/material';
+import { Modal, ModalProps, Stack, TextField, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import useForgotPassword from '../hooks/queries/useForgotPassword';
 import LoadingButton from './UI/buttons/LoadingButton';
-import ErrorSnackBar from './UI/errors/ErrorSnackBar';
 import { Nullable } from '../types/utils/Nullable';
 import Button from './UI/buttons/Button';
+import AlertSnackbar from './UI/AlertSnackbar';
 
 interface Props extends Omit<ModalProps, 'children'> {}
 
@@ -52,7 +52,7 @@ const ResetPasswordModal: React.FC<Props> = ({ open, onClose }) => {
         open={open}
         onClose={onClose}
       >
-        <Box
+        <Stack
           component="form"
           noValidate
           onSubmit={onSubmit}
@@ -60,12 +60,10 @@ const ResetPasswordModal: React.FC<Props> = ({ open, onClose }) => {
           borderRadius={2}
           bgcolor="background.paper"
           padding={3}
-          display="flex"
-          flexDirection="column"
           gap={2}
         >
           {successMessage !== null ? (
-            <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column">
+            <Stack justifyContent="center" alignItems="center">
               <Typography sx={{ py: 3 }} textAlign="center" variant="h1">
                 🎉
               </Typography>
@@ -75,7 +73,7 @@ const ResetPasswordModal: React.FC<Props> = ({ open, onClose }) => {
               </Typography>
 
               <Button onClick={() => onClose!({}, 'escapeKeyDown')}>Close</Button>
-            </Box>
+            </Stack>
           ) : (
             <>
               <Typography id="password-modal-title" variant="h6">
@@ -96,11 +94,11 @@ const ResetPasswordModal: React.FC<Props> = ({ open, onClose }) => {
               </LoadingButton>
             </>
           )}
-        </Box>
+        </Stack>
       </Modal>
-      <ErrorSnackBar open={isError} onClose={() => reset()}>
+      <AlertSnackbar severity="error" open={isError} onClose={() => reset()}>
         {error?.message}
-      </ErrorSnackBar>
+      </AlertSnackbar>
     </>
   );
 };

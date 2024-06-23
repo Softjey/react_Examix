@@ -2,7 +2,7 @@ import { Box, Stack, TextField, TextFieldProps } from '@mui/material';
 import { columnCenter } from '../../styles/flex';
 import LoadingButton from '../UI/buttons/LoadingButton';
 import { Nullable } from '../../types/utils/Nullable';
-import ErrorSnackBar from '../UI/errors/ErrorSnackBar';
+import AlertSnackbar from '../UI/AlertSnackbar';
 
 interface Props {
   errorMessage: Nullable<string>;
@@ -39,9 +39,9 @@ const LoginForm: React.FC<Props> = ({
       >
         {submitButtonText}
       </LoadingButton>
-      <ErrorSnackBar open={!!errorMessage} onClose={onErrorClose}>
+      <AlertSnackbar open={!!errorMessage} onClose={onErrorClose}>
         {errorMessage}
-      </ErrorSnackBar>
+      </AlertSnackbar>
     </Box>
   );
 };

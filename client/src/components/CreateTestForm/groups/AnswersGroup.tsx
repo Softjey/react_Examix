@@ -1,4 +1,4 @@
-import { Box, BoxProps, Typography } from '@mui/material';
+import { Box, BoxProps, Stack, Typography } from '@mui/material';
 import { FieldArrayWithId } from 'react-hook-form';
 import { useEffect } from 'react';
 import AddIcon from '@mui/icons-material/Add';
@@ -35,7 +35,7 @@ const AnswersGroup: React.FC<Props> = ({
 
   const { loading } = useCreateTest();
 
-  const isShowAddButton = fields.length >= 6 || isFromServer;
+  const isShowAddButton = fields.length < 6 && !isFromServer;
 
   const isSingleChoice = questionType === QuestionType.SINGLE_CHOICE;
 
@@ -98,8 +98,8 @@ const AnswersGroup: React.FC<Props> = ({
           />
         ))}
 
-        {isShowAddButton || (
-          <Box display="flex">
+        {isShowAddButton && (
+          <Stack direction="row">
             <Button
               disabled={loading}
               startIcon={
@@ -132,7 +132,7 @@ const AnswersGroup: React.FC<Props> = ({
             >
               Add new
             </Button>
-          </Box>
+          </Stack>
         )}
       </Box>
 

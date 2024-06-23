@@ -12,7 +12,7 @@ const getDefaultQuestion = (): FormQuestion => ({
     { title: '', isCorrect: false },
   ],
   maxScore: 0,
-  timeLimit: dayjs().startOf('hour'),
+  timeLimit: dayjs().startOf('day'),
 });
 
 export default getDefaultQuestion;

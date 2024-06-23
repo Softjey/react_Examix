@@ -48,6 +48,7 @@ const QuestionsAutocompleteModal: React.FC<Props> = ({ open, onClose, autoComple
           renderOption={renderOption}
           onChange={onChange}
           filterOptions={(x) => x}
+          getOptionLabel={(option) => (typeof option === 'string' ? option : option.title)}
           renderInput={renderInput}
           PaperComponent={TransitionedPaperComponentForward}
           {...restAutoCompleteProps}
