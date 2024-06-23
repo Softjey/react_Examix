@@ -30,6 +30,10 @@ export class WsExamsAuthenticator {
     const { studentId, studentName, examCode } = auth;
     const { students, status } = await this.examsService.getExam(auth.examCode);
 
+    if (this.handleStudentNameDuplicateError(students, { name: studentName, id: studentId })) {
+      return ['error', null];
+    }
+
     if (!studentId) {
       if (this.hasStudentExamStartedError(status)) {
         return ['error', null];
@@ -70,6 +74,23 @@ export class WsExamsAuthenticator {
 
   private handleError(error: WSException) {
     WsExceptionsFilter.handleError(this.client, error);
+
+    return false;
+  }
+
+  private handleStudentNameDuplicateError(
+    students: Exam['students'],
+    newStudent: Pick<Student, 'name'> & { id: string },
+  ) {
+    const studentAlreadyJoined = Object.entries(students).some(([studentId, { name }]) => {
+      return newStudent.name === name && newStudent.id !== studentId;
+    });
+
+    if (studentAlreadyJoined) {
+      return !this.handleError(
+        WSException.Conflict('Student with this name already joined', { disconnect: true }),
+      );
+    }
 
     return false;
   }

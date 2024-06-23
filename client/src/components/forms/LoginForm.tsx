@@ -39,7 +39,7 @@ const LoginForm: React.FC<Props> = ({
       >
         {submitButtonText}
       </LoadingButton>
-      <AlertSnackbar open={!!errorMessage} onClose={onErrorClose}>
+      <AlertSnackbar severity="error" open={!!errorMessage} onClose={onErrorClose}>
         {errorMessage}
       </AlertSnackbar>
     </Box>
