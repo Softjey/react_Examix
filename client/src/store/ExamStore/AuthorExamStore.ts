@@ -16,7 +16,13 @@ import createOffHandlers from './utils/createOffHandlers';
 import storage from '../../services/storage';
 import ErrorMessage from './types/ErrorMessage';
 // eslint-disable-next-line import/no-cycle
-import { onStudentJoined, onStudentLeave, onStudentReconnected } from './utils/studentEvents';
+import {
+  onStudentJoined,
+  onStudentKicked,
+  onStudentLeave,
+  onStudentReconnected,
+} from './utils/studentEvents';
+import Student from './types/Student';
 
 export class AuthorExamStore {
   private socket: Socket | null = null;
@@ -140,6 +146,43 @@ export class AuthorExamStore {
     });
   }
 
+  kickStudent(studentId: Student['studentId']) {
+    return new Promise<void>((resolve, reject) => {
+      const { socket, exam } = this;
+
+      if (!socket || !exam) return;
+
+      const offHandlers = createOffHandlers(socket, {
+        [Message.EXCEPTION]: onError,
+        [Message.STUDENT_KICKED]: handleStudentKicked,
+      });
+
+      function handleStudentKicked() {
+        offHandlers();
+        resolve();
+      }
+
+      function onError(error: WsException) {
+        offHandlers();
+        reject(new WsApiError(error));
+
+        if (exam) {
+          exam.students = exam.students.map((student) => {
+            return student.studentId === studentId ? { ...student, loading: false } : student;
+          });
+        }
+      }
+
+      exam.students = exam.students.map((student) => {
+        return student.studentId === studentId ? { ...student, loading: true } : student;
+      });
+      socket.once(Message.STUDENT_KICKED, handleStudentKicked);
+      socket.once(Message.EXCEPTION, onError);
+
+      socket.emit(AuthorEmitter.KICK_STUDENT, { studentId });
+    });
+  }
+
   resetExam() {
     runInAction(() => {
       this.socket?.disconnect();
@@ -154,6 +197,7 @@ export class AuthorExamStore {
     onStudentJoined.call(this, socket);
     onStudentReconnected.call(this, socket);
     onStudentLeave.call(this, socket);
+    onStudentKicked.call(this, socket);
 
     socket.on(Message.RESULTS, this.handleResults.bind(this));
     socket.on(Message.EXAM_FINISHED, this.handleExamFinished.bind(this));

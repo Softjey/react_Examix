@@ -13,6 +13,7 @@ interface Props {}
 
 const OngoingExamPage: React.FC<Props> = observer(() => {
   const { status } = studentExamStore;
+  const resetExam = () => studentExamStore.resetExam();
 
   switch (status) {
     case 'idle':
@@ -28,7 +29,17 @@ const OngoingExamPage: React.FC<Props> = observer(() => {
             title: 'Exam was deleted',
             description: ErrorMessage.EXAM_WAS_DELETED,
           }}
-          onGoHome={() => studentExamStore.resetExam()}
+          onGoHome={resetExam}
+        />
+      );
+    case 'kicked':
+      return (
+        <ErrorPage
+          errorDetails={{
+            title: 'You were kicked from the exam',
+            description: 'You were kicked from the exam by the author.',
+          }}
+          onGoHome={resetExam}
         />
       );
     case 'finished':
