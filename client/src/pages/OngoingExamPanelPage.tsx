@@ -14,14 +14,16 @@ import useDeleteOngoingExam from '../hooks/queries/useDeleteOngoingExam';
 import useStartExam from '../hooks/queries/useStartExam';
 import LoadingButton from '../components/UI/buttons/LoadingButton';
 import AlertSnackbar from '../components/UI/AlertSnackbar';
+import useKickStudent from '../hooks/queries/useKickStudent';
 
 interface Props extends HomeLayoutProps {}
 
 const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
   const { deleteExam, ...deletion } = useDeleteOngoingExam();
   const { startExam, ...starting } = useStartExam();
+  const { kickStudent, ...kicking } = useKickStudent();
   const isLoading = starting.isPending || deletion.isPending;
-  const error = starting.error || deletion.error;
+  const error = starting.error || deletion.error || kicking.error;
   const { exam, status, credentials } = authorExamStore;
 
   if (status === 'idle') {
@@ -83,7 +85,11 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
 
       <QuestionsList variant="accordion" questions={test.testQuestions} />
 
-      <StudentsList variant="accordion" students={students ?? []} />
+      <StudentsList
+        variant="accordion"
+        students={students ?? []}
+        onKick={({ studentId }) => kickStudent(studentId)}
+      />
 
       {results && results.length > 0 && <ExamResultsTable questions={results} />}
 

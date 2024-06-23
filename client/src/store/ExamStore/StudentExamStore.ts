@@ -15,13 +15,18 @@ import { StudentReconnectedResponse } from './types/responses/ReconnectedRespons
 import prepareCurrentQuestion from './utils/prepareCurrentQuestion';
 import ErrorMessage from './types/ErrorMessage';
 // eslint-disable-next-line import/no-cycle
-import { onStudentJoined, onStudentLeave, onStudentReconnected } from './utils/studentEvents';
+import {
+  onStudentJoined,
+  onStudentKicked,
+  onStudentLeave,
+  onStudentReconnected,
+} from './utils/studentEvents';
 
 export class StudentExamStore {
   private credentials: Required<Credentials> | null = null;
   private socket: Socket | null = null;
   exam: StudentStoresExam | null = null;
-  status: 'idle' | 'created' | 'started' | 'finished' | 'deleted' = 'idle';
+  status: 'idle' | 'created' | 'started' | 'finished' | 'deleted' | 'kicked' = 'idle';
 
   constructor() {
     makeAutoObservable(this);
@@ -154,6 +159,11 @@ export class StudentExamStore {
     onStudentJoined.call(this, socket);
     onStudentReconnected.call(this, socket);
     onStudentLeave.call(this, socket);
+    onStudentKicked.call(this, socket, (studentId) => {
+      if (this.credentials?.studentId === studentId) {
+        this.handleIKicked();
+      }
+    });
 
     socket.on(Message.EXAM_STARTED, this.handleExamStart.bind(this));
     socket.on(Message.QUESTION, this.handleQuestion.bind(this));
@@ -185,6 +195,11 @@ export class StudentExamStore {
   private handleExamDeleted() {
     storage.remove('student-exam-credentials');
     this.status = 'deleted';
+  }
+
+  private handleIKicked() {
+    storage.remove('student-exam-credentials');
+    this.status = 'kicked';
   }
 
   private handleExamFinished() {
