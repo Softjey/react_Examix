@@ -6,11 +6,11 @@ import React from 'react';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import UserAvatar from '../UI/UserAvatar';
-import Student from '../../store/ExamStore/types/Student';
+import Student, { LoadingStudent } from '../../store/ExamStore/types/Student';
 import DottedText from '../UI/DottedText/DottedText';
 
 interface Props extends ListProps {
-  students: Student[];
+  students: LoadingStudent[];
   variant?: 'accordion' | 'list';
   onKick?: (student: Student) => void;
 }
@@ -36,11 +36,16 @@ const StudentsList: React.FC<Props> = ({ students, variant, onKick, sx, ...rest 
       )}
 
       {students.length > 0 &&
-        students.map(({ name, studentId }) => (
+        students.map(({ name, studentId, loading }) => (
           <ListItem
             secondaryAction={
               onKick && (
-                <IconButton onClick={() => onKick({ name, studentId })}>
+                <IconButton
+                  color="error"
+                  disabled={loading}
+                  sx={{ borderRadius: 2 }}
+                  onClick={() => onKick({ name, studentId })}
+                >
                   <PersonRemoveIcon />
                 </IconButton>
               )
