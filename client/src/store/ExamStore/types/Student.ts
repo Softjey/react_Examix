@@ -8,3 +8,5 @@ export default interface Student {
 export interface StudentWithResults extends Student {
   results: Record<number, { answers: StudentAnswer[] }>;
 }
+
+export type LoadingStudent = Student & { loading?: boolean };
