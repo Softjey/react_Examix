@@ -1,4 +1,4 @@
-import { ListItem, Box, ListItemAvatar } from '@mui/material';
+import { ListItem, ListItemAvatar, Stack } from '@mui/material';
 import { ListItemText, ListItemProps, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import React from 'react';
@@ -29,7 +29,7 @@ const ExamItem: React.FC<Props> = ({ exam, ...rest }) => {
           justifyContent: 'space-between',
         }}
       >
-        <Box display="flex" alignItems="center" width="40%">
+        <Stack direction="row" alignItems="center" width="40%">
           <ListItemAvatar>
             <TestAvatar width={60} test={test} sx={{ mr: '20px' }} />
           </ListItemAvatar>
@@ -39,7 +39,7 @@ const ExamItem: React.FC<Props> = ({ exam, ...rest }) => {
             primaryTypographyProps={{ variant: 'subtitle2' }}
             secondary={<SubjectItem subject={subject} />}
           />
-        </Box>
+        </Stack>
 
         <Typography variant="caption" color="GrayText" flexGrow={1} width="50%">
           {studentsStr}

@@ -6,6 +6,7 @@ import {
   CircularProgress,
   Button,
   BoxProps,
+  Stack,
 } from '@mui/material';
 import { useState, ChangeEvent } from 'react';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
@@ -98,7 +99,7 @@ const ImageLinkUploader: React.FC<Props> = ({
       >
         {!imageLink && <PhotoCameraIcon sx={{ fontSize: 48, color: 'gray' }} />}
       </Box>
-      <Modal open={open} onClose={onModalClose}>
+      <Modal disableScrollLock open={open} onClose={onModalClose}>
         <Box
           sx={{
             display: 'flex',
@@ -145,7 +146,7 @@ const ImageLinkUploader: React.FC<Props> = ({
             {loading && <CircularProgress size={50} />}
           </Box>
 
-          <Box display="flex" gap={2} justifyContent="space-between">
+          <Stack direction="row" gap={2} justifyContent="space-between">
             <Button
               fullWidth
               size="small"
@@ -168,7 +169,7 @@ const ImageLinkUploader: React.FC<Props> = ({
             >
               Delete Image
             </Button>
-          </Box>
+          </Stack>
         </Box>
       </Modal>
     </>

@@ -1,8 +1,8 @@
 import { Dialog, Stack, Typography, TextField, DialogProps } from '@mui/material';
 import React from 'react';
-import ErrorSnackBar from '../../UI/errors/ErrorSnackBar';
 import Button from '../../UI/buttons/Button';
 import useSetPinCodeDialog from './useSetPinCodeDialog';
+import AlertSnackbar from '../../UI/AlertSnackbar';
 
 interface Props extends Omit<DialogProps, 'onClose'> {
   resetMode?: boolean;
@@ -56,7 +56,9 @@ const SetPinCodeDialog: React.FC<Props> = ({ onClose, resetMode = false, ...rest
         </Button>
       </Stack>
 
-      <ErrorSnackBar open={!!error} onClose={resetError} errorMessage={error?.message} />
+      <AlertSnackbar severity="error" open={!!error} onClose={resetError}>
+        {error?.message}
+      </AlertSnackbar>
     </Dialog>
   );
 };

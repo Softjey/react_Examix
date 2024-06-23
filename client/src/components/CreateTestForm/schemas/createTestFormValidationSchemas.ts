@@ -22,11 +22,11 @@ const QuestionSchema = z.object({
   maxScore: z.number({ message: 'Max score must be a number' }).min(0, 'Max score is required'),
   timeLimit: z
     .instanceof(dayjs as unknown as typeof Dayjs)
-    .refine((value) => value.minute() * 60 + value.second() > 0, {
-      message: 'Time limit must be greater than 0',
+    .refine((value) => value.hour() * 60 * 60 + value.minute() * 60 + value.second() >= 10, {
+      message: 'Time limit must be at least 10 seconds',
     })
-    .refine((value) => value.minute() * 60 + value.second() <= 10 * 60, {
-      message: 'Time limit cannot be more than 10 minutes',
+    .refine((value) => value.hour() * 60 * 60 + value.minute() * 60 + value.second() <= 60 * 60, {
+      message: 'Time limit cannot be more than 1 hour',
     }),
 });
 

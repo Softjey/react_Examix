@@ -1,19 +1,8 @@
-import React, { useState } from 'react';
-import { Box, Stack, TextField, Typography } from '@mui/material';
+import { Stack, TextField, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
-import dayjs from 'dayjs';
-import LoadingPage from '../../pages/LoadingPage';
-import LoadingButton from '../UI/buttons/LoadingButton';
-import ErrorSnackBar from '../UI/errors/ErrorSnackBar';
-import TestInfo from './TestInfo';
-import FormQuestionList from './groups/FormQuestionList';
-import Button from '../UI/buttons/Button';
-import QuestionsAutocompleteModal from '../UI/QuestionsAutoComplete/QuestionsAutocompleteModal';
-import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
-import Routes from '../../services/Router/Routes';
-import useQuestions from '../../hooks/queries/useQuestions';
+import { useRef, useState } from 'react';
 import {
   CreateTestFormType,
   CreateTestSchema,
@@ -23,10 +12,21 @@ import defaultValues from '../../pages/CreateTestPage/defaultValues';
 import getDefaultQuestion from '../../pages/CreateTestPage/utils/getDefaultQuestion';
 import getFilteredQuestions from '../../pages/CreateTestPage/utils/getFilteredQuestions';
 import getPreparedTestQuestions from '../../pages/CreateTestPage/utils/getPreparedTestQuestions';
+import LoadingPage from '../../pages/LoadingPage';
 import { CreateTestDto } from '../../services/Api/types/create-test';
 import { Question } from '../../types/api/entities/question';
 import Subject from '../../types/api/enums/Subject';
 import { AvailableQuestionType } from '../../types/api/enums/Type';
+import QuestionsAutocompleteModal from '../UI/QuestionsAutoComplete/QuestionsAutocompleteModal';
+import LoadingButton from '../UI/buttons/LoadingButton';
+import TestInfo from './TestInfo';
+import FormQuestionList from './groups/FormQuestionList';
+import Button from '../UI/buttons/Button';
+import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
+import Routes from '../../services/Router/Routes';
+import useQuestions from '../../hooks/queries/useQuestions';
+import { Nullable } from '../../types/utils/Nullable';
+import AlertSnackbar from '../UI/AlertSnackbar';
 
 interface Props {}
 
@@ -39,6 +39,8 @@ const CreateTestForm: React.FC<Props> = () => {
 
   const [search, setSearch] = useState<string>('');
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
+
+  const [warningMessage, setWarningMessage] = useState<Nullable<string>>(null);
 
   const { questions, ...restQueryParams } = useQuestions({
     search: search || undefined,
@@ -57,26 +59,41 @@ const CreateTestForm: React.FC<Props> = () => {
     mode: 'onBlur',
   });
 
+  const shouldScroll = useRef<boolean>(false);
+
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
     name: 'questions',
   });
 
-  const addQuestionCard = () => append(getDefaultQuestion(), { shouldFocus: false });
+  const addQuestionCard = () => {
+    append(getDefaultQuestion(), { shouldFocus: false });
+    shouldScroll.current = true;
+  };
 
-  const addQuestionCardFromServer = (value: Question) => {
-    const { type, ...question } = value;
+  const addQuestionCardFromServer = ({ type, ...question }: Question) => {
+    const { maxScore, timeLimit } = getDefaultQuestion();
+
+    const formQuestions = methods.watch('questions') as QuestionFromServer[];
+    const isDuplicate = formQuestions.some((formQuestion) => formQuestion.id === question.id);
+
+    if (isDuplicate) {
+      setWarningMessage('This question has already been added');
+      return;
+    }
 
     append(
       {
         ...question,
         type: type as AvailableQuestionType,
         isFromServer: true,
-        maxScore: 0,
-        timeLimit: dayjs().startOf('hour'),
+        maxScore,
+        timeLimit,
       },
       { shouldFocus: false },
     );
+
+    shouldScroll.current = true;
   };
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -115,12 +132,10 @@ const CreateTestForm: React.FC<Props> = () => {
 
   return (
     <FormProvider {...methods}>
-      <Box
+      <Stack
         component="form"
         noValidate
         onSubmit={onSubmit}
-        display="flex"
-        flexDirection="column"
         alignItems="center"
         padding="15px 30px"
         gap="32px"
@@ -139,44 +154,53 @@ const CreateTestForm: React.FC<Props> = () => {
           </Stack>
         )}
 
-        <FormQuestionList width="100%" questions={fields} onRemove={remove} />
+        <FormQuestionList
+          shouldScroll={shouldScroll}
+          width="100%"
+          questionFields={fields}
+          onRemove={remove}
+        />
 
-        <Stack width="100%" flexDirection="row" justifyContent="space-between" gap={2}>
-          <Stack direction="row" gap={2}>
-            <Button
-              sx={{ textTransform: 'none' }}
-              variant="outlined"
-              color="secondary"
-              disabled={loading}
-              type="button"
-              onClick={addQuestionCard}
-            >
-              Add new question
-            </Button>
+        <Stack width="100%" direction="row" justifyContent="start" gap={2}>
+          <Button
+            sx={{ textTransform: 'none' }}
+            variant="outlined"
+            color="secondary"
+            disabled={loading}
+            type="button"
+            onClick={addQuestionCard}
+          >
+            Add new question
+          </Button>
 
-            <Button
-              sx={{ textTransform: 'none' }}
-              variant="outlined"
-              color="secondary"
-              disabled={loading}
-              type="button"
-              onClick={() => setIsModalOpened(true)}
-            >
-              Add question from library
-            </Button>
-          </Stack>
-
-          <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
-            Create Test
-          </LoadingButton>
+          <Button
+            sx={{ textTransform: 'none' }}
+            variant="outlined"
+            color="secondary"
+            disabled={loading}
+            type="button"
+            onClick={() => setIsModalOpened(true)}
+          >
+            Add question from library
+          </Button>
         </Stack>
-      </Box>
 
-      <ErrorSnackBar
-        open={!!error}
-        onClose={reset}
-        errorMessage={error?.message || 'Error occurred'}
-      />
+        <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
+          Create Test
+        </LoadingButton>
+      </Stack>
+
+      <AlertSnackbar severity="error" open={!!error} onClose={reset}>
+        {error?.message || 'Error occurred'}
+      </AlertSnackbar>
+
+      <AlertSnackbar
+        severity="warning"
+        open={warningMessage !== null}
+        onClose={() => setWarningMessage(null)}
+      >
+        {warningMessage}
+      </AlertSnackbar>
 
       <QuestionsAutocompleteModal
         open={isModalOpened}
