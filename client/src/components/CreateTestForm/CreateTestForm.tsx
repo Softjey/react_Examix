@@ -184,11 +184,9 @@ const CreateTestForm: React.FC<Props> = () => {
             </Button>
           </Stack>
 
-          {fields.length >= 1 && ( // Adjusted condition for the submit button visibility
-            <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
-              Create Test
-            </LoadingButton>
-          )}
+          <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
+            Create Test
+          </LoadingButton>
         </Stack>
       </Stack>
 
