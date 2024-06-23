@@ -246,7 +246,6 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async kickStudent(
     @MessageBody() { studentId }: KickStudentDto,
     @ClientAuth('examCode') examCode: string,
-    @ConnectedSocket() client: Socket,
   ) {
     const exam = await this.examsService.getExam(examCode);
 
@@ -260,9 +259,7 @@ export class ExamsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw WebSocketException.NotFound('Student with this id is not in the exam');
     }
 
-    this.server.to(deletedStudentClientId).emit('student-kicked', { studentId });
+    this.server.to(examCode).emit('student-kicked', { studentId });
     this.server.to(deletedStudentClientId).disconnectSockets(true);
-
-    client.emit('student-kicked', { studentId });
   }
 }
