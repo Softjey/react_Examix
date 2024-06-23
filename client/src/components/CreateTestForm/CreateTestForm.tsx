@@ -4,6 +4,16 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
 import dayjs from 'dayjs';
+import LoadingPage from '../../pages/LoadingPage';
+import LoadingButton from '../UI/buttons/LoadingButton';
+import ErrorSnackBar from '../UI/errors/ErrorSnackBar';
+import TestInfo from './TestInfo';
+import FormQuestionList from './groups/FormQuestionList';
+import Button from '../UI/buttons/Button';
+import QuestionsAutocompleteModal from '../UI/QuestionsAutoComplete/QuestionsAutocompleteModal';
+import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
+import Routes from '../../services/Router/Routes';
+import useQuestions from '../../hooks/queries/useQuestions';
 import {
   CreateTestFormType,
   CreateTestSchema,
@@ -13,20 +23,10 @@ import defaultValues from '../../pages/CreateTestPage/defaultValues';
 import getDefaultQuestion from '../../pages/CreateTestPage/utils/getDefaultQuestion';
 import getFilteredQuestions from '../../pages/CreateTestPage/utils/getFilteredQuestions';
 import getPreparedTestQuestions from '../../pages/CreateTestPage/utils/getPreparedTestQuestions';
-import LoadingPage from '../../pages/LoadingPage';
 import { CreateTestDto } from '../../services/Api/types/create-test';
 import { Question } from '../../types/api/entities/question';
 import Subject from '../../types/api/enums/Subject';
 import { AvailableQuestionType } from '../../types/api/enums/Type';
-import QuestionsAutocompleteModal from '../UI/QuestionsAutoComplete/QuestionsAutocompleteModal';
-import LoadingButton from '../UI/buttons/LoadingButton';
-import ErrorSnackBar from '../UI/errors/ErrorSnackBar';
-import TestInfo from './TestInfo';
-import FormQuestionList from './groups/FormQuestionList';
-import Button from '../UI/buttons/Button';
-import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
-import Routes from '../../services/Router/Routes';
-import useQuestions from '../../hooks/queries/useQuestions';
 
 interface Props {}
 
@@ -131,37 +131,45 @@ const CreateTestForm: React.FC<Props> = () => {
           Questions
         </Typography>
 
+        {fields.length >= 3 && (
+          <Stack marginLeft="760px">
+            <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
+              Create Test
+            </LoadingButton>
+          </Stack>
+        )}
+
         <FormQuestionList width="100%" questions={fields} onRemove={remove} />
 
-        <Stack width="100%" flexDirection="row" justifyContent="start" gap={2}>
-          <Button
-            sx={{ textTransform: 'none' }}
-            variant="outlined"
-            color="secondary"
-            disabled={loading}
-            type="button"
-            onClick={addQuestionCard}
-          >
-            Add new question
-          </Button>
+        <Stack width="100%" flexDirection="row" justifyContent="space-between" gap={2}>
+          <Stack direction="row" gap={2}>
+            <Button
+              sx={{ textTransform: 'none' }}
+              variant="outlined"
+              color="secondary"
+              disabled={loading}
+              type="button"
+              onClick={addQuestionCard}
+            >
+              Add new question
+            </Button>
 
-          <Button
-            sx={{ textTransform: 'none' }}
-            variant="outlined"
-            color="secondary"
-            disabled={loading}
-            type="button"
-            onClick={() => setIsModalOpened(true)}
-          >
-            Add question from library
-          </Button>
-        </Stack>
+            <Button
+              sx={{ textTransform: 'none' }}
+              variant="outlined"
+              color="secondary"
+              disabled={loading}
+              type="button"
+              onClick={() => setIsModalOpened(true)}
+            >
+              Add question from library
+            </Button>
+          </Stack>
 
-        <Box position="fixed" width="59%" bottom={28} display="flex" justifyContent="end">
           <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
             Create Test
           </LoadingButton>
-        </Box>
+        </Stack>
       </Box>
 
       <ErrorSnackBar
