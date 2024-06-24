@@ -140,17 +140,14 @@ const CreateTestForm: React.FC<Props> = () => {
       >
         <TestInfo />
 
-        <Typography sx={{ width: '100%' }} variant="h6">
-          Questions
-        </Typography>
-
-        {fields.length >= 3 && (
-          <Stack marginLeft="760px">
+        <Stack width="100%" direction="row" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6">Questions</Typography>
+          {fields.length >= 3 && (
             <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
               Create Test
             </LoadingButton>
-          </Stack>
-        )}
+          )}
+        </Stack>
 
         <FormQuestionList
           shouldScroll={shouldScroll}
