@@ -29,6 +29,12 @@ import { AvailableQuestionType } from '../../types/api/enums/Type';
 
 interface Props {}
 
+const CreateTestButton: React.FC<{ loading: boolean }> = ({ loading }) => (
+  <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
+    Create Test
+  </LoadingButton>
+);
+
 const CreateTestForm: React.FC<Props> = () => {
   const navigate = useNavigate();
 
@@ -132,21 +138,21 @@ const CreateTestForm: React.FC<Props> = () => {
         component="form"
         noValidate
         onSubmit={onSubmit}
-        display="flex"
-        flexDirection="column"
         alignItems="center"
         padding="15px 30px"
         gap="32px"
       >
         <TestInfo />
 
-        <Stack width="100%" direction="row" justifyContent="space-between" alignItems="center">
+        <Stack
+          width="100%"
+          direction="row"
+          justifyContent="space-between"
+          spacing={10}
+          alignItems="center"
+        >
           <Typography variant="h6">Questions</Typography>
-          {fields.length >= 3 && (
-            <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
-              Create Test
-            </LoadingButton>
-          )}
+          {fields.length >= 3 && <CreateTestButton loading={loading} />}
         </Stack>
 
         <FormQuestionList
@@ -181,9 +187,7 @@ const CreateTestForm: React.FC<Props> = () => {
             </Button>
           </Stack>
 
-          <LoadingButton variant="contained" size="large" type="submit" loading={loading}>
-            Create Test
-          </LoadingButton>
+          <CreateTestButton loading={loading} />
         </Stack>
       </Stack>
 
