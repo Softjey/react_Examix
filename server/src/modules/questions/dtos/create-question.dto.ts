@@ -3,6 +3,7 @@ import { IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validato
 import { Type } from 'class-transformer';
 import { $Enums } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import AllUnique from 'src/utils/validation/decorators/all-unique/all-unique.decorator';
 
 export class CreateQuestionDto {
   @IsString()
@@ -21,6 +22,10 @@ export class CreateQuestionDto {
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
+  @AllUnique({
+    mapFn: (answer: AnswerDto) => answer.title,
+    itemsName: 'Answers',
+  })
   @Type(() => AnswerDto)
   answers: AnswerDto[];
 }
