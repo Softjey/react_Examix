@@ -1,5 +1,5 @@
-import React from 'react';
-import { Navigate } from 'react-router';
+import React, { useMemo } from 'react';
+import { Navigate, useNavigate } from 'react-router';
 import { observer } from 'mobx-react-lite';
 import { Stack, Typography } from '@mui/material';
 import HomeLayout, { Props as HomeLayoutProps } from '../components/layouts/HomeLayout';
@@ -19,7 +19,11 @@ import useKickStudent from '../hooks/queries/useKickStudent';
 interface Props extends HomeLayoutProps {}
 
 const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
-  const { deleteExam, ...deletion } = useDeleteOngoingExam();
+  const testId = useMemo(() => authorExamStore?.exam?.test.id, []);
+  const navigate = useNavigate();
+  const { deleteExam, ...deletion } = useDeleteOngoingExam({
+    onSuccess: () => navigate(`${Routes.TEST}/${testId}`),
+  });
   const { startExam, ...starting } = useStartExam();
   const { kickStudent, ...kicking } = useKickStudent();
   const isLoading = starting.isPending || deletion.isPending;
