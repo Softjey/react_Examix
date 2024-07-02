@@ -86,6 +86,7 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
       <QuestionsList variant="accordion" questions={test.testQuestions} />
 
       <StudentsList
+        disableKickButton={status === 'started'}
         variant="accordion"
         students={students ?? []}
         onKick={({ studentId }) => kickStudent(studentId)}

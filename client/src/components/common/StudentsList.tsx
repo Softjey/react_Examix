@@ -13,9 +13,17 @@ interface Props extends ListProps {
   students: LoadingStudent[];
   variant?: 'accordion' | 'list';
   onKick?: (student: Student) => void;
+  disableKickButton: boolean;
 }
 
-const StudentsList: React.FC<Props> = ({ students, variant, onKick, sx, ...rest }) => {
+const StudentsList: React.FC<Props> = ({
+  students,
+  variant,
+  onKick,
+  sx,
+  disableKickButton,
+  ...rest
+}) => {
   const content = (
     <List
       sx={{
@@ -42,7 +50,7 @@ const StudentsList: React.FC<Props> = ({ students, variant, onKick, sx, ...rest 
               onKick && (
                 <IconButton
                   color="error"
-                  disabled={loading}
+                  disabled={loading || disableKickButton}
                   sx={{ borderRadius: 2 }}
                   onClick={() => onKick({ name, studentId })}
                 >
