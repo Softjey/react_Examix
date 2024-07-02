@@ -2,11 +2,24 @@ import { z } from 'zod';
 import dayjs, { Dayjs } from 'dayjs';
 import Subject from '../../../types/api/enums/Subject';
 import QuestionType from '../../../types/api/enums/Type';
+import { Answer } from '../../../types/api/entities/question';
 
 const AnswerSchema = z.object({
   title: z.string().min(1, 'Answer title is required'),
   isCorrect: z.boolean(),
 });
+
+const isAnswersUnique = (answers: Answer[]) => {
+  const titlesSet = new Set<string>();
+
+  return !answers.some((answer) => {
+    if (titlesSet.has(answer.title)) {
+      return true;
+    }
+    titlesSet.add(answer.title);
+    return false;
+  });
+};
 
 const QuestionSchema = z.object({
   title: z.string().min(1, 'Question title is required'),
@@ -18,6 +31,9 @@ const QuestionSchema = z.object({
     .max(6, 'Max 6 answers')
     .refine((answers) => answers.some((answer) => answer.isCorrect), {
       message: 'At least one answer must be correct',
+    })
+    .refine((answers) => isAnswersUnique(answers), {
+      message: 'Answers must be unique',
     }),
   maxScore: z.number({ message: 'Max score must be a number' }).min(0, 'Max score is required'),
   timeLimit: z
