@@ -50,10 +50,6 @@ const useCreateTestPage = () => {
     name: 'questions',
   });
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(event.target.value);
-  };
-
   const addQuestionCard = () => {
     append(getDefaultQuestion(), { shouldFocus: false });
     shouldScroll.current = true;
@@ -114,10 +110,6 @@ const useCreateTestPage = () => {
     });
   });
 
-  const openQuestionsLibraryModal = () => setIsModalOpened(true);
-
-  const closeQuestionsLibraryModal = () => setIsModalOpened(false);
-
   const handleQuestionsAutocompleteChange = (
     _: React.SyntheticEvent<Element, Event>,
     value: NonNullable<string | Question> | (string | Question)[] | null,
@@ -127,8 +119,6 @@ const useCreateTestPage = () => {
     setSearch('');
     setIsModalOpened(false);
   };
-
-  const handleWarningClose = () => setWarningMessage(null);
 
   return {
     loading,
@@ -143,12 +133,12 @@ const useCreateTestPage = () => {
     error,
     reset,
     warningMessage,
-    handleWarningClose,
+    handleWarningClose: () => setWarningMessage(null),
     questions,
     search,
-    handleSearchChange,
-    openQuestionsLibraryModal,
-    closeQuestionsLibraryModal,
+    handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value),
+    openQuestionsLibraryModal: () => setIsModalOpened(true),
+    closeQuestionsLibraryModal: () => setIsModalOpened(false),
     handleQuestionsAutocompleteChange,
   };
 };
