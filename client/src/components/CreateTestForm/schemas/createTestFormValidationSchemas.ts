@@ -10,15 +10,9 @@ const AnswerSchema = z.object({
 });
 
 const isAnswersUnique = (answers: Answer[]) => {
-  const titlesSet = new Set<string>();
+  const titlesSet = new Set<string>(answers.map((answer) => answer.title));
 
-  return !answers.some((answer) => {
-    if (titlesSet.has(answer.title)) {
-      return true;
-    }
-    titlesSet.add(answer.title);
-    return false;
-  });
+  return answers.length === Array.from(titlesSet).length;
 };
 
 const QuestionSchema = z.object({
