@@ -13,7 +13,7 @@ interface Props extends ListProps {
   students: LoadingStudent[];
   variant?: 'accordion' | 'list';
   onKick?: (student: Student) => void;
-  disableKickButton: boolean;
+  disableKickButton?: boolean;
 }
 
 const StudentsList: React.FC<Props> = ({
