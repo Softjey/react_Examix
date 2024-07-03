@@ -12,7 +12,7 @@ const AnswerSchema = z.object({
 const isAnswersUnique = (answers: Answer[]) => {
   const titlesSet = new Set<string>(answers.map((answer) => answer.title));
 
-  return answers.length === Array.from(titlesSet).length;
+  return answers.length === titlesSet.size;
 };
 
 const QuestionSchema = z.object({
