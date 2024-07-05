@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Stack, Typography } from '@mui/material';
 import HomeLayout, { Props as HomeLayoutProps } from '../components/layouts/HomeLayout';
 import StartLayout, { Props as StartLayoutProps } from '../components/layouts/StartLayout';
@@ -6,8 +6,9 @@ import Button from '../components/UI/buttons/Button';
 import Routes from '../services/Router/Routes';
 import { LayoutProps } from '../types/utils/LayoutProps';
 import ApiError from '../services/Api/ApiError';
-import ErrorPicture from '/images/ErrorPicture.png';
 import { center } from '../styles/flex';
+import usePublicFolder from '../hooks/usePublicFolder';
+import getRandom from '../utils/getRandom';
 
 type ErrorDetails = {
   title: string;
@@ -23,6 +24,9 @@ type Props = LayoutProps & {
 
 const ErrorPage: React.FC<Props> = (props) => {
   const { layout, error, errorDetails, actions, onGoHome, ...rest } = props;
+  const randomNum = useMemo(() => getRandom(1, 5), []);
+  const gifSrc = usePublicFolder(`gifs/error/${randomNum}.gif`);
+
   let status;
   let message;
   let title;
@@ -37,40 +41,39 @@ const ErrorPage: React.FC<Props> = (props) => {
     title = errorDetails.title;
   } else {
     status = null;
-    message = 'Something went wrong.';
-    title = 'Oops!';
+    message = 'Oops! Something went wrong.';
+    title = 'Unknown error';
   }
 
   const content = (
-    <Stack
-      spacing={2}
-      justifyContent="center"
-      alignItems="center"
-      css={{ height: window.innerHeight, width: window.innerWidth }}
-    >
-      <Stack direction="column" justifyContent="center" alignItems="center" spacing={4}>
-        <img src={ErrorPicture} alt="ErrorPicture" css={{ height: '14vh', width: 'auto' }} />
+    <Stack spacing={4} paddingInline={4} justifyContent="center" alignItems="center">
+      <img src={gifSrc} alt={title} css={{ maxWidth: 600, width: '100%', height: 'auto' }} />
+      <Stack
+        justifyContent="center"
+        alignItems="center"
+        spacing={3}
+        sx={{
+          wordBreak: 'break-word',
+          wordWrap: 'normal',
+        }}
+      >
         <Typography
           textAlign="center"
           fontWeight={400}
           variant="h3"
-          color="#AD19D5"
-          paddingLeft="5%"
-          paddingRight="5%"
+          color={(theme) => theme.palette.error.main}
+          maxWidth={1200}
         >
           {title}
         </Typography>
-      </Stack>
 
-      <Stack direction="column" justifyContent="center" alignItems="center" spacing={1}>
-        <Typography textAlign="center" paddingLeft="5%" paddingRight="5%" variant="h6">
+        <Typography textAlign="center" variant="h5" maxWidth={900}>
           {message}
         </Typography>
       </Stack>
+      {actions}
 
-      <Stack direction="row" spacing={2} alignItems="center">
-        {actions}
-
+      <Stack>
         <Button
           to={layout === 'home' ? Routes.HOME : Routes.START}
           onClick={onGoHome}
@@ -94,7 +97,11 @@ const ErrorPage: React.FC<Props> = (props) => {
   }
 
   return (
-    <StartLayout header={false} {...(rest as StartLayoutProps)}>
+    <StartLayout
+      boxProps={{ sx: { maxWidth: '100%', height: 'unset' } }}
+      header={false}
+      {...(rest as StartLayoutProps)}
+    >
       {content}
     </StartLayout>
   );
