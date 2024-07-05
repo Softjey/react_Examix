@@ -7,12 +7,12 @@ import { ThemeContext } from '../../services/theme/ThemeContext';
 import storage from '../../services/storage';
 
 const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const prefferedTheme = window.matchMedia('(prefers-color-scheme: light)').matches
+  const preferredTheme = window.matchMedia('(prefers-color-scheme: light)').matches
     ? 'light'
     : 'dark';
 
   const [themeMode, setThemeMode] = useState<'light' | 'dark'>(
-    () => storage.read('theme') ?? prefferedTheme,
+    () => storage.read('theme') ?? preferredTheme,
   );
 
   const contextValue = useMemo(() => {

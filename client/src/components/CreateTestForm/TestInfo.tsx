@@ -1,10 +1,10 @@
-import { Box, BoxProps, MenuItem, TextField } from '@mui/material';
+import { MenuItem, Stack, StackProps, TextField } from '@mui/material';
 import SubjectSelect from '../UI/SubjectSelect';
 import CreateTestFormImageLinkUploader from './CreateTestFormImageLinkUploader';
 import { useCreateTest } from '../../pages/CreateTestPage/CreateTestContext';
 import useCreateTestForm from '../../hooks/useCreateTestForm';
 
-interface Props extends BoxProps {}
+interface Props extends StackProps {}
 
 const TestInfo: React.FC<Props> = ({ sx, ...rest }) => {
   const {
@@ -14,8 +14,10 @@ const TestInfo: React.FC<Props> = ({ sx, ...rest }) => {
 
   const { loading } = useCreateTest();
 
+  const { ref: subjectRef, ...subjectRegister } = register('subject');
+
   return (
-    <Box {...rest} display="flex" flexDirection="column" gap="24px" sx={{ width: '100%', ...sx }}>
+    <Stack {...rest} gap="24px" sx={{ width: '100%', ...sx }}>
       <CreateTestFormImageLinkUploader
         sx={{
           alignSelf: 'flex-start',
@@ -34,10 +36,10 @@ const TestInfo: React.FC<Props> = ({ sx, ...rest }) => {
       />
       <SubjectSelect
         otherMenuItems={<MenuItem value="">No subject</MenuItem>}
-        {...register('subject')}
+        {...subjectRegister}
+        inputRef={subjectRef}
         error={!!errors.subject}
         helperText={errors.subject?.message?.toString()}
-        ref={null}
         disabled={loading}
       />
       <TextField
@@ -51,7 +53,7 @@ const TestInfo: React.FC<Props> = ({ sx, ...rest }) => {
         maxRows={4}
         disabled={loading}
       />
-    </Box>
+    </Stack>
   );
 };
 

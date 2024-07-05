@@ -21,6 +21,7 @@ const AnswersGroupComponent: React.FC<Props> = ({
   ...rest
 }) => {
   const [selectedAnswers, setSelectedAnswers] = useState<StudentAnswer[]>([]);
+  const [answered, setAnswered] = useState(false);
   const isAllowedType =
     questionType === QuestionType.MULTIPLE_CHOICE || questionType === QuestionType.SINGLE_CHOICE;
 
@@ -31,14 +32,17 @@ const AnswersGroupComponent: React.FC<Props> = ({
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
+    setAnswered(true);
     onAnswer(selectedAnswers);
   };
 
   const onAnswerChange = (newAnswers: StudentAnswer[]) => {
+    setAnswered(false);
     setSelectedAnswers(newAnswers);
   };
 
   useEffect(() => {
+    setAnswered(false);
     setSelectedAnswers([]);
   }, [answers]);
 
@@ -62,7 +66,7 @@ const AnswersGroupComponent: React.FC<Props> = ({
       <Button
         type="submit"
         sx={{ alignSelf: 'flex-end', mt: 2 }}
-        disabled={disabled}
+        disabled={disabled || answered}
         variant="contained"
       >
         Submit

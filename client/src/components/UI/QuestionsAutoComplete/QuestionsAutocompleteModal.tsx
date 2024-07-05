@@ -16,6 +16,7 @@ const QuestionsAutocompleteModal: React.FC<Props> = ({ open, onClose, autoComple
 
   return (
     <Modal
+      disableScrollLock
       open={open}
       onClose={onClose}
       sx={{ display: 'flex', justifyContent: 'center', alignItems: 'start' }}
@@ -24,7 +25,7 @@ const QuestionsAutocompleteModal: React.FC<Props> = ({ open, onClose, autoComple
         sx={{
           width: '80dvh',
           maxWidth: '600px',
-          backgroundColor: '#fff',
+          backgroundColor: (theme) => theme.palette.background.paper,
           padding: 4,
           borderRadius: 1,
           minHeight: autoCompleteOpen ? 520 : 0,
@@ -47,6 +48,7 @@ const QuestionsAutocompleteModal: React.FC<Props> = ({ open, onClose, autoComple
           renderOption={renderOption}
           onChange={onChange}
           filterOptions={(x) => x}
+          getOptionLabel={(option) => (typeof option === 'string' ? option : option.title)}
           renderInput={renderInput}
           PaperComponent={TransitionedPaperComponentForward}
           {...restAutoCompleteProps}

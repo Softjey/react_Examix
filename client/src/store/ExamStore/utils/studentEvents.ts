@@ -33,3 +33,17 @@ export function onStudentLeave(this: ExamStore, socket: Socket) {
     });
   });
 }
+
+export function onStudentKicked(
+  this: ExamStore,
+  socket: Socket,
+  callback?: (studentId: string) => void,
+) {
+  socket.on(Message.STUDENT_KICKED, ({ studentId }: { studentId: string }) => {
+    runInAction(() => {
+      if (!this.exam) return;
+      if (callback) callback(studentId);
+      this.exam.students = this.exam.students.filter((student) => student.studentId !== studentId);
+    });
+  });
+}

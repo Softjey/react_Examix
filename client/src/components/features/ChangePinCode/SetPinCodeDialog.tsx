@@ -1,11 +1,8 @@
 import { Dialog, Stack, Typography, TextField, DialogProps } from '@mui/material';
-import React, { useMemo } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { usePinCode } from '../../../store/contexts/PinCodeContext';
-import ErrorSnackBar from '../../UI/errors/ErrorSnackBar';
-import { PinCodePasswordValues, getSetPinCodeSchema } from './PinCodeSchemas';
+import React from 'react';
 import Button from '../../UI/buttons/Button';
+import useSetPinCodeDialog from './useSetPinCodeDialog';
+import AlertSnackbar from '../../UI/AlertSnackbar';
 
 interface Props extends Omit<DialogProps, 'onClose'> {
   resetMode?: boolean;
@@ -13,40 +10,9 @@ interface Props extends Omit<DialogProps, 'onClose'> {
 }
 
 const SetPinCodeDialog: React.FC<Props> = ({ onClose, resetMode = false, ...rest }) => {
-  const { setPinCode, setPinMutation, checkPasswordMutation } = usePinCode();
-  const error = checkPasswordMutation.error ?? setPinMutation.error;
-  const isPending = checkPasswordMutation.isPending ?? setPinMutation.isPending;
-  const SetPinCodeSchema = useMemo(() => getSetPinCodeSchema(resetMode), [resetMode]);
-  const defaultValues = resetMode ? { currentPassword: '' } : { pinCode: '', currentPassword: '' };
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<typeof resetMode extends boolean ? PinCodePasswordValues : PinCodePasswordValues>({
-    resolver: zodResolver(SetPinCodeSchema),
-    defaultValues,
-  });
-
-  const onSubmit = handleSubmit(({ currentPassword, pinCode }) => {
-    const newPinCode = pinCode || null;
-
-    setPinCode(currentPassword, newPinCode, {
-      onSuccess: () => {
-        onClose();
-      },
-      onSettled: () => reset(),
-    });
-  });
-
-  // eslint-disable-next-line no-console
-  console.log(errors);
-
-  const resetError = () => {
-    checkPasswordMutation.reset();
-    setPinMutation.reset();
-  };
+  const { form, query } = useSetPinCodeDialog({ onClose, resetMode });
+  const { isPending, error, resetError } = query;
+  const { validationErrors, register, onSubmit } = form;
 
   return (
     <Dialog onClose={onClose} {...rest}>
@@ -54,8 +20,8 @@ const SetPinCodeDialog: React.FC<Props> = ({ onClose, resetMode = false, ...rest
         <Typography variant="h5">{resetMode ? 'Reset pin code' : 'Set pin code'}</Typography>
 
         <TextField
-          error={!!errors.currentPassword}
-          helperText={errors.currentPassword?.message?.toString()}
+          error={!!validationErrors.currentPassword?.message}
+          helperText={validationErrors.currentPassword?.message}
           disabled={isPending}
           fullWidth
           autoFocus
@@ -68,8 +34,8 @@ const SetPinCodeDialog: React.FC<Props> = ({ onClose, resetMode = false, ...rest
 
         {!resetMode && (
           <TextField
-            error={!!errors.pinCode}
-            helperText={errors.pinCode?.message?.toString()}
+            error={!!validationErrors.pinCode}
+            helperText={validationErrors.pinCode?.message}
             disabled={isPending}
             fullWidth
             label="Enter New PIN Code"
@@ -90,7 +56,9 @@ const SetPinCodeDialog: React.FC<Props> = ({ onClose, resetMode = false, ...rest
         </Button>
       </Stack>
 
-      <ErrorSnackBar open={!!error} onClose={resetError} errorMessage={error?.message} />
+      <AlertSnackbar severity="error" open={!!error} onClose={resetError}>
+        {error?.message}
+      </AlertSnackbar>
     </Dialog>
   );
 };

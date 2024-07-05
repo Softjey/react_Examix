@@ -10,7 +10,7 @@ export class SearchController {
 
   @Get()
   async search(@Query() { query, limit }: SearchQueryDto) {
-    const { exams, questions, tests } = await this.searchService.serachEverything({
+    const { exams, questions, tests } = await this.searchService.searchEverything({
       search: query,
       limit,
     });

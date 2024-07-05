@@ -2,14 +2,13 @@
 /* eslint-disable implicit-arrow-linebreak */
 import {
   Alert,
-  Box,
   Card,
   CardActions,
   CardContent,
   CardProps,
   Collapse,
   Paper,
-  Snackbar,
+  Stack,
   TextField,
   Typography,
 } from '@mui/material';
@@ -25,6 +24,9 @@ import useCreateTestForm from '../../../hooks/useCreateTestForm';
 import MaxScoreInput from '../../UI/inputs/MaxScoreInput';
 import ErrorPopover from '../../UI/errors/ErrorPopover';
 import CreateTestFormTimeLimitPicker from '../CreateTestFormTimeLimitPicker';
+import disableDragEvent from '../../../pages/CreateTestPage/utils/disableDragEvent';
+import { Nullable } from '../../../types/utils/Nullable';
+import AlertSnackbar from '../../UI/AlertSnackbar';
 
 interface Props extends CardProps {
   type: QuestionType;
@@ -34,7 +36,7 @@ interface Props extends CardProps {
 }
 
 const QuestionCard = forwardRef<HTMLDivElement, Props>(
-  ({ isFromServer, onDelete, type, questionIndex, ...props }, ref) => {
+  ({ isFromServer, onDelete, type, questionIndex, sx: cardSx, ...props }, ref) => {
     const {
       register,
       control,
@@ -49,17 +51,16 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
       name: `questions.${questionIndex}.answers`,
     });
 
-    const [isSnackBarOpened, setIsSnackBarOpened] = useState<boolean>(false);
-    const [snackBarMessage, setSnackBarMessage] = useState<string>('');
+    const [snackBarMessage, setSnackBarMessage] = useState<Nullable<string>>(null);
 
     const [isInfoOpened, setIsInfoOpened] = useState<boolean>(false);
+    const [draggable, setDraggable] = useState<boolean>(false);
 
     const onAnswerItemRemove = (index: number) => {
       if (fields.length > 2) {
         remove(index);
       } else {
         setSnackBarMessage('Minimum number of answers is 2');
-        setIsSnackBarOpened(true);
       }
     };
 
@@ -68,16 +69,20 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
         append({ title: '', isCorrect: false }, { shouldFocus: false });
       } else {
         setSnackBarMessage('Maximum number of answers reached');
-        setIsSnackBarOpened(true);
       }
     };
+
+    const { ref: questionTypeRef, ...questionTypeReg } = register(
+      `questions.${questionIndex}.type`,
+    );
 
     return (
       <>
         <Card
+          draggable={draggable}
           ref={ref}
-          onMouseEnter={() => setIsInfoOpened(true)}
-          onMouseLeave={() => setIsInfoOpened(false)}
+          onMouseEnter={isFromServer ? () => setIsInfoOpened(true) : undefined}
+          onMouseLeave={isFromServer ? () => setIsInfoOpened(false) : undefined}
           component={Paper}
           elevation={2}
           sx={{
@@ -88,13 +93,25 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
               opacity: 0.7,
               visibility: 'visible',
             },
+            ...cardSx,
           }}
           {...props}
         >
-          <DragBar sx={{ cursor: 'not-allowed' }} title="This feature is unavailable" />
+          <DragBar
+            sx={{
+              '&:active': {
+                cursor: 'grabbing',
+              },
+            }}
+            onMouseEnter={() => setDraggable(true)}
+            onMouseLeave={() => setDraggable(false)}
+          />
 
           <CardContent
             sx={{
+              userSelect: 'none',
+              WebkitUserDrag: 'none',
+              userDrag: 'none',
               display: 'flex',
               gap: 1,
               flexDirection: 'column',
@@ -102,11 +119,12 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
               paddingTop: 0,
             }}
           >
-            <Box display="flex" gap={1} flexWrap="wrap">
+            <Stack direction="row" gap={1} flexWrap="wrap">
               <QuestionTypeSelect
+                defaultValue={type}
                 disabled={disabled}
-                {...register(`questions.${questionIndex}.type`)}
-                ref={null}
+                {...questionTypeReg}
+                inputRef={questionTypeRef}
               />
 
               <ErrorPopover
@@ -125,6 +143,9 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
                 errorMessage={errors.questions?.[questionIndex]?.maxScore?.message}
               >
                 <MaxScoreInput
+                  onDragStart={disableDragEvent}
+                  onDragEnd={disableDragEvent}
+                  onDragEnter={disableDragEvent}
                   {...register(`questions.${questionIndex}.maxScore`, { valueAsNumber: true })}
                   error={!!errors.questions?.[questionIndex]?.maxScore}
                   disabled={loading}
@@ -137,13 +158,15 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
                 onClick={() =>
                   onDelete(() => {
                     setSnackBarMessage('Minimum number of questions is 1');
-                    setIsSnackBarOpened(true);
                   })
                 }
               />
-            </Box>
+            </Stack>
 
             <TextField
+              onDragStart={disableDragEvent}
+              onDragEnd={disableDragEvent}
+              onDragEnter={disableDragEvent}
               error={!!errors.questions?.[questionIndex]?.title}
               helperText={errors.questions?.[questionIndex]?.title?.message?.toString()}
               {...register(`questions.${questionIndex}.title`)}
@@ -184,22 +207,13 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
           </CardActions>
         </Card>
 
-        <Snackbar
-          open={isSnackBarOpened}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          autoHideDuration={3000}
-          onClose={(_, reason) => {
-            if (reason === 'clickaway') {
-              return;
-            }
-
-            setIsSnackBarOpened(false);
-          }}
+        <AlertSnackbar
+          severity="warning"
+          open={snackBarMessage !== null}
+          onClose={() => setSnackBarMessage(null)}
         >
-          <Alert onClose={() => setIsSnackBarOpened(false)} variant="filled" severity="warning">
-            {snackBarMessage}
-          </Alert>
-        </Snackbar>
+          {snackBarMessage}
+        </AlertSnackbar>
       </>
     );
   },

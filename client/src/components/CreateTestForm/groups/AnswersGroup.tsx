@@ -1,8 +1,4 @@
-/* eslint-disable implicit-arrow-linebreak */
-/* eslint-disable no-confusing-arrow */
-/* eslint-disable function-paren-newline */
-
-import { Box, BoxProps, Typography } from '@mui/material';
+import { Box, BoxProps, Stack, Typography } from '@mui/material';
 import { FieldArrayWithId } from 'react-hook-form';
 import { useEffect } from 'react';
 import AddIcon from '@mui/icons-material/Add';
@@ -39,16 +35,16 @@ const AnswersGroup: React.FC<Props> = ({
 
   const { loading } = useCreateTest();
 
-  const isShowAddButton = fields.length >= 6 || isFromServer;
+  const isShowAddButton = fields.length < 6 && !isFromServer;
 
-  const isSingleChoise = questionType === QuestionType.SINGLE_CHOICE;
+  const isSingleChoice = questionType === QuestionType.SINGLE_CHOICE;
 
   const answersPath = `questions.${questionIndex}.answers` as const;
 
   const updateCorrect = (index: number) => {
     const answers = watch(answersPath);
 
-    if (isSingleChoise) {
+    if (isSingleChoice) {
       if (answers.some((item, i) => item.isCorrect && i !== index)) {
         // If any checkbox is checked and it's not the current one, uncheck all checkboxes
         const answersWithOnlyCurrentChecked = answers.map((item, i) => {
@@ -58,9 +54,9 @@ const AnswersGroup: React.FC<Props> = ({
         setValue(answersPath, answersWithOnlyCurrentChecked);
       } else {
         // Otherwise, toggle the checkbox state
-        const answersWithCurrentToggled = answers.map((item, i) =>
-          i === index ? { ...item, isCorrect: !item.isCorrect } : item,
-        );
+        const answersWithCurrentToggled = answers.map((item, i) => {
+          return i === index ? { ...item, isCorrect: !item.isCorrect } : item;
+        });
 
         setValue(answersPath, answersWithCurrentToggled);
       }
@@ -68,7 +64,7 @@ const AnswersGroup: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (isSingleChoise) {
+    if (isSingleChoice) {
       const answers = watch(answersPath);
       // set the first one checked and the rest unchecked
       const answersWithOnlyFirstChecked = answers.map((item, index) => ({
@@ -102,8 +98,8 @@ const AnswersGroup: React.FC<Props> = ({
           />
         ))}
 
-        {isShowAddButton || (
-          <Box display="flex">
+        {isShowAddButton && (
+          <Stack direction="row">
             <Button
               disabled={loading}
               startIcon={
@@ -112,7 +108,7 @@ const AnswersGroup: React.FC<Props> = ({
                     width: 24,
                     height: 24,
                     marginX: '9px',
-                    color: loading ? theme.palette.action.disabled : theme.palette.info.main,
+                    color: loading ? theme.palette.action.disabled : theme.palette.primary.main,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -136,7 +132,7 @@ const AnswersGroup: React.FC<Props> = ({
             >
               Add new
             </Button>
-          </Box>
+          </Stack>
         )}
       </Box>
 

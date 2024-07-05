@@ -5,6 +5,7 @@ import CloseButton from '../../UI/buttons/CloseButton';
 import RadioCheckBox from '../../UI/buttons/RadioCheckBox';
 import { useCreateTest } from '../../../pages/CreateTestPage/CreateTestContext';
 import useCreateTestForm from '../../../hooks/useCreateTestForm';
+import disableDragEvent from '../../../pages/CreateTestPage/utils/disableDragEvent';
 
 interface Props extends BoxProps {
   answerIndex: number;
@@ -35,11 +36,14 @@ const FormAnswerItem: React.FC<Props> = ({
   const { loading } = useCreateTest();
   const disabled = loading || isFromServer;
 
-  const isCorrect = watch(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`);
+  const isCorrectPath: Parameters<typeof register>[0] =
+    `questions.${questionIndex}.answers.${answerIndex}.isCorrect`;
+
+  const isCorrect = watch(isCorrectPath);
 
   const onCheckBoxChange = (e: ChangeEvent<HTMLInputElement>) => {
     onCheckBoxClick();
-    setValue(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`, e.target.checked);
+    setValue(isCorrectPath, e.target.checked);
   };
 
   const isError = !!errors.questions?.[questionIndex]?.answers?.[answerIndex]?.title;
@@ -49,16 +53,19 @@ const FormAnswerItem: React.FC<Props> = ({
   return (
     <Box sx={{ display: 'flex', alignItems: 'start', ...sx }} {...props}>
       <RadioCheckBox
-        {...register(`questions.${questionIndex}.answers.${answerIndex}.isCorrect`)}
+        {...register(isCorrectPath)}
         type={type}
-        ref={null}
-        /* this is neccessary because mui checkbox component
+        /* this is necessary because mui checkbox component
         is not working correctly with react-hook-form */
+        ref={null}
         checked={isCorrect}
         onChange={onCheckBoxChange}
         disabled={disabled}
       />
       <TextField
+        onDragStart={disableDragEvent}
+        onDragEnd={disableDragEvent}
+        onDragEnter={disableDragEvent}
         fullWidth
         {...register(`questions.${questionIndex}.answers.${answerIndex}.title`)}
         error={isError}

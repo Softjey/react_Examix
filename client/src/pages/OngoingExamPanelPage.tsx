@@ -1,5 +1,5 @@
-import React from 'react';
-import { Navigate } from 'react-router';
+import React, { useMemo } from 'react';
+import { Navigate, useNavigate } from 'react-router';
 import { observer } from 'mobx-react-lite';
 import { Stack, Typography } from '@mui/material';
 import HomeLayout, { Props as HomeLayoutProps } from '../components/layouts/HomeLayout';
@@ -13,15 +13,21 @@ import ExamResultsTable from '../components/common/ExamResultsTable/ExamResultsT
 import useDeleteOngoingExam from '../hooks/queries/useDeleteOngoingExam';
 import useStartExam from '../hooks/queries/useStartExam';
 import LoadingButton from '../components/UI/buttons/LoadingButton';
-import ErrorSnackBar from '../components/UI/errors/ErrorSnackBar';
+import AlertSnackbar from '../components/UI/AlertSnackbar';
+import useKickStudent from '../hooks/queries/useKickStudent';
 
 interface Props extends HomeLayoutProps {}
 
 const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
-  const { deleteExam, ...deletion } = useDeleteOngoingExam();
+  const testId = useMemo(() => authorExamStore?.exam?.test.id, []);
+  const navigate = useNavigate();
+  const { deleteExam, ...deletion } = useDeleteOngoingExam({
+    onSuccess: () => navigate(`${Routes.TEST}/${testId}`),
+  });
   const { startExam, ...starting } = useStartExam();
+  const { kickStudent, ...kicking } = useKickStudent();
   const isLoading = starting.isPending || deletion.isPending;
-  const error = starting.error || deletion.error;
+  const error = starting.error || deletion.error || kicking.error;
   const { exam, status, credentials } = authorExamStore;
 
   if (status === 'idle') {
@@ -83,15 +89,18 @@ const OngoingExamPanelPage: React.FC<Props> = observer(({ ...rest }) => {
 
       <QuestionsList variant="accordion" questions={test.testQuestions} />
 
-      <StudentsList variant="accordion" students={students ?? []} />
+      <StudentsList
+        disableKickButton={status !== 'created'}
+        variant="accordion"
+        students={students ?? []}
+        onKick={({ studentId }) => kickStudent(studentId)}
+      />
 
       {results && results.length > 0 && <ExamResultsTable questions={results} />}
 
-      <ErrorSnackBar
-        open={!!error}
-        errorMessage={error?.message}
-        onClose={() => starting.reset()}
-      />
+      <AlertSnackbar severity="error" open={!!error} onClose={() => starting.reset()}>
+        {error?.message}
+      </AlertSnackbar>
     </HomeLayout>
   );
 });

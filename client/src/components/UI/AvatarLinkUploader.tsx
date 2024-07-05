@@ -6,6 +6,7 @@ import {
   CircularProgress,
   Button,
   BoxProps,
+  Stack,
 } from '@mui/material';
 import { useState, ChangeEvent } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -13,7 +14,7 @@ import { FieldValues, UseFormRegisterReturn, UseFormSetValue } from 'react-hook-
 import useAuth from '../../hooks/queries/useAuth';
 import useUpdateMe from '../../hooks/queries/useUpdateMe';
 import { Nullable } from '../../types/utils/Nullable';
-import isImageAcessable from '../../utils/isImageAcessable';
+import isImageAccessible from '../../utils/isImageAccessible';
 import isValidUrl from '../../utils/isValidUrl';
 import UserAvatar from './UserAvatar';
 
@@ -73,7 +74,7 @@ const AvatarLinkUploader: React.FC<Props> = ({
     const link = e.target.value;
 
     const getErrorMessage = async () => {
-      const isAccessible = await isImageAcessable(link);
+      const isAccessible = await isImageAccessible(link);
       const isUrl = isValidUrl(link);
 
       if (!isUrl) return 'The URL is not valid';
@@ -114,7 +115,7 @@ const AvatarLinkUploader: React.FC<Props> = ({
         user={user}
         sx={{ width: 60, height: 60, cursor: disabled ? 'unset' : 'pointer', ...props.sx }}
       />
-      <Modal open={open} onClose={onModalClose}>
+      <Modal disableScrollLock open={open} onClose={onModalClose}>
         <Box
           sx={{
             display: 'flex',
@@ -162,7 +163,7 @@ const AvatarLinkUploader: React.FC<Props> = ({
             {isPending && <CircularProgress size={50} />}
           </Box>
 
-          <Box display="flex" gap={2} justifyContent="space-between">
+          <Stack direction="row" gap={2} justifyContent="space-between">
             <Button
               fullWidth
               size="small"
@@ -181,7 +182,7 @@ const AvatarLinkUploader: React.FC<Props> = ({
             >
               Delete Image
             </Button>
-          </Box>
+          </Stack>
         </Box>
       </Modal>
     </>

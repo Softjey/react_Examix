@@ -16,7 +16,6 @@ import OngoingExamPage from '../../pages/OngoingExamPage/OngoingExamPage';
 import LoginPage from '../../pages/LoginPage';
 import JoinPage from '../../pages/JoinPage';
 import OngoingExamPanelPage from '../../pages/OngoingExamPanelPage';
-import LockedPage from '../../pages/LockedPage';
 
 const router = createRouter([
   {
@@ -122,10 +121,6 @@ const router = createRouter([
         <OngoingExamPage />
       </OnlyPublic>
     ),
-  },
-  {
-    path: Routes.LOCKED,
-    element: <LockedPage />,
   },
 ]);
 

@@ -6,13 +6,14 @@ import {
   CircularProgress,
   Button,
   BoxProps,
+  Stack,
 } from '@mui/material';
 import { useState, ChangeEvent } from 'react';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { FieldValues, UseFormRegisterReturn, UseFormSetValue } from 'react-hook-form';
 import { Nullable } from '../../../types/utils/Nullable';
-import isImageAcessable from '../../../utils/isImageAcessable';
+import isImageAccessible from '../../../utils/isImageAccessible';
 import isValidUrl from '../../../utils/isValidUrl';
 
 interface Props extends BoxProps {
@@ -54,11 +55,11 @@ const ImageLinkUploader: React.FC<Props> = ({
     setLoading(true);
 
     const getErrorMessage = async () => {
-      const isAcessable = await isImageAcessable(e.target.value);
+      const isAccessible = await isImageAccessible(e.target.value);
       const isUrl = isValidUrl(e.target.value);
 
       if (!isUrl) return 'The url is not valid';
-      if (!isAcessable) return 'Image is not acessable';
+      if (!isAccessible) return 'Image is not accessible';
       return null;
     };
 
@@ -98,7 +99,7 @@ const ImageLinkUploader: React.FC<Props> = ({
       >
         {!imageLink && <PhotoCameraIcon sx={{ fontSize: 48, color: 'gray' }} />}
       </Box>
-      <Modal open={open} onClose={onModalClose}>
+      <Modal disableScrollLock open={open} onClose={onModalClose}>
         <Box
           sx={{
             display: 'flex',
@@ -145,7 +146,7 @@ const ImageLinkUploader: React.FC<Props> = ({
             {loading && <CircularProgress size={50} />}
           </Box>
 
-          <Box display="flex" gap={2} justifyContent="space-between">
+          <Stack direction="row" gap={2} justifyContent="space-between">
             <Button
               fullWidth
               size="small"
@@ -168,7 +169,7 @@ const ImageLinkUploader: React.FC<Props> = ({
             >
               Delete Image
             </Button>
-          </Box>
+          </Stack>
         </Box>
       </Modal>
     </>
