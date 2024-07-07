@@ -17,6 +17,7 @@ export default function useConnectToExamLikeStudent({
   const { data: needConnect, ...reconnectQuery } = useQuery({
     queryKey: [QueryKey.RECONNECT_TO_EXAM],
     queryFn: () => studentExamStore.tryToReconnect(),
+    retry: false,
     ...reconnect,
   });
   const { mutate: connectToExam, ...connectMutation } = useMutation({
