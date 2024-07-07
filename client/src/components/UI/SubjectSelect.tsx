@@ -1,6 +1,7 @@
-import { TextField, MenuItem, TextFieldProps, TextFieldVariants } from '@mui/material';
+import { MenuItem, TextFieldProps, TextFieldVariants } from '@mui/material';
 import SubjectItem from './SubjectItem/SubjectItem';
 import Subject from '../../types/api/enums/Subject';
+import Select from './Select';
 
 type Props<T extends TextFieldVariants> = TextFieldProps<T> & {
   maxHeight?: number;
@@ -11,9 +12,8 @@ const SubjectSelect = <T extends TextFieldVariants>(props: Props<T>) => {
   const { maxHeight = 200, otherMenuItems, ...rest } = props;
 
   return (
-    <TextField
+    <Select
       {...rest}
-      select
       defaultValue=""
       label="Subject"
       SelectProps={{
@@ -33,7 +33,7 @@ const SubjectSelect = <T extends TextFieldVariants>(props: Props<T>) => {
           <SubjectItem textVariant="body1" subject={subject} />
         </MenuItem>
       ))}
-    </TextField>
+    </Select>
   );
 };
 
