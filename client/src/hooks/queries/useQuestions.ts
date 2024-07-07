@@ -4,9 +4,8 @@ import { QueryKey } from '../../services/Query/types';
 import { QuestionsParams } from '../../services/Api/types/questions';
 
 export default function useQuestions(params: QuestionsParams = {}) {
-  const { authorId, limit, page, search, subjects, types } = params;
   const { data, ...rest } = useQuery({
-    queryKey: [QueryKey.QUESTIONS, authorId, limit, page, search, subjects, types],
+    queryKey: [QueryKey.QUESTIONS, params],
     queryFn: () => ApiClient.getQuestions(params),
   });
 
