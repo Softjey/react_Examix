@@ -15,7 +15,7 @@ import {
 import { useFieldArray } from 'react-hook-form';
 import { forwardRef, useState } from 'react';
 import QuestionTypeSelect from '../../UI/inputs/QuestionTypeSelect';
-import DragBar from '../../../dev/DragBar';
+import DragBar from '../../UI/DragBar';
 import QuestionType from '../../../types/api/enums/Type';
 import DeleteButton from '../../UI/buttons/DeleteButton';
 import AnswersGroup from '../groups/AnswersGroup';
