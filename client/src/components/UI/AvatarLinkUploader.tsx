@@ -133,7 +133,7 @@ const AvatarLinkUploader: React.FC<Props> = ({
             borderRadius: '8px',
           }}
         >
-          <Typography variant="h6">Upload Image</Typography>
+          <Typography variant="h6">Upload Avatar</Typography>
           <TextField
             type="url"
             {...reg}
@@ -142,7 +142,7 @@ const AvatarLinkUploader: React.FC<Props> = ({
             helperText={error}
             variant="standard"
             placeholder="Paste image link here"
-            sx={{ width: '100%' }}
+            sx={{ width: '100%', height: 44 }}
           />
 
           <Box
