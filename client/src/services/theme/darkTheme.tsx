@@ -1,5 +1,4 @@
-import { createTheme } from '@mui/material/styles';
-import resetStyles from '../../styles/resetStyles';
+import createTheme from './createTheme';
 
 const dividerColor = '#474747';
 
@@ -18,11 +17,18 @@ const darkTheme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        '::-webkit-scrollbar': {
-          backgroundColor: 'transparent',
-          width: resetStyles.scrollbar.width,
+        '::-webkit-scrollbar-thumb': {
+          backgroundColor: dividerColor,
         },
-        '::-webkit-scrollbar-thumb': { backgroundColor: dividerColor },
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        SelectProps: {
+          MenuProps: {
+            disableScrollLock: true,
+          },
+        },
       },
     },
   },

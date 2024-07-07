@@ -1,5 +1,4 @@
-import { createTheme } from '@mui/material/styles';
-import resetStyles from '../../styles/resetStyles';
+import createTheme from './createTheme';
 
 const dividerColor = 'rgba(0, 0, 0, 0.12)';
 
@@ -11,11 +10,9 @@ const lightTheme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        '::-webkit-scrollbar': {
-          backgroundColor: 'transparent',
-          width: resetStyles.scrollbar.width,
+        '::-webkit-scrollbar-thumb': {
+          backgroundColor: dividerColor,
         },
-        '::-webkit-scrollbar-thumb': { backgroundColor: dividerColor },
       },
     },
   },
