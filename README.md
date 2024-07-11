@@ -23,6 +23,7 @@ Project Setup
 To install all required node packages, run the following command in the terminal:
 
 `npm install`
+
 `npm install:all`
 
 ### Setting Up Services with Docker
