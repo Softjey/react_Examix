@@ -23,6 +23,7 @@ Project Setup
 To install all required node packages, run the following command in the terminal:
 
 `npm install`
+`npm install:all`
 
 ### Setting Up Services with Docker
 
@@ -52,7 +53,7 @@ Environment variables must be configured before running the application. Create 
 
 After installing all dependencies, migrate the database schema with the following Prisma command:
 
-`cd server && npx prisma migrate deploy && npx prisma generate`
+`npm run db-migrate`
 
 Starting Development
 --------------------
