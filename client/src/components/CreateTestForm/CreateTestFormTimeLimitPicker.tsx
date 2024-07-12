@@ -1,17 +1,19 @@
-import { TimePickerProps } from '@mui/x-date-pickers/TimePicker';
 import { Controller } from 'react-hook-form';
 import React from 'react';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+import { TextFieldProps, TextFieldVariants } from '@mui/material';
 import useCreateTestForm from '../../hooks/useCreateTestForm';
-import TimeLimitPicker from '../UI/inputs/TimeLimitPicker';
 import disableDragEvent from '../../pages/CreateTestPage/utils/disableDragEvent';
+import TimeLimitPicker from '../UI/inputs/TimeLimitPicker';
 
-interface Props extends TimePickerProps<Dayjs> {
+type Props<T extends TextFieldVariants> = TextFieldProps<T> & {
   questionIndex: number;
-  error?: boolean;
-}
+};
 
-const CreateTestFormTimeLimitPicker: React.FC<Props> = ({ questionIndex, error, ...props }) => {
+const CreateTestFormTimeLimitPicker = <T extends TextFieldVariants>({
+  questionIndex,
+  ...props
+}: Props<T>) => {
   const { control, trigger } = useCreateTestForm();
 
   return (
@@ -19,30 +21,28 @@ const CreateTestFormTimeLimitPicker: React.FC<Props> = ({ questionIndex, error, 
       name={`questions.${questionIndex}.timeLimit`}
       control={control}
       render={({ field }) => {
-        const { onBlur, onChange, ref, value, disabled } = field;
+        const { onBlur, onChange, value, disabled } = field;
 
-        const onTimeLimitChange = (e: dayjs.Dayjs | null) => {
-          onChange(e);
+        const onTimeLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+          onChange(dayjs(e.target.value, 'HH:mm:ss'));
           trigger(`questions.${questionIndex}.timeLimit`);
         };
 
         return (
           <TimeLimitPicker
-            maxTime={dayjs().startOf('day').hour(1)}
-            ampm={false}
-            value={value}
-            onClose={onBlur}
-            onChange={onTimeLimitChange}
-            slotProps={{
-              textField: {
-                onDragStart: disableDragEvent,
-                onDragEnd: disableDragEvent,
-                onDragEnter: disableDragEvent,
-              },
-            }}
             disabled={disabled}
-            error={error}
-            ref={ref}
+            type="time"
+            value={value.format('HH:mm:ss')}
+            onBlur={onBlur}
+            onChange={onTimeLimitChange}
+            inputProps={{
+            step: 1,
+            max: '01:00:00',
+          }}
+            onDragStart={disableDragEvent}
+            onDragEnd={disableDragEvent}
+            onDragEnter={disableDragEvent}
+            variant="outlined"
             {...props}
           />
         );

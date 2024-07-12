@@ -1,46 +1,25 @@
-import { TimePickerProps, TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { Dayjs } from 'dayjs';
-import { forwardRef } from 'react';
+import { TextField, TextFieldProps, TextFieldVariants } from '@mui/material';
 
-interface Props extends TimePickerProps<Dayjs> {
-  error?: boolean;
-}
+type Props<T extends TextFieldVariants> = TextFieldProps<T>;
 
-const TimeLimitPicker = forwardRef<HTMLDivElement, Props>(
-  ({ error, value, onClose, maxTime, onChange, disabled, slotProps, ...props }, ref) => {
-    return (
-      <TimePicker
-        sx={{
-          maxWidth: '126px',
-          '.MuiInputBase-input': {
-            paddingTop: 1,
-            paddingBottom: 1,
-            '& ~ fieldset': {
-              borderColor: error ? (theme) => theme.palette.error.main : 'auto',
-            },
-          },
-          '.MuiInputLabel-root': {
-            top: '-8px',
-          },
-        }}
-        views={['hours', 'minutes', 'seconds']}
-        format="HH:mm:ss"
-        value={value}
-        timeSteps={{ minutes: 1, seconds: 5 }}
-        maxTime={maxTime}
-        skipDisabled
-        onClose={onClose}
-        onChange={onChange}
-        disabled={disabled}
-        slotProps={{
-          actionBar: { actions: [] },
-          ...slotProps,
-        }}
-        ref={ref}
-        {...props}
-      />
-    );
-  },
-);
+const TimeLimitPicker = <T extends TextFieldVariants>({ sx, ...props }: Props<T>) => {
+  return (
+    <TextField
+      type="time"
+      sx={{
+        width: '127px',
+        '.MuiInputBase-input': {
+          paddingTop: 1,
+          paddingBottom: 1,
+        },
+        '.MuiInputLabel-root': {
+          top: '-8px',
+        },
+        ...sx,
+      }}
+      {...props}
+    />
+  );
+};
 
 export default TimeLimitPicker;
