@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useFieldArray } from 'react-hook-form';
+import { Controller, useFieldArray } from 'react-hook-form';
 import { forwardRef, useState } from 'react';
 import QuestionTypeSelect from '../../UI/inputs/QuestionTypeSelect';
 import DragBar from '../../UI/DragBar';
@@ -72,10 +72,6 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
       }
     };
 
-    const { ref: questionTypeRef, ...questionTypeReg } = register(
-      `questions.${questionIndex}.type`,
-    );
-
     return (
       <>
         <Card
@@ -120,11 +116,17 @@ const QuestionCard = forwardRef<HTMLDivElement, Props>(
             }}
           >
             <Stack direction="row" gap={1} flexWrap="wrap">
-              <QuestionTypeSelect
-                defaultValue={type}
-                disabled={disabled}
-                {...questionTypeReg}
-                inputRef={questionTypeRef}
+              <Controller
+                control={control}
+                name={`questions.${questionIndex}.type`}
+                render={({ field: { onChange, onBlur, value, ref: questionTypeRef } }) => (
+                  <QuestionTypeSelect
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    value={value}
+                    inputRef={questionTypeRef}
+                  />
+                )}
               />
 
               <ErrorPopover
