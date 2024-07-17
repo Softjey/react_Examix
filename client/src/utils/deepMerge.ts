@@ -47,6 +47,9 @@ const deepMerge = <T extends IObject[]>(...objects: T) => {
     seenObjects.set(source, true);
 
     Object.keys(source).forEach((key) => {
+      const targetKey = target[key] as unknown[];
+      const sourceKey = source[key] as unknown[];
+
       if (['__proto__', 'constructor', 'prototype'].includes(key)) {
         return;
       }
@@ -54,8 +57,8 @@ const deepMerge = <T extends IObject[]>(...objects: T) => {
       if (Array.isArray(target[key]) && Array.isArray(source[key])) {
         target[key] = deepMerge.options.mergeArrays
           ? deepMerge.options.uniqueArrayItems
-            ? Array.from(new Set([...target[key], ...source[key]]))
-            : [...target[key], ...source[key]]
+            ? Array.from(new Set([...targetKey, ...sourceKey]))
+            : [...targetKey, ...sourceKey]
           : source[key];
       } else if (isObject(target[key]) && isObject(source[key])) {
         target[key] = merge(target[key] as IObject, source[key] as IObject);
